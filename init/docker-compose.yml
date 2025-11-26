@@ -1,0 +1,33 @@
+name: careerbuilder
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: cb-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: cb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c max_connections=100
+      -c log_statement=none
+      -c log_min_messages=warning
+
+  redis:
+    image: redis:7
+    container_name: cb-redis
+    ports:
+      - "6379:6379"
+
+networks:
+  default:
+    name: cb-network
+
+volumes:
+  postgres-data:
