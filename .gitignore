@@ -1,63 +1,18 @@
 # =========================
 # 📦 Global
 # =========================
+
 .DS_Store
+.AppleDouble
+.LSOverride
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+
 *.log
 *.tmp
 *.swp
 *.swo
-
-# =========================
-# 🛠️ IntelliJ / VSCode
-# =========================
-*.iml
-.idea/
-out/
-.vscode/
-
-# =========================
-# 🐘 Gradle (backend)
-# =========================
-**/build/
-**/.gradle/
-./temp/*
-
-# Java / Kotlin
-*.class
-*.jar
-*.war
-*.kt~  # vim/IDE temp files
-
-# Spring Boot
-*.db
-*.h2.db
-
-# =========================
-# ⚙️ Nuxt / Node.js (frontend)
-# =========================
-node_modules/
-dist/
-.nuxt/
-.nitro/
-.cache/
-*.tsbuildinfo
-
-# npm / yarn / pnpm logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Env files (if used)
-.env
-.env.*
-!.env.example
-
-# =========================
-# 🐳 Docker
-# =========================
-docker-data/
 *.pid
 *.seed
 *.bak
@@ -66,30 +21,100 @@ docker-data/
 *.zip
 
 # =========================
+# 🛠️ IntelliJ / VSCode / IDE
+# =========================
+
+*.iml
+.idea/
+out/
+.vscode/
+
+# =========================
+# 🐘 Backend (Java/Kotlin + Spring Boot + Gradle)
+# =========================
+
+# Gradle
+backend/.gradle/
+backend/build/
+backend/out/
+backend/bin/
+backend/temp/
+
+# Java / Kotlin
+backend/**/*.class
+backend/**/*.jar
+backend/**/*.war
+backend/**/*.ear
+backend/**/*.kt~
+
+# Spring Boot
+backend/**/*.db
+backend/**/*.h2.db
+
+# Environment & Secrets
+backend/src/main/resources/application-secret.yml
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-local.properties
+backend/**/.env
+backend/**/.env.*
+!backend/**/.env.example
+
+# =========================
+# ⚙️ Frontend (Nuxt3 + Node.js)
+# =========================
+
+# Dependencies
+frontend/node_modules/
+frontend/.pnpm-store/
+
+# Nuxt build outputs
+frontend/.nuxt/
+frontend/.output/
+frontend/.nitro/
+frontend/.cache/
+frontend/dist/
+frontend/.data/
+
+# TypeScript
+frontend/*.tsbuildinfo
+
+# Logs
+frontend/logs/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Environment files
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# =========================
+# 🐳 Docker
+# =========================
+
+docker-data/
+
+# =========================
 # 🧪 Test / Coverage
 # =========================
+
 coverage/
 test-output/
 reports/
+*.coverage
 
 # =========================
 # 🔒 Security
 # =========================
+
 **/secrets.*
 **/credentials.*
 
 # =========================
-# 💡 Optional: OS-specific
+# 🗑️ Project-specific Exclusions
 # =========================
-# macOS
-.AppleDouble
-.LSOverride
 
-# Windows
-ehthumbs.db
-Desktop.ini
-/.idea/
 /RealtimeStockTracker/
-
-# Secret
-backend/src/main/resources/application-secret.yml
