@@ -3,6 +3,7 @@ package com.hsryuuu.careerbuilder.domain.user.appuser.repository
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -19,5 +20,6 @@ interface AppUserRepository : JpaRepository<AppUser, UUID> {
 
     @Modifying
     @Transactional
-    fun deleteByEmail(email: String)
+    @Query("delete from AppUser where email like concat('%', :email, '%')")
+    fun deleteByEmailLike(email: String)
 }

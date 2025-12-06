@@ -2,6 +2,7 @@ package com.hsryuuu.careerbuilder.domain.user.auth
 
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.dto.UserSignUpRequest
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
+import com.hsryuuu.careerbuilder.generator.EmailGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
@@ -22,13 +23,12 @@ class AuthControllerTest(
 
     companion object {
         private const val TEST_USERNAME = "test-user"
-        private const val TEST_EMAIL = "test@test.com"
     }
 
     @AfterEach
     fun deleteUser() {
         appUserRepository.deleteByUsername(TEST_USERNAME)
-        appUserRepository.deleteByEmail(TEST_EMAIL)
+        appUserRepository.deleteByEmailLike(EmailGenerator.TEST_EMAIL_SUFFIX)
     }
 
     @Test
@@ -37,7 +37,7 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = TEST_EMAIL,
+            email = EmailGenerator.generateTestEmail(),
             username = TEST_USERNAME,
             password = "test-password",
         )
@@ -87,7 +87,7 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = TEST_EMAIL,
+            email = EmailGenerator.generateTestEmail(),
             username = username,
             password = "test-password",
         )
@@ -113,7 +113,7 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = TEST_EMAIL,
+            email = EmailGenerator.generateTestEmail(),
             password = "test-password",
             username
         )
@@ -136,7 +136,7 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = TEST_EMAIL,
+            email = EmailGenerator.generateTestEmail(),
             username = TEST_USERNAME,
             password = password,
         )
@@ -155,7 +155,7 @@ class AuthControllerTest(
         client.postForEntity(
             "/api/auth/signup",
             UserSignUpRequest(
-                email = TEST_EMAIL,
+                email = EmailGenerator.generateTestEmail(),
                 username = username,
                 password = "test-password",
             ),
@@ -165,7 +165,7 @@ class AuthControllerTest(
         val response = client.postForEntity(
             "/api/auth/signup",
             UserSignUpRequest(
-                email = TEST_EMAIL,
+                email = EmailGenerator.generateTestEmail(),
                 password = "test-password",
                 username,
             ),
