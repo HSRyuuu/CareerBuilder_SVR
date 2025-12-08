@@ -2,7 +2,9 @@ package com.hsryuuu.careerbuilder.domain.user.auth
 
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.dto.UserSignUpRequest
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
-import com.hsryuuu.careerbuilder.generator.EmailGenerator
+import com.hsryuuu.careerbuilder.generator.TestDataGenerator
+import com.hsryuuu.careerbuilder.generator.TestDataGenerator.generateTestEmail
+import com.hsryuuu.careerbuilder.generator.TestDataGenerator.generateTestUsername
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
@@ -27,8 +29,8 @@ class AuthControllerTest(
 
     @AfterEach
     fun deleteUser() {
-        appUserRepository.deleteByUsername(TEST_USERNAME)
-        appUserRepository.deleteByEmailLike(EmailGenerator.TEST_EMAIL_SUFFIX)
+        appUserRepository.deleteByUsernameLike(TestDataGenerator.TEST_USERNAME_PREFIX)
+        appUserRepository.deleteByEmailLike(TestDataGenerator.TEST_EMAIL_SUFFIX)
     }
 
     @Test
@@ -37,8 +39,8 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = EmailGenerator.generateTestEmail(),
-            username = TEST_USERNAME,
+            email = generateTestEmail(),
+            username = generateTestUsername(),
             password = "test-password",
         )
         // Act
@@ -64,7 +66,7 @@ class AuthControllerTest(
         // Arrange
         val request = UserSignUpRequest(
             email,
-            username = TEST_USERNAME,
+            username = generateTestUsername(),
             password = "test-password",
         )
         // Act
@@ -78,7 +80,7 @@ class AuthControllerTest(
         strings = [
             "",
             "te",
-            "abcdefghijklmnopqrstuvwxyz"// 아이디는 4-20자
+            "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"// 아이디는 4-20자
         ]
     )
     fun signup_username_형식이_올바르지_않을_경우_400_Bad_Request_상태_응답(
@@ -87,7 +89,7 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = EmailGenerator.generateTestEmail(),
+            email = generateTestEmail(),
             username = username,
             password = "test-password",
         )
@@ -113,7 +115,7 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = EmailGenerator.generateTestEmail(),
+            email = generateTestEmail(),
             password = "test-password",
             username
         )
@@ -136,8 +138,8 @@ class AuthControllerTest(
     ) {
         // Arrange
         val request = UserSignUpRequest(
-            email = EmailGenerator.generateTestEmail(),
-            username = TEST_USERNAME,
+            email = generateTestEmail(),
+            username = generateTestUsername(),
             password = password,
         )
         // Act
@@ -147,15 +149,45 @@ class AuthControllerTest(
     }
 
     @Test
-    fun signup_username_중복일_경우_400_Bad_Request_상태_응답(
+    fun signup_email이_중복일_경우_409_Conflict_상태_응답(
         @Autowired client: TestRestTemplate
     ) {
         // Arrange
-        val username = TEST_USERNAME
+        val email = generateTestEmail()
         client.postForEntity(
             "/api/auth/signup",
             UserSignUpRequest(
-                email = EmailGenerator.generateTestEmail(),
+                email = email,
+                username = generateTestUsername(),
+                password = "test-password",
+            ),
+            Void::class.java
+        )
+        // Act
+        val response = client.postForEntity(
+            "/api/auth/signup",
+            UserSignUpRequest(
+                email = email,
+                password = "test-password",
+                username = generateTestUsername(),
+            ),
+            Void::class.java
+        )
+        // Assert
+        assertThat(response.statusCode.value()).isEqualTo(409)
+
+    }
+
+    @Test
+    fun signup_username이_중복일_경우_409_Conflict_상태_응답(
+        @Autowired client: TestRestTemplate
+    ) {
+        // Arrange
+        val username = generateTestUsername()
+        client.postForEntity(
+            "/api/auth/signup",
+            UserSignUpRequest(
+                email = generateTestEmail(),
                 username = username,
                 password = "test-password",
             ),
@@ -165,7 +197,7 @@ class AuthControllerTest(
         val response = client.postForEntity(
             "/api/auth/signup",
             UserSignUpRequest(
-                email = EmailGenerator.generateTestEmail(),
+                email = generateTestEmail(),
                 password = "test-password",
                 username,
             ),
