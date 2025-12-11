@@ -1,13 +1,39 @@
 <template>
   <div class="career-register-page">
-    <!-- 메인 콘텐츠 -->
+    <!-- 페이지 헤더 -->
     <div class="page-header">
-      <h1 class="page-title">성과 등록</h1>
-      <p class="page-subtitle">새로운 성과를 등록하고 관리하세요</p>
+      <div class="page-header-left">
+        <button class="back-button" @click="handleBack">
+          <v-icon>mdi-arrow-left</v-icon>
+          목록으로
+        </button>
+      </div>
+      <div class="page-header-center">
+        <h1 class="page-title">{{ isEditMode ? '성과 수정' : '성과 상세' }}</h1>
+        <p class="page-subtitle">
+          {{ isEditMode ? '성과 정보를 수정하세요' : '성과 정보를 확인하세요' }}
+        </p>
+      </div>
+      <div class="page-header-right">
+        <button v-if="!isEditMode" class="edit-mode-button" @click="handleEnterEditMode">
+          <v-icon>mdi-pencil</v-icon>
+          수정 모드
+        </button>
+        <template v-else>
+          <button class="cancel-button" @click="handleCancelEdit">
+            <v-icon>mdi-close</v-icon>
+            취소
+          </button>
+          <button class="save-button-primary" @click="handleSave">
+            <v-icon>mdi-check</v-icon>
+            저장
+          </button>
+        </template>
+      </div>
     </div>
 
     <div class="page-layout">
-      <!-- 왼쪽: 메인 폼 영역 (4) -->
+      <!-- 왼쪽: 메인 폼 영역 -->
       <div class="form-container">
         <!-- 기본 정보 블록 -->
         <section class="form-section">
@@ -27,6 +53,7 @@
                 v-model="formData.title"
                 placeholder="성과 제목을 입력하세요"
                 :size="CommonSize.Medium"
+                :disabled="!isEditMode"
               />
             </div>
 
@@ -38,6 +65,7 @@
                     v-model="formData.durationStart"
                     type="date"
                     placeholder="시작일을 선택해주세요."
+                    :disabled="!isEditMode"
                   />
                 </div>
                 <div class="form-field-inline">
@@ -46,6 +74,7 @@
                     v-model="formData.durationEnd"
                     type="date"
                     placeholder="종료일은 선택하지 않아도 괜찮아요."
+                    :disabled="!isEditMode"
                   />
                 </div>
               </div>
@@ -59,6 +88,7 @@
                     v-model="formData.orgName"
                     placeholder="회사명, 조직명 또는 개인"
                     :size="CommonSize.Medium"
+                    :disabled="!isEditMode"
                   />
                 </div>
                 <div class="form-field-inline">
@@ -67,6 +97,7 @@
                     v-model="formData.roleTitle"
                     placeholder="담당한 역할이나 직책 또는 직무"
                     :size="CommonSize.Medium"
+                    :disabled="!isEditMode"
                   />
                 </div>
               </div>
@@ -74,7 +105,7 @@
           </div>
         </section>
 
-        <!-- 업무 정보 블록 (하드코딩, 수정 불가) -->
+        <!-- 업무 정보 블록 -->
         <section class="form-section">
           <div class="section-header">
             <div
@@ -88,110 +119,73 @@
           <div class="form-grid">
             <div class="form-field full-width">
               <label class="field-label">업무 유형</label>
-              <div class="select-with-description">
-                <Select
-                  v-model="formData.workType"
-                  :items="workTypeOptions"
-                  placeholder="선택"
-                  :size="FormSize.Compact"
-                />
-                <DescriptionBox
-                  :text="
-                    formData.workType
-                      ? getWorkTypeDescription(formData.workType)
-                      : '업무 유형을 선택해주세요'
-                  "
-                />
-              </div>
+              <Select
+                v-model="formData.workType"
+                :items="workTypeOptions"
+                placeholder="선택"
+                :size="FormSize.Compact"
+                :disabled="!isEditMode"
+              />
             </div>
+
             <div class="form-field full-width">
               <label class="field-label">기여도/참여도</label>
-              <div class="select-with-description">
-                <Select
-                  v-model="formData.contributionLevel"
-                  :items="contributionLevelOptions"
-                  placeholder="선택"
-                  :size="FormSize.Compact"
-                />
-                <DescriptionBox
-                  :text="
-                    formData.contributionLevel
-                      ? getContributionLevelDescription(formData.contributionLevel)
-                      : '기여도를 선택해주세요'
-                  "
-                />
-              </div>
+              <Select
+                v-model="formData.contributionLevel"
+                :items="contributionLevelOptions"
+                placeholder="선택"
+                :size="FormSize.Compact"
+                :disabled="!isEditMode"
+              />
+            </div>
+
+            <div class="form-field full-width">
+              <label class="field-label">스킬/기술</label>
+              <Input
+                v-model="formData.skills"
+                placeholder="사용한 기술, 도구, 방법론 (쉼표로 구분)"
+                :size="CommonSize.Medium"
+                :disabled="!isEditMode"
+              />
             </div>
           </div>
         </section>
 
-        <!-- 목표 블록 (하드코딩, 수정 불가) -->
+        <!-- 핵심 요약 블록 -->
         <section class="form-section">
           <div class="section-header">
             <div
               class="section-icon"
               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%)"
             >
-              <v-icon color="white" size="small">mdi-flag-checkered</v-icon>
+              <v-icon color="white" size="small">mdi-star</v-icon>
             </div>
-            <h2 class="section-title">목표</h2>
+            <h2 class="section-title">핵심 요약</h2>
           </div>
           <div class="form-grid">
             <div class="form-field full-width">
+              <label class="field-label">목표 요약</label>
               <TextArea
                 v-model="formData.goalSummary"
-                placeholder="이 성과를 통해 달성하고자 했던 목표를 작성하세요"
+                placeholder="이 성과를 통해 달성하고자 했던 목표를 간단히 요약해주세요"
                 :rows="3"
+                :disabled="!isEditMode"
               />
             </div>
-          </div>
-        </section>
 
-        <!-- 핵심 성과 블록 (하드코딩, 수정 불가) -->
-        <section class="form-section">
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
-            >
-              <v-icon color="white" size="small">mdi-star-circle</v-icon>
-            </div>
-            <h2 class="section-title">핵심 성과</h2>
-          </div>
-          <div class="form-grid">
             <div class="form-field full-width">
+              <label class="field-label">핵심 성과 요약</label>
               <TextArea
                 v-model="formData.impactSummary"
-                placeholder="이 성과의 핵심 내용과 영향을 간략히 설명하세요"
+                placeholder="달성한 핵심 성과와 impact를 요약해주세요"
                 :rows="3"
+                :disabled="!isEditMode"
               />
             </div>
           </div>
         </section>
 
-        <!-- 스킬 블록 (하드코딩, 수정 불가) -->
-        <section class="form-section">
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
-            >
-              <v-icon color="white" size="small">mdi-code-tags</v-icon>
-            </div>
-            <h2 class="section-title">스킬</h2>
-          </div>
-          <div class="form-grid">
-            <div class="form-field full-width">
-              <Input
-                v-model="formData.skills"
-                placeholder="관련 스킬을 쉼표로 구분하여 입력하세요 (예: Vue.js, TypeScript, Node.js)"
-                :size="CommonSize.Medium"
-              />
-            </div>
-          </div>
-        </section>
-
-        <!-- 상세 블록들 (개별 form-section으로 구성) -->
+        <!-- 상세 블록들 -->
         <section
           v-for="(section, index) in formData.sections"
           :key="section.tempId"
@@ -208,17 +202,24 @@
             <!-- 제목과 편집 버튼 그룹 -->
             <div class="section-title-group">
               <!-- 편집 모드가 아닐 때 -->
-              <template v-if="!section.isEditingTitle">
+              <template v-if="!section.isEditingTitle || !isEditMode">
                 <div class="section-title-wrapper">
                   <div class="section-title-row">
                     <h2 class="section-title">
                       {{ section.title || `블록 ${index + 1}` }}
                     </h2>
-                    <button class="edit-btn-header" @click="startEditSectionTitle(index)">
+                    <button
+                      v-if="isEditMode"
+                      class="edit-btn-header"
+                      @click="startEditSectionTitle(index)"
+                    >
                       <v-icon size="small">mdi-pencil</v-icon>
                     </button>
                   </div>
-                  <div v-if="isDefaultTitle(section, index)" class="section-title-hint">
+                  <div
+                    v-if="isDefaultTitle(section, index) && isEditMode"
+                    class="section-title-hint"
+                  >
                     블록 이름을 입력해주세요
                   </div>
                 </div>
@@ -243,7 +244,7 @@
               </template>
             </div>
 
-            <button class="delete-btn-header" @click="removeSection(index)">
+            <button v-if="isEditMode" class="delete-btn-header" @click="removeSection(index)">
               <v-icon size="small">mdi-delete</v-icon>
             </button>
           </div>
@@ -256,9 +257,11 @@
                   :items="sectionKindOptions"
                   placeholder="블록 유형을 선택하세요"
                   :size="FormSize.Compact"
+                  :disabled="!isEditMode"
                   @update:model-value="onSectionKindChange(index)"
                 />
                 <button
+                  v-if="isEditMode"
                   class="section-help-btn"
                   :class="{ active: section.showHelp }"
                   @click="toggleSectionHelp(index)"
@@ -269,7 +272,7 @@
                 <DescriptionBox :text="getSectionDescription(section.kind)" />
               </div>
               <Transition name="fade">
-                <div v-if="section.showHelp" class="section-help-detail">
+                <div v-if="section.showHelp && isEditMode" class="section-help-detail">
                   {{ getSectionHelp(section.kind) }}
                 </div>
               </Transition>
@@ -280,13 +283,14 @@
                 v-model="section.content"
                 placeholder="Help 버튼을 눌러서 작성 가이드를 확인하세요"
                 :rows="8"
+                :disabled="!isEditMode"
               />
             </div>
           </div>
         </section>
 
-        <!-- 빈 상태 -->
-        <div v-if="formData.sections.length === 0" class="empty-state-standalone">
+        <!-- 빈 상태 (수정 모드일 때만 표시) -->
+        <div v-if="formData.sections.length === 0 && isEditMode" class="empty-state-standalone">
           <v-icon size="large" color="#9ca3af">mdi-text-box-plus</v-icon>
           <p class="empty-state-text">블록을 추가하여 구체적인 내용을 추가해주세요.</p>
           <Button
@@ -299,20 +303,28 @@
             블록 추가
           </Button>
         </div>
+      </div>
 
-        <!-- 액션 버튼 -->
-        <div class="form-actions">
-          <Button :variant="ButtonVariant.Secondary" :size="CommonSize.Large" @click="handleCancel">
-            취소
-          </Button>
-          <Button :variant="ButtonVariant.Primary" :size="CommonSize.Large" @click="handleSave">
-            저장
-          </Button>
+      <!-- 오른쪽: 액션 영역 -->
+      <!-- 읽기 모드: 간단한 액션 패널 -->
+      <div v-if="!isEditMode" class="action-panel">
+        <div class="action-card">
+          <h3 class="action-card-title">액션</h3>
+          <div class="action-buttons">
+            <button class="action-button primary" @click="handleEnterEditMode">
+              <v-icon size="small">mdi-pencil</v-icon>
+              수정하기
+            </button>
+            <button class="action-button ghost" @click="handleBack">
+              <v-icon size="small">mdi-arrow-left</v-icon>
+              목록으로
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- 오른쪽: 액션 사이드바 (1) -->
-      <aside class="action-sidebar">
+      <!-- 수정 모드: 편집 사이드바 -->
+      <aside v-else class="action-sidebar">
         <!-- 블록 관리 영역 -->
         <div class="sidebar-section">
           <div class="sidebar-header">
@@ -349,22 +361,8 @@
 
             <div class="sidebar-section-item sidebar-section-fixed">
               <div class="sidebar-section-info">
-                <v-icon size="small" color="#10b981">mdi-flag-checkered</v-icon>
-                <span class="sidebar-section-title">목표</span>
-              </div>
-            </div>
-
-            <div class="sidebar-section-item sidebar-section-fixed">
-              <div class="sidebar-section-info">
-                <v-icon size="small" color="#f59e0b">mdi-star-circle</v-icon>
-                <span class="sidebar-section-title">핵심 성과</span>
-              </div>
-            </div>
-
-            <div class="sidebar-section-item sidebar-section-fixed">
-              <div class="sidebar-section-info">
-                <v-icon size="small" color="#3b82f6">mdi-code-tags</v-icon>
-                <span class="sidebar-section-title">스킬</span>
+                <v-icon size="small" color="#10b981">mdi-star</v-icon>
+                <span class="sidebar-section-title">핵심 요약</span>
               </div>
             </div>
 
@@ -404,29 +402,35 @@
           </div>
         </div>
 
-        <!-- 미래 확장 공간 -->
-        <!-- <div class="sidebar-section">
-          <div class="sidebar-placeholder">
-            <v-icon size="small" color="#d1d5db">mdi-dots-horizontal</v-icon>
-            <p class="sidebar-placeholder-text">추가 기능 예정</p>
-          </div>
-        </div> -->
+        <!-- 액션 버튼 -->
+        <div class="sidebar-section sidebar-actions">
+          <Button
+            :variant="ButtonVariant.Primary"
+            :size="CommonSize.Large"
+            class="sidebar-action-btn"
+            @click="handleSave"
+          >
+            <v-icon size="small">mdi-check</v-icon>
+            저장
+          </Button>
+          <Button
+            :variant="ButtonVariant.Secondary"
+            :size="CommonSize.Large"
+            class="sidebar-action-btn"
+            @click="handleCancelEdit"
+          >
+            <v-icon size="small">mdi-close</v-icon>
+            취소
+          </Button>
+        </div>
       </aside>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { VueDraggableNext } from 'vue-draggable-next';
-import Button from '@/components/atoms/Button/Button.vue';
-import Input from '@/components/atoms/Input/Input.vue';
-import TextArea from '@/components/atoms/TextArea/TextArea.vue';
-import DatePicker from '@/components/atoms/DatePicker/DatePicker.vue';
-import Select from '@/components/atoms/Select/Select.vue';
-import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
-import DescriptionBox from '@/components/atoms/DescriptionBox/DescriptionBox.vue';
-import { ButtonVariant, CommonSize, FormSize } from '@/constants/enums/style-enum';
 import {
   type AchievementSection,
   AchievementSectionKind,
@@ -434,23 +438,72 @@ import {
   WORK_TYPE_INFO,
   CONTRIBUTION_LEVEL_INFO,
 } from '@/types/achievement-types';
-import { createAchievement } from '~/api/achievement/api';
-import type { TAchievementCreate } from '~/api/achievement/types';
-
-const toast = useToast();
+import { ButtonVariant, CommonSize, FormSize } from '@/constants/enums/style-enum';
+import { fetchAchievement, updateAchievement } from '~/api/achievement/api';
+import Button from '@/components/atoms/Button/Button.vue';
+import Input from '@/components/atoms/Input/Input.vue';
+import TextArea from '@/components/atoms/TextArea/TextArea.vue';
+import DatePicker from '@/components/atoms/DatePicker/DatePicker.vue';
+import Select from '@/components/atoms/Select/Select.vue';
+import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
+import DescriptionBox from '@/components/atoms/DescriptionBox/DescriptionBox.vue';
 
 definePageMeta({
   layout: 'default',
 });
 
+const route = useRoute();
+const toast = useToast();
+
+const achievementId = route.params.id as string;
+
+// 읽기/수정 모드 전환
+const isEditMode = ref(false);
+
+// 섹션 인터페이스
 interface FormSection extends AchievementSection {
   tempId: string; // 프론트엔드에서 임시로 사용할 ID
   isEditingTitle?: boolean; // 제목 편집 모드 여부
-  tempTitle?: string; // 편집 중인 임시 제목 (수정 전 원본 저장)
+  tempTitle?: string; // 편집 중인 임시 제목
   showHelp?: boolean; // help description 표시 여부
 }
 
-// 블록 유형 옵션 생성
+// 폼 데이터
+interface FormData {
+  title: string;
+  orgName: string;
+  roleTitle: string;
+  durationStart: string;
+  durationEnd: string;
+  workType: string;
+  contributionLevel: string;
+  skills: string;
+  goalSummary: string;
+  impactSummary: string;
+  sections: FormSection[];
+}
+
+const formData = ref<FormData>({
+  title: '',
+  orgName: '',
+  roleTitle: '',
+  durationStart: '',
+  durationEnd: '',
+  workType: '',
+  contributionLevel: '',
+  skills: '',
+  goalSummary: '',
+  impactSummary: '',
+  sections: [],
+});
+
+// 원본 데이터 백업 (취소 시 복원용)
+const originalData = ref<FormData | null>(null);
+
+// 섹션 카운터
+let sectionCounter = 0;
+
+// Select 옵션
 const sectionKindOptions = computed<TSelectItem[]>(() => {
   return Object.entries(SECTION_KIND_INFO).map(([key, value]) => ({
     title: value.display,
@@ -458,7 +511,6 @@ const sectionKindOptions = computed<TSelectItem[]>(() => {
   }));
 });
 
-// 업무 유형 옵션 생성
 const workTypeOptions = computed<TSelectItem[]>(() => {
   return Object.entries(WORK_TYPE_INFO).map(([key, value]) => ({
     title: value.display,
@@ -466,7 +518,6 @@ const workTypeOptions = computed<TSelectItem[]>(() => {
   }));
 });
 
-// 기여도 옵션 생성
 const contributionLevelOptions = computed<TSelectItem[]>(() => {
   return Object.entries(CONTRIBUTION_LEVEL_INFO).map(([key, value]) => ({
     title: value.display,
@@ -474,36 +525,7 @@ const contributionLevelOptions = computed<TSelectItem[]>(() => {
   }));
 });
 
-interface FormData {
-  title: string;
-  orgName: string;
-  durationStart: string;
-  durationEnd: string;
-  roleTitle: string;
-  workType: string | null;
-  contributionLevel: string | null;
-  goalSummary: string;
-  impactSummary: string;
-  skills: string;
-  sections: FormSection[];
-}
-
-const formData = ref<FormData>({
-  title: '',
-  orgName: '',
-  durationStart: '',
-  durationEnd: '',
-  roleTitle: '',
-  workType: null,
-  contributionLevel: null,
-  goalSummary: '',
-  impactSummary: '',
-  skills: '',
-  sections: [],
-});
-
-let sectionCounter = 0;
-
+// 섹션 관련 함수
 const addSection = () => {
   formData.value.sections.push({
     tempId: `section_${Date.now()}_${sectionCounter++}`,
@@ -517,83 +539,115 @@ const addSection = () => {
   });
 };
 
-// 블록 유형에 따른 help 가져오기
-const getSectionHelp = (kind: string): string => {
-  const kindKey = kind as AchievementSectionKind;
-  return SECTION_KIND_INFO[kindKey]?.help || '내용을 입력하세요';
-};
-
-// 블록 유형에 따른 description 가져오기
-const getSectionDescription = (kind: string): string => {
-  const kindKey = kind as AchievementSectionKind;
-  return SECTION_KIND_INFO[kindKey]?.description || '';
-};
-
-// 업무 유형에 따른 description 가져오기
-const getWorkTypeDescription = (workType: string | null): string => {
-  if (!workType) return '';
-  return WORK_TYPE_INFO[workType as keyof typeof WORK_TYPE_INFO]?.description || '';
-};
-
-// 기여도에 따른 description 가져오기
-const getContributionLevelDescription = (level: string | null): string => {
-  if (!level) return '';
-  return CONTRIBUTION_LEVEL_INFO[level as keyof typeof CONTRIBUTION_LEVEL_INFO]?.description || '';
-};
-
-// 블록 help 토글
-const toggleSectionHelp = (index: number) => {
-  formData.value.sections[index].showHelp = !formData.value.sections[index].showHelp;
-};
-
-// 블록 유형 변경 시 처리
-const onSectionKindChange = (index: number) => {
-  // 유형 변경 시 추가 로직이 필요한 경우 여기에 구현
-  console.log(`Section ${index} kind changed to:`, formData.value.sections[index].kind);
-};
-
 const removeSection = (index: number) => {
   formData.value.sections.splice(index, 1);
   updateSortOrder();
 };
 
-// 블록 순서 업데이트
 const updateSortOrder = () => {
   formData.value.sections.forEach((section, index) => {
     section.sortOrder = index;
   });
 };
 
-// 제목이 기본값인지 확인
 const isDefaultTitle = (section: FormSection, index: number): boolean => {
-  // 제목이 비어있거나 기본 패턴("블록 1", "블록 2" 등)과 일치하면 true
   return !section.title || section.title === `블록 ${index + 1}`;
 };
 
-// 블록 제목 편집 시작
 const startEditSectionTitle = (index: number) => {
   const section = formData.value.sections[index];
-  section.tempTitle = section.title || `블록 ${index + 1}`; // 수정 전 원본 저장
+  section.tempTitle = section.title || `블록 ${index + 1}`;
   section.isEditingTitle = true;
 };
 
-// 블록 제목 적용
 const applySectionTitle = (index: number) => {
   const section = formData.value.sections[index];
-  section.title = section.tempTitle || ''; // tempTitle을 실제 title로 적용
+  section.title = section.tempTitle || '';
   section.tempTitle = '';
   section.isEditingTitle = false;
 };
 
-// 블록 제목 편집 취소
 const cancelSectionTitleEdit = (index: number) => {
   const section = formData.value.sections[index];
   section.tempTitle = '';
   section.isEditingTitle = false;
 };
 
+const getSectionHelp = (kind: string): string => {
+  const kindKey = kind as AchievementSectionKind;
+  return SECTION_KIND_INFO[kindKey]?.help || '내용을 입력하세요';
+};
+
+const getSectionDescription = (kind: string): string => {
+  const kindKey = kind as AchievementSectionKind;
+  return SECTION_KIND_INFO[kindKey]?.description || '';
+};
+
+const toggleSectionHelp = (index: number) => {
+  formData.value.sections[index].showHelp = !formData.value.sections[index].showHelp;
+};
+
+const onSectionKindChange = (index: number) => {
+  console.log(`Section ${index} kind changed to:`, formData.value.sections[index].kind);
+};
+
+// 데이터 로드
+onMounted(async () => {
+  const { data, error } = await fetchAchievement(achievementId);
+
+  if (error) {
+    console.error('성과 조회 실패:', error);
+    toast.error('성과를 불러오는데 실패했습니다.');
+    return;
+  }
+
+  if (data) {
+    // 폼 데이터 초기화
+    formData.value = {
+      title: data.title,
+      orgName: data.orgName || '',
+      roleTitle: data.roleTitle || '',
+      durationStart: data.durationStart,
+      durationEnd: data.durationEnd || '',
+      workType: data.workType || '',
+      contributionLevel: data.contributionLevel || '',
+      skills: data.skills || '',
+      goalSummary: data.goalSummary || '',
+      impactSummary: data.impactSummary || '',
+      sections:
+        data.sections?.map((section) => ({
+          ...section,
+          tempId: `section_${section.id || Date.now()}_${sectionCounter++}`,
+          isEditingTitle: false,
+          tempTitle: '',
+          showHelp: false,
+        })) || [],
+    };
+  }
+});
+
+// 핸들러 함수
+const handleBack = () => {
+  navigateTo('/career');
+};
+
+const handleEnterEditMode = () => {
+  // 현재 데이터 백업
+  originalData.value = { ...formData.value };
+  isEditMode.value = true;
+};
+
+const handleCancelEdit = () => {
+  // 원본 데이터 복원
+  if (originalData.value) {
+    formData.value = { ...originalData.value };
+  }
+  isEditMode.value = false;
+  originalData.value = null;
+};
+
 const handleSave = async () => {
-  // 필수 필드 검증 (최소한의 필수 블록만)
+  // 유효성 검증
   if (!formData.value.title.trim()) {
     toast.error('제목을 입력해주세요.');
     return;
@@ -604,7 +658,7 @@ const handleSave = async () => {
   }
 
   // API 요청 데이터 변환
-  const requestBody: TAchievementCreate = {
+  const requestBody = {
     title: formData.value.title,
     orgName: formData.value.orgName || undefined,
     roleTitle: formData.value.roleTitle || undefined,
@@ -624,25 +678,126 @@ const handleSave = async () => {
   };
 
   // API 호출
-  const { error } = await createAchievement(requestBody);
+  const { error } = await updateAchievement(achievementId, requestBody);
 
   if (error) {
-    console.error('API 에러:', error);
+    console.error('성과 수정 실패:', error);
     return;
   }
 
   toast.success('저장되었습니다!');
-
-  // 목록 페이지로 이동
-  await navigateTo('/career');
-};
-
-const handleCancel = () => {
-  // 폼 초기화 또는 이전 페이지로 이동
-  window.history.back();
+  isEditMode.value = false;
+  originalData.value = null;
 };
 </script>
 
 <style lang="scss" scoped>
 @use '@/styles/pages/career-register-page.scss';
+
+// 추가 스타일
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 24px;
+}
+
+.page-header-left {
+  flex-shrink: 0;
+}
+
+.page-header-center {
+  flex: 1;
+  text-align: center;
+}
+
+.page-header-right {
+  flex-shrink: 0;
+  display: flex;
+  gap: 12px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #1a1d1f;
+  }
+}
+
+.edit-mode-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #2563eb;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+}
+
+.cancel-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+  }
+}
+
+.save-button-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #10b981;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+}
 </style>

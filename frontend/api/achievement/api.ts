@@ -8,6 +8,7 @@ import type {
   TAchievementUpdate,
   TAchievementListParams,
   TPageResponse,
+  TAchievementStats,
 } from './types';
 
 /**
@@ -17,7 +18,7 @@ export const fetchAchievements = (params?: TAchievementListParams) => {
   return useApi<TPageResponse<TAchievement>>({
     url: '/api/achievements',
     method: HttpMethod.GET,
-    params: params as Record<string, string | number | boolean | undefined>,
+    params,
   });
 };
 
@@ -71,5 +72,15 @@ export const updateAchievementStatus = (id: string, status: string) => {
     url: `/api/achievements/${id}/status`,
     method: HttpMethod.PATCH,
     body: { status },
+  });
+};
+
+/**
+ * 성과 통계 조회
+ */
+export const fetchAchievementStats = () => {
+  return useApi<TAchievementStats>({
+    url: '/api/achievements/stats',
+    method: HttpMethod.GET,
   });
 };

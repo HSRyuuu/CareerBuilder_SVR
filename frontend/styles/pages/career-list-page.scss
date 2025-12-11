@@ -1,0 +1,222 @@
+.career-list-page {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Part1: 카드 그리드
+.career-list-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.career-list-info-card {
+  background: #ffffff;
+  border: 1px solid #e8e9eb;
+  border-radius: 16px;
+  padding: 28px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    border-color: #d1d5db;
+  }
+}
+
+.career-list-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.career-list-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1d1f;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+.career-list-card-description {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.career-list-card-action-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e40af;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #0f172a;
+    transform: translateX(4px);
+  }
+}
+
+// Part2: 통계 섹션
+.career-list-stats-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 8px 24px rgba(30, 64, 175, 0.25);
+  margin-bottom: 48px;
+}
+
+.career-list-stat-item {
+  text-align: center;
+  color: white;
+}
+
+.career-list-stat-number {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.career-list-stat-label {
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.career-list-stat-divider {
+  width: 1px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+// Part3: 테이블 섹션
+.career-list-table-section {
+  background: #ffffff;
+  border: 1px solid #e8e9eb;
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.career-list-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.career-list-section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1d1f;
+  letter-spacing: -0.4px;
+}
+
+.career-list-sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.career-list-sort-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.career-list-sort-select-component {
+  min-width: 140px;
+}
+
+.career-list-sort-direction-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #eff6ff;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .v-icon {
+    font-size: 20px;
+  }
+}
+
+// 테이블 행 스타일 (Table 컴포넌트의 slot 내용)
+
+.career-list-table-title {
+  font-weight: 600;
+  color: #1a1d1f;
+}
+
+.career-list-table-date {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.career-list-table-work-type {
+  color: #374151;
+}
+
+.career-list-status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  &.status-draft {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.status-published {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &.status-archived {
+    background: #e5e7eb;
+    color: #6b7280;
+  }
+}
