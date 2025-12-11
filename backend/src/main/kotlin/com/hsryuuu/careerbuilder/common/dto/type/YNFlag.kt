@@ -1,4 +1,4 @@
-package com.hsryuuu.careerbuilder.application.type
+package com.hsryuuu.careerbuilder.common.dto.type
 
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException

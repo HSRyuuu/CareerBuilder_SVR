@@ -2,20 +2,22 @@ package com.hsryuuu.careerbuilder.domain.archivement.service
 
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
+import com.hsryuuu.careerbuilder.common.dto.CommonPageResponse
+import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.AchievementResponse
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.CreateAchievementRequest
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.CreateSectionRequest
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.UpdateAchievementRequest
 import com.hsryuuu.careerbuilder.domain.archivement.model.entity.AchievementStatus
+import com.hsryuuu.careerbuilder.domain.archivement.model.type.AchievementSortKey
 import com.hsryuuu.careerbuilder.domain.archivement.repository.AchievementRepository
 import com.hsryuuu.careerbuilder.domain.archivement.repository.AchievementSectionRepository
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
-
-private const val string = "Hello"
 
 @Service
 class AchievementService(
@@ -40,7 +42,28 @@ class AchievementService(
 
         val savedAchievement = achievementRepository.save(achievement)
 
-        return AchievementResponse.from(savedAchievement, savedAchievement.sections)
+        return AchievementResponse.fromEntity(savedAchievement, savedAchievement.sections)
+    }
+
+    @Transactional(readOnly = true)
+    fun searchAchievement(
+        searchKeyword: String?,
+        page: Int,
+        pageSize: Int,
+        sort: AchievementSortKey,
+        sortDirection: SortDirection? = SortDirection.DESC
+    ): CommonPageResponse<AchievementResponse> {
+
+        val pageRequest = PageRequest.of(page, pageSize)
+
+        // QueryDSL 기반 검색 실행
+        val achievementPage =
+            achievementRepository.searchAchievement(searchKeyword, sort, sortDirection, pageRequest)
+
+        // Entity를 Response로 변환
+        return CommonPageResponse.from(achievementPage) { achievement ->
+            AchievementResponse.fromEntityWithoutSections(achievement)
+        }
     }
 
 
@@ -54,15 +77,14 @@ class AchievementService(
         }
 
         val sections = achievementSectionRepository.findByAchievementIdOrderBySortOrderAsc(id)
-        return AchievementResponse.from(achievement, sections)
+        return AchievementResponse.fromEntity(achievement, sections)
     }
 
     @Transactional(readOnly = true)
     fun getAllAchievements(userId: UUID): List<AchievementResponse> {
         val achievements = achievementRepository.findByUserId(userId)
         return achievements.map { achievement ->
-            val sections = achievementSectionRepository.findByAchievementIdOrderBySortOrderAsc(achievement.id!!)
-            AchievementResponse.from(achievement, sections)
+            AchievementResponse.fromEntityWithoutSections(achievement)
         }
     }
 
@@ -71,7 +93,7 @@ class AchievementService(
         val achievements = achievementRepository.findByUserIdAndStatus(userId, status)
         return achievements.map { achievement ->
             val sections = achievementSectionRepository.findByAchievementIdOrderBySortOrderAsc(achievement.id!!)
-            AchievementResponse.from(achievement, sections)
+            AchievementResponse.fromEntity(achievement, sections)
         }
     }
 
@@ -115,7 +137,7 @@ class AchievementService(
 //            achievementSectionRepository.save(section)
 //        }
 
-        return AchievementResponse.from(
+        return AchievementResponse.fromEntity(
             achievement,
             achievement.sections
         );//AchievementResponse.from(saved, savedSections)
@@ -132,4 +154,5 @@ class AchievementService(
 
         achievementRepository.delete(achievement)
     }
+
 }

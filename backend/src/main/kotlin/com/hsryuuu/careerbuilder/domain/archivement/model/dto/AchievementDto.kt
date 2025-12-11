@@ -105,7 +105,28 @@ data class AchievementResponse(
 ) {
     companion object {
 
-        fun from(achievement: Achievement, sections: List<AchievementSection>): AchievementResponse {
+        fun fromEntityWithoutSections(achievement: Achievement): AchievementResponse {
+            return AchievementResponse(
+                id = achievement.id!!,
+                userId = achievement.user.id!!,
+                title = achievement.title,
+                orgName = achievement.orgName,
+                durationStart = achievement.durationStart,
+                durationEnd = achievement.durationEnd,
+                impactSummary = achievement.impactSummary,
+                goalSummary = achievement.goalSummary,
+                status = achievement.status,
+                roleTitle = achievement.roleTitle,
+                workType = achievement.workType,
+                contributionLevel = achievement.contributionLevel,
+                skills = achievement.skills,
+                sections = emptyList(),
+                createdAt = achievement.createdAt,
+                updatedAt = achievement.updatedAt
+            )
+        }
+
+        fun fromEntity(achievement: Achievement, sections: List<AchievementSection>): AchievementResponse {
             return AchievementResponse(
                 id = achievement.id!!,
                 userId = achievement.user.id!!,
