@@ -4,6 +4,7 @@ import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
 import com.hsryuuu.careerbuilder.domain.archivement.model.entity.Achievement
 import com.hsryuuu.careerbuilder.domain.archivement.model.entity.QAchievement
 import com.hsryuuu.careerbuilder.domain.archivement.model.type.AchievementSortKey
+import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import com.querydsl.core.types.Order
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.dsl.BooleanExpression
@@ -21,6 +22,7 @@ class CustomAchievementRepositoryImpl(
     private val achievement = QAchievement.achievement
 
     override fun searchAchievement(
+        user: AppUser,
         searchKeyword: String?, sortKey: AchievementSortKey,
         sortDirection: SortDirection?, pageable: Pageable
     ): Page<Achievement> {
@@ -33,7 +35,7 @@ class CustomAchievementRepositoryImpl(
         // 데이터 조회
         val results = queryFactory
             .selectFrom(achievement)
-            .where(searchCondition)
+            .where(achievement.user.eq(user), searchCondition)
             .orderBy(*orderSpecifiers.toTypedArray())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())

@@ -3,6 +3,7 @@ package com.hsryuuu.careerbuilder.domain.archivement.repository
 import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
 import com.hsryuuu.careerbuilder.domain.archivement.model.entity.Achievement
 import com.hsryuuu.careerbuilder.domain.archivement.model.type.AchievementSortKey
+import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -15,7 +16,10 @@ interface CustomAchievementRepository {
      * @return Page<Achievement>
      */
     fun searchAchievement(
-        searchKeyword: String?, sortKey: AchievementSortKey,
-        sortDirection: SortDirection?, pageable: Pageable
+        user: AppUser,
+        searchKeyword: String?,
+        sortKey: AchievementSortKey,
+        sortDirection: SortDirection?,
+        pageable: Pageable
     ): Page<Achievement>
 }

@@ -44,7 +44,8 @@ class AchievementController(
         @RequestParam(required = false, name = "sortKey", defaultValue = "UPDATED_AT") sort: AchievementSortKey,
         @RequestParam(required = false, name = "sortDir", defaultValue = "DESC") sortDirection: SortDirection?
     ): CommonPageResponse<AchievementResponse> {
-        return achievementService.searchAchievement(searchKeyword, page - 1, pageSize, sort, sortDirection);
+        val userId = authManager.getCurrentUserIdOrElseThrow()
+        return achievementService.searchAchievement(userId, searchKeyword, page - 1, pageSize, sort, sortDirection);
     }
 
     @Operation(summary = "성과 조회", description = "특정 성과를 조회합니다.")
@@ -53,13 +54,6 @@ class AchievementController(
         val userId = authManager.getCurrentUserIdOrElseThrow()
         return achievementService.getAchievement(id, userId)
     }
-
-//    @Operation(summary = "전체 성과 목록 조회", description = "현재 사용자의 모든 성과를 조회합니다.")
-//    @GetMapping
-//    fun getAllAchievements(): List<AchievementResponse> {
-//        val userId = authManager.getCurrentUserIdOrElseThrow()
-//        return achievementService.getAllAchievements(userId)
-//    }
 
     @Operation(summary = "상태별 성과 목록 조회", description = "특정 상태의 성과 목록을 조회합니다.")
     @GetMapping("/status/{status}")

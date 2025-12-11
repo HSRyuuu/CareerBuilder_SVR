@@ -47,18 +47,21 @@ class AchievementService(
 
     @Transactional(readOnly = true)
     fun searchAchievement(
+        userId: UUID,
         searchKeyword: String?,
         page: Int,
         pageSize: Int,
         sort: AchievementSortKey,
         sortDirection: SortDirection? = SortDirection.DESC
     ): CommonPageResponse<AchievementResponse> {
+        val user = appUserRepository.findByIdOrNull(userId)
+            ?: throw GlobalException(ErrorCode.MEMBER_NOT_FOUND)
 
         val pageRequest = PageRequest.of(page, pageSize)
 
         // QueryDSL 기반 검색 실행
         val achievementPage =
-            achievementRepository.searchAchievement(searchKeyword, sort, sortDirection, pageRequest)
+            achievementRepository.searchAchievement(user, searchKeyword, sort, sortDirection, pageRequest)
 
         // Entity를 Response로 변환
         return CommonPageResponse.from(achievementPage) { achievement ->
