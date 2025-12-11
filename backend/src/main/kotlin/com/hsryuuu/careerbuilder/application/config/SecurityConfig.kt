@@ -17,7 +17,7 @@ class SecurityConfig(
     private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ) {
     companion object {
-        val PERMIT_ALL_URLS = listOf("/api/auth/**", "/api/public/**")
+        val PERMIT_ALL_URLS = listOf("/api/**", "/api/auth/**", "/api/public/**")
         val SWAGGER_URLS = listOf("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
 
     }
@@ -53,7 +53,7 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
         configuration.allowedOrigins =
-            listOf("http://localhost:4000") // 모든 origin 허용 또는 특정 도메인 지정
+            listOf("http://localhost:3000") // 모든 origin 허용 또는 특정 도메인 지정
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("Authorization", "Content-Type")
         configuration.allowCredentials = true
