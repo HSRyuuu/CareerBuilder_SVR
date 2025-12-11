@@ -13,7 +13,7 @@ import java.util.*
 @EntityListeners(AuditingEntityListener::class)
 @Entity
 @Table(name = "achievements")
-data class Achievement(
+class Achievement(
     @Id
     @UuidGenerator
     val id: UUID? = null,
@@ -64,8 +64,21 @@ data class Achievement(
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
-    var updatedAt: LocalDateTime = LocalDateTime.now()
-)
+    var updatedAt: LocalDateTime = LocalDateTime.now(),
+
+    @OneToMany(
+        mappedBy = "achievement",
+        cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE],
+        orphanRemoval = true
+    )
+    val sections: MutableList<AchievementSection> = mutableListOf()
+) {
+    fun addSection(section: AchievementSection) {
+        sections.add(section)
+        section.achievement = this // 양방향 연관관계 세팅
+    }
+}
+
 
 enum class AchievementStatus {
     DRAFT,

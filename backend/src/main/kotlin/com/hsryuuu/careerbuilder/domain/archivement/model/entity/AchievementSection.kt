@@ -11,14 +11,14 @@ import java.util.*
 @EntityListeners(AuditingEntityListener::class)
 @Entity
 @Table(name = "achievement_sections")
-data class AchievementSection(
+class AchievementSection(
     @Id
     @UuidGenerator
     val id: UUID? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "achievement_id", nullable = false)
-    val achievement: Achievement,
+    var achievement: Achievement? = null,
 
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
@@ -40,7 +40,6 @@ data class AchievementSection(
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
-
 )
 
 enum class SectionKind(

@@ -4,9 +4,8 @@ import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.AchievementResponse
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.CreateAchievementRequest
+import com.hsryuuu.careerbuilder.domain.archivement.model.dto.CreateSectionRequest
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.UpdateAchievementRequest
-import com.hsryuuu.careerbuilder.domain.archivement.model.entity.Achievement
-import com.hsryuuu.careerbuilder.domain.archivement.model.entity.AchievementSection
 import com.hsryuuu.careerbuilder.domain.archivement.model.entity.AchievementStatus
 import com.hsryuuu.careerbuilder.domain.archivement.repository.AchievementRepository
 import com.hsryuuu.careerbuilder.domain.archivement.repository.AchievementSectionRepository
@@ -30,38 +29,20 @@ class AchievementService(
         val user = appUserRepository.findByIdOrNull(userId)
             ?: throw GlobalException(ErrorCode.MEMBER_NOT_FOUND)
 
-        val achievement = Achievement(
-            user = user,
-            title = request.title,
-            orgName = request.orgName,
-            durationStart = request.durationStart,
-            durationEnd = request.durationEnd,
-            impactSummary = request.impactSummary,
-            goalSummary = request.goalSummary,
-            status = request.status,
-            roleTitle = request.roleTitle,
-            workType = request.workType,
-            contributionLevel = request.contributionLevel,
-            skills = request.skills
-        )
+        if (!request.durationStart.isBefore(request.durationEnd))
+            throw GlobalException(ErrorCode.VALIDATION_ERROR_DURATION_SEQUENCE)
+
+        val achievement = CreateAchievementRequest.createEntity(user, request)
+        request.sections.forEach { sectionRequest ->
+            val section = CreateSectionRequest.createEntity(sectionRequest)
+            achievement.addSection(section)
+        }
 
         val savedAchievement = achievementRepository.save(achievement)
 
-        // 섹션 추가
-        val savedSections = request.sections.map { sectionRequest ->
-            val section = AchievementSection(
-                achievement = savedAchievement,
-                kind = sectionRequest.kind,
-                title = sectionRequest.title,
-                content = sectionRequest.content,
-                sortOrder = sectionRequest.sortOrder
-            )
-            achievementSectionRepository.save(section)
-        }
-        val str = string;
-
-        return AchievementResponse.from(savedAchievement, savedSections)
+        return AchievementResponse.from(savedAchievement, savedAchievement.sections)
     }
+
 
     @Transactional(readOnly = true)
     fun getAchievement(id: UUID, userId: UUID): AchievementResponse {
@@ -103,38 +84,41 @@ class AchievementService(
             throw GlobalException(ErrorCode.FORBIDDEN)
         }
 
-        val updatedAchievement = achievement.copy(
-            title = request.title,
-            orgName = request.orgName,
-            durationStart = request.durationStart,
-            durationEnd = request.durationEnd,
-            impactSummary = request.impactSummary,
-            goalSummary = request.goalSummary,
-            status = request.status,
-            roleTitle = request.roleTitle,
-            workType = request.workType,
-            contributionLevel = request.contributionLevel,
-            skills = request.skills
-        )
+//        val updatedAchievement = achievement.copy(
+//            title = request.title,
+//            orgName = request.orgName,
+//            durationStart = request.durationStart,
+//            durationEnd = request.durationEnd,
+//            impactSummary = request.impactSummary,
+//            goalSummary = request.goalSummary,
+//            status = request.status,
+//            roleTitle = request.roleTitle,
+//            workType = request.workType,
+//            contributionLevel = request.contributionLevel,
+//            skills = request.skills
+//        )
+//
+//        val saved = achievementRepository.save(updatedAchievement)
 
-        val saved = achievementRepository.save(updatedAchievement)
+//        // 기존 섹션 삭제
+//        achievementSectionRepository.deleteByAchievementId(id)
+//
+//        // 새 섹션 추가
+//        val savedSections = request.sections.map { sectionRequest ->
+//            val section = AchievementSection(
+//                achievement = saved,
+//                kind = sectionRequest.kind,
+//                title = sectionRequest.title,
+//                content = sectionRequest.content,
+//                sortOrder = sectionRequest.sortOrder
+//            )
+//            achievementSectionRepository.save(section)
+//        }
 
-        // 기존 섹션 삭제
-        achievementSectionRepository.deleteByAchievementId(id)
-
-        // 새 섹션 추가
-        val savedSections = request.sections.map { sectionRequest ->
-            val section = AchievementSection(
-                achievement = saved,
-                kind = sectionRequest.kind,
-                title = sectionRequest.title,
-                content = sectionRequest.content,
-                sortOrder = sectionRequest.sortOrder
-            )
-            achievementSectionRepository.save(section)
-        }
-
-        return AchievementResponse.from(saved, savedSections)
+        return AchievementResponse.from(
+            achievement,
+            achievement.sections
+        );//AchievementResponse.from(saved, savedSections)
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.hsryuuu.careerbuilder.domain.archivement.model.dto
 
 import com.hsryuuu.careerbuilder.domain.archivement.model.entity.*
+import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -19,14 +20,46 @@ data class CreateAchievementRequest(
     val contributionLevel: ContributionLevel? = null,
     val skills: String? = null,
     val sections: List<CreateSectionRequest> = emptyList()
-)
+) {
+    companion object {
+        fun createEntity(
+            user: AppUser,
+            request: CreateAchievementRequest
+        ): Achievement = Achievement(
+            user = user,
+            title = request.title,
+            orgName = request.orgName,
+            durationStart = request.durationStart,
+            durationEnd = request.durationEnd,
+            impactSummary = request.impactSummary,
+            goalSummary = request.goalSummary,
+            status = request.status,
+            roleTitle = request.roleTitle,
+            workType = request.workType,
+            contributionLevel = request.contributionLevel,
+            skills = request.skills
+        )
+    }
+}
 
 data class CreateSectionRequest(
     val kind: SectionKind = SectionKind.NONE,
     val title: String,
     val content: String,
     val sortOrder: Int = 0
-)
+) {
+    companion object {
+        fun createEntity(
+            sectionRequest: CreateSectionRequest
+        ): AchievementSection = AchievementSection(
+            achievement = null,
+            kind = sectionRequest.kind,
+            title = sectionRequest.title,
+            content = sectionRequest.content,
+            sortOrder = sectionRequest.sortOrder
+        )
+    }
+}
 
 data class UpdateAchievementRequest(
     val title: String,
@@ -71,6 +104,7 @@ data class AchievementResponse(
     val updatedAt: LocalDateTime
 ) {
     companion object {
+
         fun from(achievement: Achievement, sections: List<AchievementSection>): AchievementResponse {
             return AchievementResponse(
                 id = achievement.id!!,

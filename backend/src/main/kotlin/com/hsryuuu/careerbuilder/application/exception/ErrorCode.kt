@@ -27,5 +27,6 @@ enum class ErrorCode(
 
 
     // Achievement
-    ACHIEVEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ACHIEVEMENT_NOT_FOUND", "성과 항목을 찾을 수 없습니다.")
+    ACHIEVEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ACHIEVEMENT_NOT_FOUND", "성과 항목을 찾을 수 없습니다."),
+    VALIDATION_ERROR_DURATION_SEQUENCE(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR_DURATION_SEQUENCE", "기간 순서가 잘못되었습니다.")
 }
