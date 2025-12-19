@@ -8,6 +8,7 @@ import com.hsryuuu.careerbuilder.domain.archivement.model.dto.AchievementRespons
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.CreateAchievementRequest
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.CreateSectionRequest
 import com.hsryuuu.careerbuilder.domain.archivement.model.dto.UpdateAchievementRequest
+import com.hsryuuu.careerbuilder.domain.archivement.model.entity.AchievementSection
 import com.hsryuuu.careerbuilder.domain.archivement.model.entity.AchievementStatus
 import com.hsryuuu.careerbuilder.domain.archivement.model.type.AchievementSortKey
 import com.hsryuuu.careerbuilder.domain.archivement.repository.AchievementRepository
@@ -102,6 +103,7 @@ class AchievementService(
 
     @Transactional
     fun updateAchievement(id: UUID, userId: UUID, request: UpdateAchievementRequest): AchievementResponse {
+        // 1. Achievement 조회 및 권한 검증
         val achievement = achievementRepository.findByIdOrNull(id)
             ?: throw GlobalException(ErrorCode.ACHIEVEMENT_NOT_FOUND)
 
@@ -109,41 +111,60 @@ class AchievementService(
             throw GlobalException(ErrorCode.FORBIDDEN)
         }
 
-//        val updatedAchievement = achievement.copy(
-//            title = request.title,
-//            orgName = request.orgName,
-//            durationStart = request.durationStart,
-//            durationEnd = request.durationEnd,
-//            impactSummary = request.impactSummary,
-//            goalSummary = request.goalSummary,
-//            status = request.status,
-//            roleTitle = request.roleTitle,
-//            workType = request.workType,
-//            contributionLevel = request.contributionLevel,
-//            skills = request.skills
-//        )
-//
-//        val saved = achievementRepository.save(updatedAchievement)
+        // 2. 비즈니스 규칙 검증
+        if (request.durationEnd != null && !request.durationStart.isBefore(request.durationEnd)) {
+            throw GlobalException(ErrorCode.VALIDATION_ERROR_DURATION_SEQUENCE)
+        }
 
-//        // 기존 섹션 삭제
-//        achievementSectionRepository.deleteByAchievementId(id)
-//
-//        // 새 섹션 추가
-//        val savedSections = request.sections.map { sectionRequest ->
-//            val section = AchievementSection(
-//                achievement = saved,
-//                kind = sectionRequest.kind,
-//                title = sectionRequest.title,
-//                content = sectionRequest.content,
-//                sortOrder = sectionRequest.sortOrder
-//            )
-//            achievementSectionRepository.save(section)
-//        }
+        // 3. Achievement 정보 업데이트
+        achievement.update(
+            title = request.title,
+            orgName = request.orgName,
+            durationStart = request.durationStart,
+            durationEnd = request.durationEnd,
+            impactSummary = request.impactSummary,
+            goalSummary = request.goalSummary,
+            roleTitle = request.roleTitle,
+            workType = request.workType,
+            contributionLevel = request.contributionLevel,
+            skills = request.skills
+        )
 
-        return AchievementResponse.fromEntity(
-            achievement,
-            achievement.sections
-        );//AchievementResponse.from(saved, savedSections)
+        // 4. Sections 업데이트 (ID 기반 Merge 전략)
+        val requestSectionIds = request.sections.mapNotNull { it.id }.toSet()
+        val existingSections = achievement.sections.associateBy { it.id }
+
+        // 4-1. 요청에 없는 기존 섹션 삭제
+        val sectionsToRemove = achievement.sections.filter { section ->
+            section.id !in requestSectionIds
+        }
+        sectionsToRemove.forEach { achievement.sections.remove(it) }
+
+        // 4-2. 섹션 수정 또는 추가
+        request.sections.forEach { sectionRequest ->
+            if (sectionRequest.id != null && existingSections.containsKey(sectionRequest.id)) {
+                // 기존 섹션 업데이트
+                existingSections[sectionRequest.id]?.update(
+                    kind = sectionRequest.kind,
+                    title = sectionRequest.title,
+                    content = sectionRequest.content,
+                    sortOrder = sectionRequest.sortOrder
+                )
+            } else {
+                // 새로운 섹션 추가
+                val newSection = AchievementSection(
+                    kind = sectionRequest.kind,
+                    title = sectionRequest.title,
+                    content = sectionRequest.content,
+                    sortOrder = sectionRequest.sortOrder
+                )
+                achievement.addSection(newSection)
+            }
+        }
+
+        achievementRepository.save(achievement)
+
+        return AchievementResponse.fromEntity(achievement, achievement.sections)
     }
 
     @Transactional

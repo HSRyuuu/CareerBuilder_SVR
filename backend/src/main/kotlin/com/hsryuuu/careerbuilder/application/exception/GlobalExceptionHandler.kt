@@ -1,6 +1,7 @@
 package com.hsryuuu.careerbuilder.application.exception
 
 import jakarta.servlet.http.HttpServletRequest
+import org.slf4j.LoggerFactory
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -14,6 +15,7 @@ import java.net.URI
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
+    private val log = LoggerFactory.getLogger(this.javaClass)
     /**
      * 서비스 정책 예외를 ProblemDetail로 변환합니다.
      */
@@ -23,6 +25,7 @@ class GlobalExceptionHandler {
         request: HttpServletRequest
     ): ProblemDetail {
         val ec = ex.errorCode
+        log.error("Error: {}", ec.message, ex)
 
         return ProblemDetail.forStatusAndDetail(ec.status, ec.message).apply {
             // type은 팀/프로젝트 규칙에 맞춰 URI 형태로 정의하는 것이 일반적입니다.
@@ -48,12 +51,14 @@ class GlobalExceptionHandler {
         request: HttpServletRequest
     ): ProblemDetail {
 
+
         val errors = ex.bindingResult.fieldErrors.map {
             mapOf(
                 "field" to it.field,
                 "message" to (it.defaultMessage ?: "Invalid value")
             )
         }
+        log.error("Error: {}",errors , ex)
 
         return ProblemDetail.forStatusAndDetail(
             ErrorCode.INVALID_REQUEST.status,
@@ -76,6 +81,7 @@ class GlobalExceptionHandler {
         ex: Exception,
         request: HttpServletRequest
     ): ProblemDetail {
+        log.error("Error: {}", ex.message, ex)
         return ProblemDetail.forStatusAndDetail(
             org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR,
             "서버 오류가 발생했습니다."

@@ -68,7 +68,6 @@ data class UpdateAchievementRequest(
     val durationEnd: LocalDate? = null,
     val impactSummary: String? = null,
     val goalSummary: String? = null,
-    val status: AchievementStatus,
     val roleTitle: String? = null,
     val workType: WorkType? = null,
     val contributionLevel: ContributionLevel? = null,

@@ -1,5 +1,7 @@
 package com.hsryuuu.careerbuilder.domain.archivement.model.entity
 
+import com.hsryuuu.careerbuilder.application.exception.ErrorCode
+import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
@@ -23,40 +25,40 @@ class Achievement(
     val user: AppUser,
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    val title: String,
+    var title: String,
 
     @Column(name = "org_name", columnDefinition = "TEXT")
-    val orgName: String? = null,
+    var orgName: String? = null,
 
     @Column(name = "duration_start", nullable = false)
-    val durationStart: LocalDate,
+    var durationStart: LocalDate,
 
     @Column(name = "duration_end")
-    val durationEnd: LocalDate? = null,
+    var durationEnd: LocalDate? = null,
 
     @Column(name = "impact_summary", columnDefinition = "TEXT")
-    val impactSummary: String? = null,
+    var impactSummary: String? = null,
 
     @Column(name = "goal_summary", columnDefinition = "TEXT")
-    val goalSummary: String? = null,
+    var goalSummary: String? = null,
 
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    val status: AchievementStatus = AchievementStatus.DRAFT,
+    var status: AchievementStatus = AchievementStatus.DRAFT,
 
     @Column(name = "role_title")
-    val roleTitle: String? = null,
+    var roleTitle: String? = null,
 
     @Column(name = "work_type")
     @Enumerated(EnumType.STRING)
-    val workType: WorkType? = null,
+    var workType: WorkType? = null,
 
     @Column(name = "contribution_level")
     @Enumerated(EnumType.STRING)
-    val contributionLevel: ContributionLevel? = null,
+    var contributionLevel: ContributionLevel? = null,
 
     @Column(columnDefinition = "TEXT")
-    val skills: String? = null,
+    var skills: String? = null,
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -73,9 +75,54 @@ class Achievement(
     )
     val sections: MutableList<AchievementSection> = mutableListOf()
 ) {
+    /**
+     * Section을 추가하고 양방향 연관관계를 설정합니다.
+     */
     fun addSection(section: AchievementSection) {
         sections.add(section)
-        section.achievement = this // 양방향 연관관계 세팅
+        section.achievement = this
+    }
+
+    /**
+     * Achievement의 기본 정보를 업데이트합니다.
+     * DDD 패턴: 도메인 로직을 엔티티 내부에 캡슐화
+     */
+    fun update(
+        title: String,
+        orgName: String?,
+        durationStart: LocalDate,
+        durationEnd: LocalDate?,
+        impactSummary: String?,
+        goalSummary: String?,
+        roleTitle: String?,
+        workType: WorkType?,
+        contributionLevel: ContributionLevel?,
+        skills: String?
+    ) {
+        // durationStart는 durationEnd보다 앞서야 함
+        if (durationEnd != null && !durationStart.isBefore(durationEnd)) {
+            throw GlobalException(ErrorCode.VALIDATION_ERROR_DURATION_SEQUENCE)
+        }
+
+        this.title = title
+        this.orgName = orgName
+        this.durationStart = durationStart
+        this.durationEnd = durationEnd
+        this.impactSummary = impactSummary
+        this.goalSummary = goalSummary
+        this.roleTitle = roleTitle
+        this.workType = workType
+        this.contributionLevel = contributionLevel
+        this.skills = skills
+    }
+
+    /**
+     * Section 컬렉션을 업데이트합니다.
+     * 전략: Clear & AddAll 방식 (orphanRemoval=true로 삭제 자동 처리)
+     */
+    fun updateSections(newSections: List<AchievementSection>) {
+        sections.clear()
+        newSections.forEach { addSection(it) }
     }
 }
 

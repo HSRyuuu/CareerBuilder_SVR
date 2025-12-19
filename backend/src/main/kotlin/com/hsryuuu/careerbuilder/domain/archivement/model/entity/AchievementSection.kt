@@ -22,16 +22,16 @@ class AchievementSection(
 
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    val kind: SectionKind = SectionKind.NONE,
+    var kind: SectionKind = SectionKind.NONE,
 
     @Column(nullable = false, length = 255)
-    val title: String,
+    var title: String,
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    val content: String,
+    var content: String,
 
     @Column(name = "sort_order", nullable = false)
-    val sortOrder: Int = 0,
+    var sortOrder: Int = 0,
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -40,7 +40,22 @@ class AchievementSection(
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    /**
+     * Section 정보를 업데이트합니다.
+     */
+    fun update(
+        kind: SectionKind,
+        title: String,
+        content: String,
+        sortOrder: Int
+    ) {
+        this.kind = kind
+        this.title = title
+        this.content = content
+        this.sortOrder = sortOrder
+    }
+}
 
 enum class SectionKind(
     val display: String
