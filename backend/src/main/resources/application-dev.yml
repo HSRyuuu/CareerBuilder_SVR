@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: career-builder
+  # H2 인메모리 데이터베이스 (로컬 개발용)
+  datasource:
+    url: jdbc:h2:mem:careerbuilder;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+  # Redis 비활성화 (로컬 개발용)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    display-request-duration: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com.hsryuuu.careerbuilder: debug
+
+# AI Configuration
+ai:
+  gemini:
+    api-key: ${GEMINI_API_KEY:AIzaSyCv04viCK31f84FmFeDUllgjpC6XfQp414}
+    model: gemini-2.5-flash
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    model: gpt-4o-mini
