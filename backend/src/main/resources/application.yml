@@ -1,6 +1,6 @@
 spring:
   application:
-    name: stock
+    name: career-builder
   config:
     import: optional:application-secret.yml
   datasource:
