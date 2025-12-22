@@ -17,7 +17,13 @@ class SecurityConfig(
     private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ) {
     companion object {
-        val PERMIT_ALL_URLS = listOf("/api/auth/**", "/api/public/**")
+        val PERMIT_ALL_URLS = listOf(
+            "/api/auth/**",
+            "/api/public/**",
+            "/api/ai/**",        // AI API
+            "/api/analytics/**", // Analytics API
+            "/h2-console/**"     // H2 Console (dev only)
+        )
         val SWAGGER_URLS = listOf("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
 
     }
@@ -27,7 +33,10 @@ class SecurityConfig(
         http
             .csrf { it.disable() }
             .cors { it.configurationSource(corsConfigurationSource()) }
-
+            // H2 Console iframe 허용
+            .headers { headers ->
+                headers.frameOptions { it.disable() }
+            }
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(*PERMIT_ALL_URLS.toTypedArray()).permitAll() // 공개 API

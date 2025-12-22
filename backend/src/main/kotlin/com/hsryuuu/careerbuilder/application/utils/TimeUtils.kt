@@ -1,6 +1,5 @@
 package com.hsryuuu.careerbuilder.application.utils
 
-import com.hsryuuu.careerbuilder.application.utils.TimeUtils.getZoneDateTime
 import java.time.*
 import java.time.temporal.TemporalAdjusters
 
@@ -15,15 +14,15 @@ object TimeUtils {
     }
 
     fun getLastFriday(from: LocalDate = LocalDate.now()): LocalDate {
-        return from.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
+        return from.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY))
     }
 
     fun getThisFriday(from: LocalDate = LocalDate.now()): LocalDate {
-        return from.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
+        return from.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY))
     }
 
     fun getYesterday(from: LocalDate = LocalDate.now()): LocalDate {
-        return from.minusDays(1);
+        return from.minusDays(1)
     }
 
     fun getZoneDateTime(
@@ -51,15 +50,4 @@ object TimeUtils {
         val nowInUs = ZonedDateTime.now(ZoneId.of(TIME_ZONE_AMERICA_NEW_YORK)).toLocalDate()
         return date == nowInUs
     }
-
-}
-
-fun main() {
-    val localDateTime = LocalDateTime.now().minusHours(2)
-    val zonedDateTime = getZoneDateTime(localDateTime)
-
-    println(localDateTime)
-    println(zonedDateTime)
-    println(zonedDateTime.toLocalDate())
-
 }

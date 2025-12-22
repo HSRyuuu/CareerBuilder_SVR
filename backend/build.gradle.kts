@@ -5,7 +5,6 @@ plugins {
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("kapt") version "1.9.25"
     id("io.spring.dependency-management") version "1.1.7"
-
 }
 
 group = "com.hsryuuu"
@@ -37,15 +36,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     runtimeOnly("org.postgresql:postgresql:42.7.5")
+    runtimeOnly("com.h2database:h2") // H2 for local development
 
     // security
     implementation("org.springframework.boot:spring-boot-starter-security")
 
-    // JWT 인증을 원하시면 다음 의존성도 추가하세요
+    // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-
 
     // Jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -73,6 +72,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // WebFlux (WebClient for AI API calls)
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.1")
 }
 
 kotlin {
@@ -96,7 +102,7 @@ allOpen {
 sourceSets {
     main {
         java {
-            srcDir("build/generated/source/kapt/main") // Q타입 위치
+            srcDir("build/generated/source/kapt/main")
         }
     }
 }

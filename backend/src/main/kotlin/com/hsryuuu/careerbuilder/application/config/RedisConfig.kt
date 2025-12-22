@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -18,11 +19,12 @@ class RedisConfig {
     @Bean
     fun objectMapper(): ObjectMapper = ObjectMapper()
         .registerKotlinModule()
-        .registerModule(JavaTimeModule()) // LocalDateTime 지원 추가
+        .registerModule(JavaTimeModule())
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) // ISO-8601 형식으로 직렬화
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
     @Bean
+    @ConditionalOnProperty(name = ["spring.data.redis.enabled"], havingValue = "true", matchIfMissing = false)
     fun redisTemplate(
         connectionFactory: RedisConnectionFactory,
         objectMapper: ObjectMapper
