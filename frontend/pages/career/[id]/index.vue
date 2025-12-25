@@ -2,8 +2,8 @@
   <div class="career-register-page">
     <!-- 페이지 헤더 -->
     <PageHeader
-      :title="isEditMode ? '성과 수정' : '성과 상세'"
-      :subtitle="isEditMode ? '성과 정보를 수정하세요' : '성과 정보를 확인하세요'"
+      :title="isEditMode ? '경험 수정' : '경험 상세'"
+      :subtitle="isEditMode ? '경험 정보를 수정하세요' : '경험 정보를 확인하세요'"
     >
       <template #actions>
         <!-- 수정 모드일 때: 저장/취소 버튼 -->
@@ -66,7 +66,7 @@
               <label class="field-label">제목 *</label>
               <Input
                 v-model="formData.title"
-                placeholder="성과 제목을 입력하세요"
+                placeholder="경험을 한마디로 정의해주세요."
                 :size="CommonSize.Medium"
                 :disabled="!isEditMode"
               />
@@ -563,8 +563,8 @@ const loadAchievementData = async () => {
   const { data, error } = await fetchAchievement(achievementId.value);
 
   if (error) {
-    console.error('성과 조회 실패:', error);
-    toast.error('성과를 불러오는데 실패했습니다.');
+    console.error('경험 조회 실패:', error);
+    toast.error('경험을 불러오는데 실패했습니다.');
     return;
   }
 
@@ -733,7 +733,7 @@ const handleSave = async () => {
   const { error } = await updateAchievement(achievementId.value, requestBody);
 
   if (error) {
-    console.error('성과 수정 실패:', error);
+    console.error('경험 수정 실패:', error);
     return;
   }
 

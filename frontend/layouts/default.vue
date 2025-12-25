@@ -90,8 +90,8 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { path: '/home', label: '홈', icon: 'mdi-home' },
-  { path: '/career', label: '성과 목록', icon: 'mdi-file-document' },
-  { path: '/career/register', label: '성과 등록', icon: 'mdi-file-document-edit' },
+  { path: '/career', label: '경험 목록', icon: 'mdi-file-document' },
+  { path: '/career/register', label: '경험 등록', icon: 'mdi-file-document-edit' },
 ];
 
 const toggleSidebar = () => {

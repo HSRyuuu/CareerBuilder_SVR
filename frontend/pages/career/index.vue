@@ -45,7 +45,7 @@
     <div class="career-list-stats-section">
       <div class="career-list-stat-item">
         <div class="career-list-stat-number">{{ stats.total }}</div>
-        <div class="career-list-stat-label">전체 성과</div>
+        <div class="career-list-stat-label">전체 경험</div>
       </div>
       <div class="career-list-stat-divider" />
       <div class="career-list-stat-item">
@@ -64,10 +64,10 @@
       </div>
     </div>
 
-    <!-- Part3: 성과 목록 테이블 -->
+    <!-- Part3: 경험 목록 테이블 -->
     <div class="career-list-table-section">
       <div class="career-list-table-header">
-        <h2 class="career-list-section-title">내 성과 목록</h2>
+        <h2 class="career-list-section-title">내 경험 목록</h2>
         <div class="career-list-sort-wrapper">
           <label class="career-list-sort-label">정렬:</label>
           <Select

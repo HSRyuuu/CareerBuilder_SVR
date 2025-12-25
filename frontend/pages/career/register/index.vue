@@ -1,7 +1,7 @@
 <template>
   <div class="career-register-page">
     <!-- 페이지 헤더 -->
-    <PageHeader title="성과 등록" subtitle="새로운 성과를 등록하고 관리하세요">
+    <PageHeader title="경험 등록" subtitle="새로운 경험을 등록하고 관리하세요">
       <template #actions>
         <Button
           :variant="ButtonVariant.Secondary"
@@ -9,8 +9,8 @@
           :round="true"
           @click="handleCancel"
         >
-          <v-icon size="small">mdi-close</v-icon>
-          취소
+          <v-icon size="small">mdi-arrow-left</v-icon>
+          뒤로가기
         </Button>
         <Button
           :variant="ButtonVariant.Primary"
@@ -38,7 +38,7 @@
               <label class="field-label">제목 *</label>
               <Input
                 v-model="formData.title"
-                placeholder="성과 제목을 입력하세요"
+                placeholder="경험을 한마디로 정의해주세요."
                 :size="CommonSize.Medium"
               />
             </div>
@@ -143,7 +143,7 @@
             <div class="form-field full-width">
               <TextArea
                 v-model="formData.goalSummary"
-                placeholder="이 성과를 통해 달성하고자 했던 목표를 작성하세요"
+                placeholder="달성하고자 했던 목표를 작성하세요"
                 :rows="3"
               />
             </div>
@@ -160,7 +160,7 @@
             <div class="form-field full-width">
               <TextArea
                 v-model="formData.impactSummary"
-                placeholder="이 성과의 핵심 내용과 영향을 간략히 설명하세요"
+                placeholder="이 경험을 통해 얻은 성과와 영향을 간략히 설명하세요"
                 :rows="3"
               />
             </div>
