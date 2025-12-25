@@ -20,6 +20,7 @@ export interface ButtonProps {
   iconSize?: string;
   type?: 'button' | 'submit' | 'reset';
   block?: boolean;
+  round?: boolean;
 }
 
 // Input 컴포넌트 Props

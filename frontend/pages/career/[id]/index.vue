@@ -11,12 +11,18 @@
           <Button
             :variant="ButtonVariant.Secondary"
             :size="CommonSize.Medium"
+            :round="true"
             @click="handleCancel"
           >
             <v-icon size="small">mdi-close</v-icon>
             취소
           </Button>
-          <Button :variant="ButtonVariant.Primary" :size="CommonSize.Medium" @click="handleSave">
+          <Button
+            :variant="ButtonVariant.Primary"
+            :size="CommonSize.Medium"
+            :round="true"
+            @click="handleSave"
+          >
             <v-icon size="small">mdi-check</v-icon>
             저장
           </Button>
@@ -24,13 +30,19 @@
 
         <!-- 상세 모드일 때: 수정하기/목록으로 버튼 -->
         <template v-else>
-          <Button :variant="ButtonVariant.Secondary" :size="CommonSize.Medium" @click="handleBack">
+          <Button
+            :variant="ButtonVariant.Secondary"
+            :size="CommonSize.Medium"
+            :round="true"
+            @click="handleBack"
+          >
             <v-icon size="small">mdi-arrow-left</v-icon>
             목록으로
           </Button>
           <Button
             :variant="ButtonVariant.Primary"
             :size="CommonSize.Medium"
+            :round="true"
             @click="handleEnterEditMode"
           >
             <v-icon size="small">mdi-pencil</v-icon>
@@ -44,16 +56,11 @@
       <!-- 왼쪽: 메인 폼 영역 (4) -->
       <div class="form-container">
         <!-- 기본 정보 블록 -->
-        <section class="form-section">
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%)"
-            >
-              <v-icon color="white" size="small">mdi-trophy</v-icon>
-            </div>
-            <h2 class="section-title">기본 정보</h2>
-          </div>
+        <Card
+          title="기본 정보"
+          icon="mdi-trophy"
+          icon-color="linear-gradient(135deg, #2563eb 0%, #1e40af 100%)"
+        >
           <div class="form-grid">
             <div class="form-field full-width">
               <label class="field-label">제목 *</label>
@@ -111,19 +118,14 @@
               </div>
             </div>
           </div>
-        </section>
+        </Card>
 
-        <!-- 업무 정보 블록 (하드코딩, 수정 불가) -->
-        <section class="form-section">
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)"
-            >
-              <v-icon color="white" size="small">mdi-briefcase-variant</v-icon>
-            </div>
-            <h2 class="section-title">업무 정보</h2>
-          </div>
+        <!-- 업무 정보 블록 -->
+        <Card
+          title="업무 정보"
+          icon="mdi-briefcase-variant"
+          icon-color="linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)"
+        >
           <div class="form-grid">
             <div class="form-field full-width">
               <label class="field-label">업무 유형</label>
@@ -164,19 +166,14 @@
               </div>
             </div>
           </div>
-        </section>
+        </Card>
 
-        <!-- 목표 블록 (하드코딩, 수정 불가) -->
-        <section class="form-section">
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #10b981 0%, #059669 100%)"
-            >
-              <v-icon color="white" size="small">mdi-flag-checkered</v-icon>
-            </div>
-            <h2 class="section-title">목표</h2>
-          </div>
+        <!-- 목표 블록 -->
+        <Card
+          title="목표"
+          icon="mdi-flag-checkered"
+          icon-color="linear-gradient(135deg, #10b981 0%, #059669 100%)"
+        >
           <div class="form-grid">
             <div class="form-field full-width">
               <TextArea
@@ -187,19 +184,14 @@
               />
             </div>
           </div>
-        </section>
+        </Card>
 
-        <!-- 핵심 성과 블록 (하드코딩, 수정 불가) -->
-        <section class="form-section">
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
-            >
-              <v-icon color="white" size="small">mdi-star-circle</v-icon>
-            </div>
-            <h2 class="section-title">핵심 성과</h2>
-          </div>
+        <!-- 핵심 성과 블록 -->
+        <Card
+          title="핵심 성과"
+          icon="mdi-star-circle"
+          icon-color="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+        >
           <div class="form-grid">
             <div class="form-field full-width">
               <TextArea
@@ -210,19 +202,14 @@
               />
             </div>
           </div>
-        </section>
+        </Card>
 
-        <!-- 스킬 블록 (하드코딩, 수정 불가) -->
-        <section class="form-section">
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
-            >
-              <v-icon color="white" size="small">mdi-code-tags</v-icon>
-            </div>
-            <h2 class="section-title">스킬</h2>
-          </div>
+        <!-- 스킬 블록 -->
+        <Card
+          title="스킬"
+          icon="mdi-code-tags"
+          icon-color="linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
+        >
           <div class="form-grid">
             <div class="form-field full-width">
               <Input
@@ -233,71 +220,74 @@
               />
             </div>
           </div>
-        </section>
+        </Card>
 
-        <!-- 상세 블록들 (개별 form-section으로 구성) -->
-        <section
+        <!-- 상세 블록들 (동적) -->
+        <Card
           v-for="(section, index) in formData.sections"
           :key="section.id"
-          class="form-section"
+          icon="mdi-text-box-multiple"
+          icon-color="linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"
         >
-          <div class="section-header">
-            <div
-              class="section-icon"
-              style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"
-            >
-              <v-icon color="white" size="small">mdi-text-box-multiple</v-icon>
-            </div>
+          <template #header>
+            <div class="card-custom-header">
+              <div
+                class="card-icon-wrapper"
+                style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"
+              >
+                <v-icon color="white" size="20">mdi-text-box-multiple</v-icon>
+              </div>
 
-            <!-- 제목과 편집 버튼 그룹 -->
-            <div class="section-title-group">
-              <!-- 편집 모드가 아닐 때 -->
-              <template v-if="!section.isEditingTitle">
-                <div class="section-title-wrapper">
-                  <div class="section-title-row">
-                    <h2 class="section-title">
-                      {{ section.title || `블록 ${index + 1}` }}
-                    </h2>
-                    <button
-                      v-if="isEditMode"
-                      class="edit-btn-header"
-                      @click="startEditSectionTitle(index)"
+              <!-- 제목과 편집 버튼 그룹 -->
+              <div class="section-title-group">
+                <!-- 편집 모드가 아닐 때 -->
+                <template v-if="!section.isEditingTitle">
+                  <div class="section-title-wrapper">
+                    <div class="section-title-row">
+                      <h2 class="section-title">
+                        {{ section.title || `블록 ${index + 1}` }}
+                      </h2>
+                      <button
+                        v-if="isEditMode"
+                        class="edit-btn-header"
+                        @click="startEditSectionTitle(index)"
+                      >
+                        <v-icon size="small">mdi-pencil</v-icon>
+                      </button>
+                    </div>
+                    <div
+                      v-if="isDefaultTitle(section, index) && isEditMode"
+                      class="section-title-hint"
                     >
-                      <v-icon size="small">mdi-pencil</v-icon>
+                      블록 이름을 입력해주세요
+                    </div>
+                  </div>
+                </template>
+
+                <!-- 편집 모드일 때 -->
+                <template v-else>
+                  <div class="section-title-edit">
+                    <Input
+                      v-model="section.tempTitle!"
+                      placeholder="블록 제목을 입력하세요"
+                      :size="CommonSize.Small"
+                      class="section-title-input"
+                    />
+                    <button class="edit-action-btn apply" @click="applySectionTitle(index)">
+                      <v-icon size="small">mdi-check</v-icon>
+                    </button>
+                    <button class="edit-action-btn cancel" @click="cancelSectionTitleEdit(index)">
+                      <v-icon size="small">mdi-close</v-icon>
                     </button>
                   </div>
-                  <div
-                    v-if="isDefaultTitle(section, index) && isEditMode"
-                    class="section-title-hint"
-                  >
-                    블록 이름을 입력해주세요
-                  </div>
-                </div>
-              </template>
+                </template>
+              </div>
 
-              <!-- 편집 모드일 때 -->
-              <template v-else>
-                <div class="section-title-edit">
-                  <Input
-                    v-model="section.tempTitle!"
-                    placeholder="블록 제목을 입력하세요"
-                    :size="CommonSize.Small"
-                    class="section-title-input"
-                  />
-                  <button class="edit-action-btn apply" @click="applySectionTitle(index)">
-                    <v-icon size="small">mdi-check</v-icon>
-                  </button>
-                  <button class="edit-action-btn cancel" @click="cancelSectionTitleEdit(index)">
-                    <v-icon size="small">mdi-close</v-icon>
-                  </button>
-                </div>
-              </template>
+              <button v-if="isEditMode" class="delete-btn-header" @click="removeSection(index)">
+                <v-icon size="small">mdi-delete</v-icon>
+              </button>
             </div>
-
-            <button v-if="isEditMode" class="delete-btn-header" @click="removeSection(index)">
-              <v-icon size="small">mdi-delete</v-icon>
-            </button>
-          </div>
+          </template>
 
           <div class="form-grid">
             <div class="form-field full-width">
@@ -332,12 +322,12 @@
               <TextArea
                 v-model="section.content"
                 placeholder="Help 버튼을 눌러서 작성 가이드를 확인하세요"
-                :rows="5"
+                :rows="8"
                 :disabled="!isEditMode"
               />
             </div>
           </div>
-        </section>
+        </Card>
 
         <!-- 빈 상태 (수정 모드일 때만 표시) -->
         <div v-if="formData.sections.length === 0 && isEditMode" class="empty-state-standalone">
@@ -346,6 +336,7 @@
           <Button
             :variant="ButtonVariant.Primary"
             :size="CommonSize.Medium"
+            :round="true"
             class="empty-state-add-btn"
             @click="addSection"
           >
@@ -368,6 +359,7 @@
             v-if="isEditMode"
             :variant="ButtonVariant.Primary"
             :size="CommonSize.Medium"
+            :round="true"
             class="sidebar-add-btn"
             @click="addSection"
           >
@@ -474,6 +466,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { VueDraggableNext } from 'vue-draggable-next';
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
+import Card from '@/components/molecules/Card/Card.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import Input from '@/components/atoms/Input/Input.vue';
 import TextArea from '@/components/atoms/TextArea/TextArea.vue';
@@ -758,10 +751,52 @@ const handleBack = () => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/pages/career-register-page.scss';
+.career-register-page {
+  min-height: 100vh;
+  margin: -32px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-layout {
+  padding: 40px 48px;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  gap: 24px;
+  align-items: start;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 24px;
+    grid-template-columns: 1fr;
+  }
+}
+
+// 동적 블록의 커스텀 헤더
+.card-custom-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.card-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
 
 // 읽기 전용 블록 스타일
 .sidebar-section-readonly {
   padding-left: 12px;
 }
+</style>
+<style lang="scss">
+@use '@/styles/pages/career-register-page.scss';
 </style>

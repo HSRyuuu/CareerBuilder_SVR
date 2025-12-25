@@ -125,6 +125,11 @@
     }
   }
 
+  // Round (Apple pill style)
+  &--round {
+    border-radius: 980px;
+  }
+
   .button-label {
     line-height: 1;
   }

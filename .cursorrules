@@ -16,8 +16,15 @@ CareerBuilder_SVR/
 │   └── src/
 └── init/              # Docker 설정
 ```
+---
 
-## 🎯 핵심 원칙
+## 디자인 규칙
+
+
+---
+
+## 🔧 프론트엔드 규칙 (Vue3 + Nuxt3)
+
 
 ### 프론트엔드 작업 시 반드시 준수
 **코드 작성 전 `frontend/convention.md` 파일을 참고하세요.**

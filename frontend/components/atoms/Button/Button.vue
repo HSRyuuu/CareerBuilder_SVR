@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   iconSize: 'small',
   type: 'button',
   block: false,
+  round: false,
 });
 
 const emit = defineEmits<{
@@ -38,6 +39,7 @@ const buttonClasses = computed(() => {
       'cb-button--icon-only': props.iconOnly,
       'cb-button--block': props.block,
       'cb-button--disabled': props.disabled,
+      'cb-button--round': props.round,
     },
   ];
 });
