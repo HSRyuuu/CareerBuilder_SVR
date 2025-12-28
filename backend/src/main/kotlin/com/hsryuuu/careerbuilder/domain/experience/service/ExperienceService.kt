@@ -4,6 +4,7 @@ import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.common.dto.CommonPageResponse
 import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
+import com.hsryuuu.careerbuilder.domain.experience.model.dto.ExperienceStatsSummary
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.ExperienceResponse
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.CreateExperienceRequest
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.CreateSectionRequest
@@ -50,6 +51,7 @@ class ExperienceService(
     fun searchExperience(
         userId: UUID,
         searchKeyword: String?,
+        status: ExperienceStatus?,
         page: Int,
         pageSize: Int,
         sort: ExperienceSortKey,
@@ -62,7 +64,7 @@ class ExperienceService(
 
         // QueryDSL 기반 검색 실행
         val experiencePage =
-            experienceRepository.searchExperience(user, searchKeyword, sort, sortDirection, pageRequest)
+            experienceRepository.searchExperience(user, searchKeyword, status,sort, sortDirection, pageRequest)
 
         // Entity를 Response로 변환
         return CommonPageResponse.from(experiencePage) { experience ->
@@ -82,15 +84,6 @@ class ExperienceService(
 
         val sections = experienceSectionRepository.findByExperienceIdOrderBySortOrderAsc(id)
         return ExperienceResponse.fromEntity(experience, sections)
-    }
-
-    @Transactional(readOnly = true)
-    fun getExperiencesByStatus(userId: UUID, status: ExperienceStatus): List<ExperienceResponse> {
-        val experiences = experienceRepository.findByUserIdAndStatus(userId, status)
-        return experiences.map { experience ->
-            val sections = experienceSectionRepository.findByExperienceIdOrderBySortOrderAsc(experience.id!!)
-            ExperienceResponse.fromEntity(experience, sections)
-        }
     }
 
     @Transactional
@@ -169,6 +162,14 @@ class ExperienceService(
         }
 
         experienceRepository.delete(experience)
+    }
+
+    @Transactional(readOnly = true)
+    fun getStatsSummary(userId: UUID): ExperienceStatsSummary {
+        val user = appUserRepository.findByIdOrNull(userId)
+            ?: throw GlobalException(ErrorCode.MEMBER_NOT_FOUND)
+
+        return experienceRepository.getStatsSummary(user)
     }
 
 }

@@ -165,9 +165,18 @@ data class SectionResponse(
                 title = section.title,
                 content = section.content,
                 sortOrder = section.sortOrder,
-                createdAt = section.createdAt,
-                updatedAt = section.updatedAt
-            )
-        }
-    }
-}
+                                createdAt = section.createdAt,
+                                updatedAt = section.updatedAt
+                            )
+                        }
+                    }
+                }
+                
+data class ExperienceStatsSummary(
+    val total: Long,
+    val incomplete: Long,
+    val completed: Long,
+    val analyzing: Long,
+    val analyzed: Long
+)
+                

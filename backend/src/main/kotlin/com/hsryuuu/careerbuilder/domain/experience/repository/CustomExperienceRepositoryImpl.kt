@@ -1,10 +1,13 @@
 package com.hsryuuu.careerbuilder.domain.experience.repository
 
 import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
+import com.hsryuuu.careerbuilder.domain.experience.model.dto.ExperienceStatsSummary
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.Experience
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceStatus
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.QExperience
 import com.hsryuuu.careerbuilder.domain.experience.model.type.ExperienceSortKey
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
+import com.querydsl.core.Tuple
 import com.querydsl.core.types.Order
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.dsl.BooleanExpression
@@ -23,19 +26,21 @@ class CustomExperienceRepositoryImpl(
 
     override fun searchExperience(
         user: AppUser,
-        searchKeyword: String?, sortKey: ExperienceSortKey,
+        searchKeyword: String?,
+        status: ExperienceStatus?,
+        sortKey: ExperienceSortKey,
         sortDirection: SortDirection?, pageable: Pageable
     ): Page<Experience> {
         // 검색 조건 생성
         val searchCondition = createSearchCondition(searchKeyword)
-
+        val statusCondition = status?.let{ experience.status.eq(status) }
         // 정렬 조건 생성
         val orderSpecifiers = createOrderSpecifiers(sortKey, sortDirection)
 
         // 데이터 조회
         val results = queryFactory
             .selectFrom(experience)
-            .where(experience.user.eq(user), searchCondition)
+            .where(experience.user.eq(user), searchCondition, statusCondition)
             .orderBy(*orderSpecifiers.toTypedArray())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -45,10 +50,47 @@ class CustomExperienceRepositoryImpl(
         val total = queryFactory
             .select(experience.count())
             .from(experience)
-            .where(searchCondition)
+            .where(searchCondition, statusCondition)
             .fetchOne() ?: 0L
 
         return PageImpl(results, pageable, total)
+    }
+
+    override fun getStatsSummary(user: AppUser): ExperienceStatsSummary {
+        val results: List<Tuple> = queryFactory
+            .select(experience.status, experience.count())
+            .from(experience)
+            .where(experience.user.eq(user))
+            .groupBy(experience.status)
+            .fetch()
+
+        var total: Long = 0
+        var incomplete: Long = 0
+        var completed: Long = 0
+        var analyzing: Long = 0
+        var analyzed: Long = 0
+
+        results.forEach { tuple ->
+            val status = tuple.get(experience.status)
+            val count = tuple.get(experience.count()) ?: 0L
+
+            total += count
+            when (status) {
+                ExperienceStatus.INCOMPLETE -> incomplete = count
+                ExperienceStatus.COMPLETED -> completed = count
+                ExperienceStatus.ANALYZING -> analyzing = count
+                ExperienceStatus.ANALYZED -> analyzed = count
+                null -> {}
+            }
+        }
+
+        return ExperienceStatsSummary(
+            total = total,
+            incomplete = incomplete,
+            completed = completed,
+            analyzing = analyzing,
+            analyzed = analyzed
+        )
     }
 
     /**

@@ -61,10 +61,10 @@ enum class SectionKind(
     val display: String
 ) {
     NONE("미정"),         // 아직 정하지 않음
-    CONTEXT("배경/상황"),   // 일을 하게 된 배경 / 상황
     GOAL("목표/문제"),      // 목표/문제 정의
     ACTION("실행 내용"),        // 내가 실제로 한 일
     RESULT("결과 및 성과"),            // 결과, 성과 (숫자)
+    CONTEXT("배경/상황"),   // 일을 하게 된 배경 / 상황
     CHALLENGE("어려웠던 점"),   // 어려웠던 점
     LEARNING("배운 점"),    // 배운 점 / 성장
     FEEDBACK("피드백/평가"), // 받은 피드백, 평가

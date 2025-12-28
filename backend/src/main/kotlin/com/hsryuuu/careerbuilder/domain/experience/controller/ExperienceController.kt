@@ -5,6 +5,7 @@ import com.hsryuuu.careerbuilder.common.dto.CommonPageResponse
 import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.CreateExperienceRequest
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.ExperienceResponse
+import com.hsryuuu.careerbuilder.domain.experience.model.dto.ExperienceStatsSummary
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.UpdateExperienceRequest
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceStatus
 import com.hsryuuu.careerbuilder.domain.experience.model.type.ExperienceSortKey
@@ -39,13 +40,14 @@ class ExperienceController(
     @ResponseStatus(HttpStatus.OK)
     fun searchExperience(
         @RequestParam(required = false, name = "q") searchKeyword: String?,
+        @RequestParam(required = false, name = "status") status: ExperienceStatus?,
         @RequestParam(required = false, name = "p", defaultValue = "1") page: Int,
         @RequestParam(required = false, name = "size", defaultValue = "10") pageSize: Int,
         @RequestParam(required = false, name = "sortKey", defaultValue = "UPDATED_AT") sort: ExperienceSortKey,
         @RequestParam(required = false, name = "sortDir", defaultValue = "DESC") sortDirection: SortDirection?
     ): CommonPageResponse<ExperienceResponse> {
         val userId = authManager.getCurrentUserIdOrElseThrow()
-        return experienceService.searchExperience(userId, searchKeyword, page - 1, pageSize, sort, sortDirection);
+        return experienceService.searchExperience(userId, searchKeyword, status,page - 1, pageSize, sort, sortDirection);
     }
 
     @Operation(summary = "경험 조회", description = "특정 경험을 조회합니다.")
@@ -54,16 +56,6 @@ class ExperienceController(
     fun getExperience(@PathVariable id: UUID): ExperienceResponse {
         val userId = authManager.getCurrentUserIdOrElseThrow()
         return experienceService.getExperience(id, userId)
-    }
-
-    @Operation(summary = "상태별 경험 목록 조회", description = "특정 상태의 경험 목록을 조회합니다.")
-    @GetMapping("/status/{status}")
-    @ResponseStatus(HttpStatus.OK)
-    fun getExperiencesByStatus(
-        @PathVariable status: ExperienceStatus
-    ): List<ExperienceResponse> {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
-        return experienceService.getExperiencesByStatus(userId, status)
     }
 
     @Operation(summary = "경험 수정", description = "기존 경험을 수정합니다.")
@@ -84,4 +76,13 @@ class ExperienceController(
         val userId = authManager.getCurrentUserIdOrElseThrow()
         experienceService.deleteExperience(id, userId)
     }
+
+    @Operation(summary = "상태별 경험 통계", description = "상태별 경험 통계를 조회합니다.")
+    @GetMapping("/stats/summary")
+    @ResponseStatus(HttpStatus.OK)
+    fun getExperienceStatsSummary(): ExperienceStatsSummary {
+        val userId = authManager.getCurrentUserIdOrElseThrow()
+        return experienceService.getStatsSummary(userId)
+    }
+
 }
