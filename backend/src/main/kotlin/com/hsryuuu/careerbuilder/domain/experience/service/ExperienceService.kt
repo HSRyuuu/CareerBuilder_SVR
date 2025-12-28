@@ -33,7 +33,7 @@ class ExperienceService(
         val user = appUserRepository.findByIdOrNull(userId)
             ?: throw GlobalException(ErrorCode.MEMBER_NOT_FOUND)
 
-        if (!request.durationStart.isBefore(request.durationEnd))
+        if (request.durationEnd != null && !request.durationStart.isBefore(request.durationEnd))
             throw GlobalException(ErrorCode.VALIDATION_ERROR_DURATION_SEQUENCE)
 
         val experience = CreateExperienceRequest.createEntity(user, request)
