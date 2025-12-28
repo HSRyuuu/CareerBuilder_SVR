@@ -1,9 +1,9 @@
 /**
- * Achievement(성과) 테이블 컬럼 정의
+ * Experience(경험) 테이블 컬럼 정의
  */
-import { WORK_TYPE_INFO } from '@/types/achievement-types';
-import type { WorkType } from '@/types/achievement-types';
-import type { TAchievement } from '~/api/achievement/types';
+import { WORK_TYPE_INFO } from '@/types/experience-types';
+import type { WorkType } from '@/types/experience-types';
+import type { TExperience } from '~/api/experience/types';
 import type { TTableColumn } from '@/components/organisms/Table/Table.vue';
 
 /**
@@ -27,9 +27,9 @@ export const getWorkTypeDisplay = (workType?: string | null) => {
 };
 
 /**
- * 성과 목록 테이블 컬럼 정의
+ * 경험 목록 테이블 컬럼 정의
  */
-export const achievementColumns: TTableColumn<TAchievement>[] = [
+export const experienceColumns: TTableColumn<TExperience>[] = [
   {
     field: 'durationStart',
     headerName: '시작일',

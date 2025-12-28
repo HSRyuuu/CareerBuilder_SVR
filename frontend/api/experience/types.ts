@@ -1,41 +1,40 @@
 /**
- * Achievement(성과) API 타입 정의
+ * Experience(경험) API 타입 정의
  */
 import type {
-  AchievementSectionKind,
-  AchievementStatus,
+  ExperienceSectionKind,
+  ExperienceStatus,
   WorkType,
   ContributionLevel,
-} from '@/types/achievement-types';
+} from '@/types/experience-types';
 
 /**
- * 성과 블록 생성 요청 타입
+ * 경험 블록 생성 요청 타입
  */
-export type TAchievementSectionCreate = {
-  kind: AchievementSectionKind | string;
+export type TExperienceSectionCreate = {
+  kind: ExperienceSectionKind | string;
   title: string;
   content: string;
   sortOrder: number;
 };
 
 /**
- * 성과 블록 수정 요청 타입 (id 포함)
+ * 경험 블록 수정 요청 타입 (id 포함)
  */
-export type TAchievementSectionUpdate = {
+export type TExperienceSectionUpdate = {
   id?: string; // 기존 블록: 서버 id, 새 블록: new_section_* 또는 undefined
-  kind: AchievementSectionKind | string;
+  kind: ExperienceSectionKind | string;
   title: string;
   content: string;
   sortOrder: number;
 };
 
 /**
- * 성과 블록 응답 타입
+ * 경험 블록 응답 타입
  */
-export type TAchievementSection = {
+export type TExperienceSection = {
   id: string;
-  achievementId: string;
-  kind: AchievementSectionKind | string;
+  kind: ExperienceSectionKind | string;
   title: string;
   content: string;
   sortOrder: number;
@@ -44,9 +43,9 @@ export type TAchievementSection = {
 };
 
 /**
- * 성과 생성 요청 타입
+ * 경험 생성 요청 타입
  */
-export type TAchievementCreate = {
+export type TExperienceCreate = {
   title: string;
   orgName?: string;
   roleTitle?: string;
@@ -57,14 +56,14 @@ export type TAchievementCreate = {
   goalSummary?: string;
   impactSummary?: string;
   skills?: string;
-  status?: AchievementStatus | string;
-  sections: TAchievementSectionCreate[];
+  status?: ExperienceStatus | string;
+  sections: TExperienceSectionCreate[];
 };
 
 /**
- * 성과 수정 요청 타입
+ * 경험 수정 요청 타입
  */
-export type TAchievementUpdate = {
+export type TExperienceUpdate = {
   title: string;
   orgName?: string;
   roleTitle?: string;
@@ -75,14 +74,14 @@ export type TAchievementUpdate = {
   goalSummary?: string;
   impactSummary?: string;
   skills?: string;
-  status?: AchievementStatus | string;
-  sections: TAchievementSectionUpdate[];
+  status?: ExperienceStatus | string;
+  sections: TExperienceSectionUpdate[];
 };
 
 /**
- * 성과 응답 타입
+ * 경험 응답 타입
  */
-export type TAchievement = {
+export type TExperience = {
   id: string;
   userId: string;
   title: string;
@@ -95,16 +94,16 @@ export type TAchievement = {
   goalSummary?: string;
   impactSummary?: string;
   skills?: string;
-  status: AchievementStatus | string;
+  status: ExperienceStatus | string;
   createdAt: string;
   updatedAt: string;
-  sections: TAchievementSection[];
+  sections: TExperienceSection[];
 };
 
 /**
- * 성과 정렬 키
+ * 경험 정렬 키
  */
-export type AchievementSortKey = 'UPDATED_AT' | 'DURATION_START';
+export type ExperienceSortKey = 'UPDATED_AT' | 'DURATION_START';
 
 /**
  * 정렬 방향
@@ -112,13 +111,13 @@ export type AchievementSortKey = 'UPDATED_AT' | 'DURATION_START';
 export type SortDirection = 'ASC' | 'DESC';
 
 /**
- * 성과 목록 조회 파라미터 타입
+ * 경험 목록 조회 파라미터 타입
  */
-export type TAchievementListParams = {
+export type TExperienceListParams = {
   q?: string; // 검색 키워드
   p?: number; // 페이지 번호 (1부터 시작)
   size?: number; // 페이지 크기
-  sortKey?: AchievementSortKey; // 정렬 키
+  sortKey?: ExperienceSortKey; // 정렬 키
   sortDir?: SortDirection; // 정렬 방향
 };
 
@@ -134,9 +133,9 @@ export type TPageResponse<T> = {
 };
 
 /**
- * 성과 통계 응답 타입
+ * 경험 통계 응답 타입
  */
-export type TAchievementStats = {
+export type TExperienceStats = {
   total: number;
   completed: number;
   needsImprovement: number;

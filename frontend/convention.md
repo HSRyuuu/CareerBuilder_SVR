@@ -373,26 +373,26 @@ import type {
 // 2. API 함수 정의
 
 // GET - 목록 조회
-export const fetchAchievements = (params?: TAchievementListParams) => {
-  return useApi<TPageResponse<TAchievement>>({
-    url: '/api/achievements',
+export const fetchExperiences = (params?: TExperienceListParams) => {
+  return useApi<TPageResponse<TExperience>>({
+    url: '/api/experiences',
     method: HttpMethod.GET,
     params,
   });
 };
 
 // GET - 단건 조회
-export const fetchAchievement = (id: string) => {
-  return useApi<TAchievement>({
-    url: `/api/achievements/${id}`,
+export const fetchExperience = (id: string) => {
+  return useApi<TExperience>({
+    url: `/api/experiences/${id}`,
     method: HttpMethod.GET,
   });
 };
 
 // POST - 생성
-export const updateAchievement = (id: string, body: TAchievementUpdate) => {
-  return useApi<TAchievement>({
-    url: `/api/achievements/${id}`,
+export const updateExperience = (id: string, body: TExperienceUpdate) => {
+  return useApi<TExperience>({
+    url: `/api/experiences/${id}`,
     method: HttpMethod.PUT,
     body,
   });
@@ -408,9 +408,9 @@ export const updateDataResource = (id: string, body: TDataResourceCommon): Promi
 };
 
 // DELETE - 삭제
-export const deleteAchievement = (id: string) => {
+export const deleteExperience = (id: string) => {
   return useApi<null>({
-    url: `/api/achievements/${id}`,
+    url: `/api/experiences/${id}`,
     method: HttpMethod.DELETE,
   });
 };
@@ -1164,7 +1164,7 @@ export enum Color {
 - [ ] Vue 파일 작성 순서를 따랐는가?
 - [ ] Props는 destructuring + 기본값으로 선언했는가?
 - [ ] Emits는 타입 안전하게 선언했는가?
-- [ ] API 파일 4개 (api.ts, types.ts, keys.ts)를 생성했는가?
+- [ ] API 파일 3개 (api.ts, types.ts, keys.ts)를 생성했는가?
 - [ ] Type 이름은 `T` prefix를 사용했는가?
 - [ ] Composable 함수는 `use` prefix를 사용했는가?
 - [ ] 컴포넌트는 Atomic Design 패턴을 따랐는가?

@@ -99,8 +99,8 @@
       </div>
 
       <Table
-        :columns="achievementColumns"
-        :rows="achievements"
+        :columns="experienceColumns"
+        :rows="experiences"
         row-key="id"
         row-class="career-list-table-row"
         @row-click="handleRowClick"
@@ -118,20 +118,20 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { AchievementStatus } from '@/types/achievement-types';
+import { ExperienceStatus } from '@/types/experience-types';
 import type {
-  TAchievement,
-  TAchievementListParams,
+  TExperience,
+  TExperienceListParams,
   SortDirection,
-  AchievementSortKey,
-} from '~/api/achievement/types';
-import { fetchAchievements } from '~/api/achievement/api';
+  ExperienceSortKey,
+} from '~/api/experience/types';
+import { fetchExperiences } from '~/api/experience/api';
 import Table from '@/components/organisms/Table/Table.vue';
 import Select from '@/components/atoms/Select/Select.vue';
 import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import { FormSize, FormVariant, ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
-import { achievementColumns } from '@/columns/achievement';
+import { experienceColumns } from '@/columns/experience';
 
 definePageMeta({
   layout: 'default',
@@ -146,7 +146,7 @@ const stats = ref({
 });
 
 // Sort 옵션
-const sortOption = ref<AchievementSortKey>('UPDATED_AT');
+const sortOption = ref<ExperienceSortKey>('UPDATED_AT');
 const sortDirection = ref<SortDirection>('DESC');
 
 // Select 옵션 목록
@@ -155,12 +155,12 @@ const sortOptions: TSelectItem[] = [
   { title: '프로젝트 기간', value: 'DURATION_START' },
 ];
 
-// 성과 목록 데이터
-const achievements = ref<TAchievement[]>([]);
+// 경험 목록 데이터
+const experiences = ref<TExperience[]>([]);
 const isLoading = ref(false);
 
 // API 파라미터 computed
-const apiParams = computed<TAchievementListParams>(() => {
+const apiParams = computed<TExperienceListParams>(() => {
   return {
     p: 1,
     size: 100, // 전체 조회
@@ -174,19 +174,19 @@ const toggleSortDirection = () => {
   sortDirection.value = sortDirection.value === 'DESC' ? 'ASC' : 'DESC';
 };
 
-// 성과 목록 조회
-const loadAchievements = async () => {
+// 경험 목록 조회
+const loadExperiences = async () => {
   isLoading.value = true;
   try {
-    const { data, error } = await fetchAchievements(apiParams.value);
+    const { data, error } = await fetchExperiences(apiParams.value);
 
     if (error) {
-      console.error('성과 목록 조회 실패:', error);
+      console.error('경험 목록 조회 실패:', error);
       return;
     }
 
     if (data) {
-      achievements.value = data.list;
+      experiences.value = data.list;
       stats.value.total = data.total;
     }
   } finally {
@@ -195,11 +195,11 @@ const loadAchievements = async () => {
 };
 
 // 초기 로드
-loadAchievements();
+loadExperiences();
 
 // sortOption, sortDirection 변경 시 재조회
 watch([sortOption, sortDirection], () => {
-  loadAchievements();
+  loadExperiences();
 });
 
 const handleRegister = () => {
@@ -222,21 +222,21 @@ const handleExport = () => {
 };
 
 // Part3 테이블 관련 함수
-const handleRowClick = (row: TAchievement) => {
+const handleRowClick = (row: TExperience) => {
   navigateTo(`/career/${row.id}`);
 };
 
 const getStatusDisplay = (status: string) => {
-  if (status === AchievementStatus.DRAFT) return '작성중';
-  if (status === AchievementStatus.PUBLISHED) return '완료';
-  if (status === AchievementStatus.ARCHIVED) return '보관';
+  if (status === ExperienceStatus.DRAFT) return '작성중';
+  if (status === ExperienceStatus.PUBLISHED) return '완료';
+  if (status === ExperienceStatus.ARCHIVED) return '보관';
   return status;
 };
 
 const getStatusClass = (status: string) => {
-  if (status === AchievementStatus.DRAFT) return 'status-draft';
-  if (status === AchievementStatus.PUBLISHED) return 'status-published';
-  if (status === AchievementStatus.ARCHIVED) return 'status-archived';
+  if (status === ExperienceStatus.DRAFT) return 'status-draft';
+  if (status === ExperienceStatus.PUBLISHED) return 'status-published';
+  if (status === ExperienceStatus.ARCHIVED) return 'status-archived';
   return '';
 };
 </script>

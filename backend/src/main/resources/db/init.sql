@@ -15,12 +15,12 @@ create table app_user
 alter table app_user
     owner to root;
 
-create table achievements
+create table experiences
 (
     id                 uuid        default gen_random_uuid()          not null
         primary key,
     user_id            uuid                                           not null
-        constraint achievements_app_user_id_fk
+        constraint experiences_app_user_id_fk
             references app_user,
     title              text                                           not null,
     org_name           text,
@@ -37,47 +37,47 @@ create table achievements
     goal_summary       text
 );
 
-comment on column achievements.title is '제목';
+comment on column experiences.title is '제목';
 
-comment on column achievements.org_name is '소속';
+comment on column experiences.org_name is '소속';
 
-comment on column achievements.duration_start is '기간 시작';
+comment on column experiences.duration_start is '기간 시작';
 
-comment on column achievements.duration_end is '기간 종료';
+comment on column experiences.duration_end is '기간 종료';
 
-comment on column achievements.impact_summary is '핵심 성과 요약';
+comment on column experiences.impact_summary is '핵심 성과 요약';
 
-comment on column achievements.status is '상태';
+comment on column experiences.status is '상태';
 
-comment on column achievements.skills is '기술 목록';
+comment on column experiences.skills is '기술 목록';
 
-comment on column achievements.role_title is '역할';
+comment on column experiences.role_title is '역할';
 
-comment on column achievements.work_type is '일의 유형';
+comment on column experiences.work_type is '일의 유형';
 
-comment on column achievements.contribution_level is '기여 수준';
+comment on column experiences.contribution_level is '기여 수준';
 
-comment on column achievements.goal_summary is '목표 요약';
+comment on column experiences.goal_summary is '목표 요약';
 
-alter table achievements
+alter table experiences
     owner to root;
 
-create table achievement_sections
+create table experience_sections
 (
-    id             uuid        default gen_random_uuid()         not null
+    id            uuid        default gen_random_uuid()         not null
         primary key,
-    achievement_id uuid                                          not null
-        references achievements
+    experience_id uuid                                          not null
+        references experiences
             on delete cascade,
-    kind           varchar(20) default 'NONE'::character varying not null,
-    title          varchar(255)                                  not null,
-    content        text                                          not null,
-    sort_order     integer     default 0                         not null,
-    created_at     timestamp   default now()                     not null,
-    updated_at     timestamp   default now()                     not null
+    kind          varchar(20) default 'NONE'::character varying not null,
+    title         varchar(255)                                  not null,
+    content       text                                          not null,
+    sort_order    integer     default 0                         not null,
+    created_at    timestamp   default now()                     not null,
+    updated_at    timestamp   default now()                     not null
 );
 
-alter table achievement_sections
+alter table experience_sections
     owner to root;
 
 create table user_action_log

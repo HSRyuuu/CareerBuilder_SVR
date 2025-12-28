@@ -150,9 +150,9 @@
           </div>
         </Card>
 
-        <!-- 핵심 성과 블록 -->
+        <!-- 핵심 경험 블록 -->
         <Card
-          title="핵심 성과"
+          title="핵심 경험"
           icon="mdi-star-circle"
           icon-color="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
         >
@@ -160,7 +160,7 @@
             <div class="form-field full-width">
               <TextArea
                 v-model="formData.impactSummary"
-                placeholder="이 경험을 통해 얻은 성과와 영향을 간략히 설명하세요"
+                placeholder="이 경험을 통해 얻은 경험와 영향을 간략히 설명하세요"
                 :rows="3"
               />
             </div>
@@ -345,7 +345,7 @@
             <div class="sidebar-section-item sidebar-section-fixed">
               <div class="sidebar-section-info">
                 <v-icon size="small" color="#f59e0b">mdi-star-circle</v-icon>
-                <span class="sidebar-section-title">핵심 성과</span>
+                <span class="sidebar-section-title">핵심 경험</span>
               </div>
             </div>
 
@@ -418,14 +418,14 @@ import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
 import DescriptionBox from '@/components/atoms/DescriptionBox/DescriptionBox.vue';
 import { ButtonVariant, CommonSize, FormSize } from '@/constants/enums/style-enum';
 import {
-  type AchievementSection,
-  AchievementSectionKind,
+  type ExperienceSection,
+  ExperienceSectionKind,
   SECTION_KIND_INFO,
   WORK_TYPE_INFO,
   CONTRIBUTION_LEVEL_INFO,
-} from '@/types/achievement-types';
-import { createAchievement } from '~/api/achievement/api';
-import type { TAchievementCreate } from '~/api/achievement/types';
+} from '@/types/experience-types';
+import { createExperience } from '~/api/experience/api';
+import type { TExperienceCreate } from '~/api/experience/types';
 
 const toast = useToast();
 
@@ -433,7 +433,7 @@ definePageMeta({
   layout: 'default',
 });
 
-interface FormSection extends AchievementSection {
+interface FormSection extends ExperienceSection {
   isEditingTitle?: boolean; // 제목 편집 모드 여부
   tempTitle?: string; // 편집 중인 임시 제목 (수정 전 원본 저장)
   showHelp?: boolean; // help description 표시 여부
@@ -496,7 +496,7 @@ let sectionCounter = 0;
 const addSection = () => {
   formData.value.sections.push({
     id: `new_section_${Date.now()}_${sectionCounter++}`,
-    kind: AchievementSectionKind.NONE,
+    kind: ExperienceSectionKind.NONE,
     title: '',
     content: '',
     sortOrder: formData.value.sections.length,
@@ -508,13 +508,13 @@ const addSection = () => {
 
 // 블록 유형에 따른 help 가져오기
 const getSectionHelp = (kind: string): string => {
-  const kindKey = kind as AchievementSectionKind;
+  const kindKey = kind as ExperienceSectionKind;
   return SECTION_KIND_INFO[kindKey]?.help || '내용을 입력하세요';
 };
 
 // 블록 유형에 따른 description 가져오기
 const getSectionDescription = (kind: string): string => {
-  const kindKey = kind as AchievementSectionKind;
+  const kindKey = kind as ExperienceSectionKind;
   return SECTION_KIND_INFO[kindKey]?.description || '';
 };
 
@@ -593,7 +593,7 @@ const handleSave = async () => {
   }
 
   // API 요청 데이터 변환
-  const requestBody: TAchievementCreate = {
+  const requestBody: TExperienceCreate = {
     title: formData.value.title,
     orgName: formData.value.orgName || undefined,
     roleTitle: formData.value.roleTitle || undefined,
@@ -613,7 +613,7 @@ const handleSave = async () => {
   };
 
   // API 호출
-  const { error } = await createAchievement(requestBody);
+  const { error } = await createExperience(requestBody);
 
   if (error) {
     console.error('API 에러:', error);

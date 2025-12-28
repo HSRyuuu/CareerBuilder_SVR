@@ -178,7 +178,7 @@
             <div class="form-field full-width">
               <TextArea
                 v-model="formData.goalSummary"
-                placeholder="이 성과를 통해 달성하고자 했던 목표를 작성하세요"
+                placeholder="이 경험를 통해 달성하고자 했던 목표를 작성하세요"
                 :rows="3"
                 :disabled="!isEditMode"
               />
@@ -186,9 +186,9 @@
           </div>
         </Card>
 
-        <!-- 핵심 성과 블록 -->
+        <!-- 핵심 경험 블록 -->
         <Card
-          title="핵심 성과"
+          title="핵심 경험"
           icon="mdi-star-circle"
           icon-color="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
         >
@@ -196,7 +196,7 @@
             <div class="form-field full-width">
               <TextArea
                 v-model="formData.impactSummary"
-                placeholder="이 성과의 핵심 내용과 영향을 간략히 설명하세요"
+                placeholder="이 경험의 핵심 내용과 영향을 간략히 설명하세요"
                 :rows="5"
                 :disabled="!isEditMode"
               />
@@ -394,7 +394,7 @@
             <div class="sidebar-section-item sidebar-section-fixed">
               <div class="sidebar-section-info">
                 <v-icon size="small" color="#f59e0b">mdi-star-circle</v-icon>
-                <span class="sidebar-section-title">핵심 성과</span>
+                <span class="sidebar-section-title">핵심 경험</span>
               </div>
             </div>
 
@@ -470,19 +470,19 @@ import { VueDraggableNext } from 'vue-draggable-next';
 // 2. 프로젝트 내부 import
 import { ButtonVariant, CommonSize, FormSize } from '@/constants/enums/style-enum';
 import {
-  AchievementSectionKind,
+  ExperienceSectionKind,
   SECTION_KIND_INFO,
   WORK_TYPE_INFO,
   CONTRIBUTION_LEVEL_INFO,
-} from '@/types/achievement-types';
+} from '@/types/experience-types';
 
 // 3. API/Composables import
-import { fetchAchievement, updateAchievement } from '~/api/achievement/api';
+import { fetchExperience, updateExperience } from '~/api/experience/api';
 
 // 4. Type import (type 키워드 사용)
 import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
-import type { AchievementSection } from '@/types/achievement-types';
-import type { TAchievementUpdate } from '~/api/achievement/types';
+import type { ExperienceSection } from '@/types/experience-types';
+import type { TExperienceUpdate } from '~/api/experience/types';
 
 // 5. 로컬 컴포넌트 import
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
@@ -495,7 +495,7 @@ import Select from '@/components/atoms/Select/Select.vue';
 import DescriptionBox from '@/components/atoms/DescriptionBox/DescriptionBox.vue';
 
 // 6. Type 선언 (Props, Emits용 타입 및 기타 인터페이스)
-interface FormSection extends AchievementSection {
+interface FormSection extends ExperienceSection {
   isEditingTitle?: boolean; // 제목 편집 모드 여부
   tempTitle?: string; // 편집 중인 임시 제목 (수정 전 원본 저장)
   showHelp?: boolean; // help description 표시 여부
@@ -527,8 +527,8 @@ definePageMeta({
 const route = useRoute();
 const toast = useToast();
 
-// 성과 ID
-const achievementId = computed(() => route.params.id as string);
+// 경험 ID
+const experienceId = computed(() => route.params.id as string);
 
 // 수정 모드 여부 (기본값: 상세 모드)
 const isEditMode = ref(false);
@@ -581,8 +581,8 @@ const pageTitleView = computed(() => {
 
 // 11. 함수 선언 (핸들러, 유틸리티 함수)
 // 데이터 로드 함수 (취소 시 재사용)
-const loadAchievementData = async () => {
-  const { data, error } = await fetchAchievement(achievementId.value);
+const loadExperienceData = async () => {
+  const { data, error } = await fetchExperience(experienceId.value);
 
   if (error) {
     console.error('경험 조회 실패:', error);
@@ -618,7 +618,7 @@ const loadAchievementData = async () => {
 const addSection = () => {
   formData.value.sections.push({
     id: `new_section_${Date.now()}_${sectionCounter++}`, // 새 블록은 new_section_ 접두사
-    kind: AchievementSectionKind.NONE,
+    kind: ExperienceSectionKind.NONE,
     title: '',
     content: '',
     sortOrder: formData.value.sections.length,
@@ -630,13 +630,13 @@ const addSection = () => {
 
 // 블록 유형에 따른 help 가져오기
 const getSectionHelp = (kind: string): string => {
-  const kindKey = kind as AchievementSectionKind;
+  const kindKey = kind as ExperienceSectionKind;
   return SECTION_KIND_INFO[kindKey]?.help || '내용을 입력하세요';
 };
 
 // 블록 유형에 따른 description 가져오기
 const getSectionDescription = (kind: string): string => {
-  const kindKey = kind as AchievementSectionKind;
+  const kindKey = kind as ExperienceSectionKind;
   return SECTION_KIND_INFO[kindKey]?.description || '';
 };
 
@@ -710,7 +710,7 @@ const handleEnterEditMode = () => {
 
 // 취소 - API 재호출하여 초기값 복원
 const handleCancel = async () => {
-  await loadAchievementData();
+  await loadExperienceData();
   isEditMode.value = false;
 };
 
@@ -727,7 +727,7 @@ const handleSave = async () => {
   }
 
   // API 요청 데이터 변환
-  const requestBody: TAchievementUpdate = {
+  const requestBody: TExperienceUpdate = {
     title: formData.value.title,
     orgName: formData.value.orgName || undefined,
     roleTitle: formData.value.roleTitle || undefined,
@@ -748,7 +748,7 @@ const handleSave = async () => {
   };
 
   // API 호출
-  const { error } = await updateAchievement(achievementId.value, requestBody);
+  const { error } = await updateExperience(experienceId.value, requestBody);
 
   if (error) {
     console.error('경험 수정 실패:', error);
@@ -759,7 +759,7 @@ const handleSave = async () => {
   isEditMode.value = false;
 
   // 데이터 새로고침
-  await loadAchievementData();
+  await loadExperienceData();
 };
 
 // 목록으로 이동
@@ -769,7 +769,7 @@ const handleBack = () => {
 
 // 초기 데이터 로드
 onMounted(() => {
-  loadAchievementData();
+  loadExperienceData();
 });
 </script>
 

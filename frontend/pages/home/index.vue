@@ -76,9 +76,9 @@
           <h3 class="section-title">최근 등록한 경험</h3>
           <NuxtLink to="/career" class="view-all">전체보기</NuxtLink>
         </div>
-        <div v-if="recentAchievements.length > 0" class="activities-list">
+        <div v-if="recentExperiences.length > 0" class="activities-list">
           <div
-            v-for="item in recentAchievements"
+            v-for="item in recentExperiences"
             :key="item.id"
             class="activity-item"
             @click="navigateTo(`/career/${item.id}`)"
@@ -146,10 +146,10 @@ import { ref, onMounted } from 'vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 
 // 3. API/Composables import
-import { fetchAchievements, fetchAchievementStats } from '~/api/achievement/api';
+import { fetchExperiences, fetchExperienceStats } from '~/api/experience/api';
 
 // 4. Type import
-import type { TAchievement, TAchievementStats } from '~/api/achievement/types';
+import type { TExperience, TExperienceStats } from '~/api/experience/types';
 
 // 5. 로컬 컴포넌트 import
 import Button from '@/components/atoms/Button/Button.vue';
@@ -160,14 +160,14 @@ definePageMeta({
   layout: 'default',
 });
 
-const stats = ref<TAchievementStats | null>(null);
-const recentAchievements = ref<TAchievement[]>([]);
+const stats = ref<TExperienceStats | null>(null);
+const recentExperiences = ref<TExperience[]>([]);
 
 // 11. 함수 선언
 const loadDashboardData = async () => {
   const [statsRes, listRes] = await Promise.all([
-    fetchAchievementStats(),
-    fetchAchievements({ size: 5, sortKey: 'UPDATED_AT', sortDir: 'DESC' }),
+    fetchExperienceStats(),
+    fetchExperiences({ size: 5, sortKey: 'UPDATED_AT', sortDir: 'DESC' }),
   ]);
 
   if (statsRes.data) {
@@ -175,7 +175,7 @@ const loadDashboardData = async () => {
   }
 
   if (listRes.data) {
-    recentAchievements.value = listRes.data.list;
+    recentExperiences.value = listRes.data.list;
   }
 };
 
