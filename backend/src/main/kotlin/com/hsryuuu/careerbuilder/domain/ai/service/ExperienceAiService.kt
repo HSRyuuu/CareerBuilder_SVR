@@ -42,16 +42,30 @@ class ExperienceAiService(
         val prompt = template.render(variables)
 
         // AI 분석 요청
-        val response = chatClient.prompt()
+        val chatResponse = chatClient.prompt()
             .user { userSpec -> userSpec.text(prompt) }
             .call()
-            .content()
+            .chatResponse()
+        // 응답 내용
+        val responseContent = chatResponse?.result?.output?.content ?: ""
 
-        if (response.isNullOrBlank()) {
-             throw RuntimeException("AI Response is empty")
-        }
+        //  토큰 사용량(Usage) 정보 추출
+        val metadata = chatResponse?.metadata
+        val model= chatResponse?.metadata?.model
+        val usage = chatResponse?.metadata?.usage
+        val promptTokens = usage?.promptTokens ?: 0L     // 입력 토큰
+        val completionTokens = usage?.generationTokens ?: 0L // 출력 토큰
+        val totalTokens = usage?.totalTokens ?: 0L           // 총 토큰
+
+        println("metadata: $metadata")
+        println("model: $model")
+        println("usage: $usage")
+        println("Prompt Tokens: $promptTokens")
+        println("Completion Tokens: $completionTokens")
+        println("Total Tokens: $totalTokens")
+
 
         // 응답값 변환
-        return converter.convert(response)!!
+        return converter.convert(responseContent)!!
     }
 }
