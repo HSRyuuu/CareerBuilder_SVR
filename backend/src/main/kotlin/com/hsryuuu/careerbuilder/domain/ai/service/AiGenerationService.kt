@@ -16,21 +16,22 @@ class AiGenerationService(
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    fun analyzeExperience(experience: Experience): ChatResponse? {
-
+    fun analyzeExperience(experience: Experience): ChatResponse {
         log.info("[START] AI 경험분석 요청 | experienceId: ${experience.id}, title: ${experience.title}")
+
         // AI 응답 타입 정의
         val converter = BeanOutputConverter(ExperienceAnalysisResponse::class.java)
 
         // 프롬프트
-        val template = PromptTemplate(ExperiencePrompts.EXPERIENCE_ANALYSIS_PROMPT)
-        val variables = mapOf(
+        val variables: Map<String, Any> = mapOf(
             "title" to experience.title,
-            "impactSummary" to experience.impactSummary,
-            "goalSummary" to experience.goalSummary,
+            "impactSummary" to (experience.impactSummary ?: ""),
+            "goalSummary" to (experience.goalSummary ?: ""),
             "additionalSections" to experience.sections.joinToString("\n") { "- [${it.title} / id:(${it.id})] ${it.content}" },
             "format" to converter.format
         )
+
+        val template = PromptTemplate(ExperiencePrompts.EXPERIENCE_ANALYSIS_PROMPT)
         val prompt = template.render(variables)
 
         // AI 분석 요청
@@ -38,7 +39,12 @@ class AiGenerationService(
             .user { userSpec -> userSpec.text(prompt) }
             .call()
             .chatResponse()
-        log.info("AI 경험분석 요청 END | chatResponse: $chatResponse")
+
+
+        if (chatResponse == null) {
+            throw RuntimeException("AI Response is null")
+        }
+        log.info("AI 경험분석 응답 완료")
 
         return chatResponse
     }
