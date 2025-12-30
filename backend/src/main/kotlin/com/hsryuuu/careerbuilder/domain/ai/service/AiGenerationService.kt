@@ -21,6 +21,11 @@ class AiGenerationService(
 
         // AI 응답 타입 정의
         val converter = BeanOutputConverter(ExperienceAnalysisResponse::class.java)
+        var additionalSectionInfo = "추가 섹션 없음"
+        if (!experience.sections.isEmpty()) {
+            additionalSectionInfo =
+                experience.sections.joinToString("\n") { "- [${it.kind} / id:(${it.id})] ${it.content}" }
+        }
 
         // 프롬프트
         val variables: Map<String, Any> = mapOf(
@@ -30,7 +35,7 @@ class AiGenerationService(
             "category" to (experience.category?.name ?: "미지정"),
             "keyAchievements" to (experience.keyAchievements ?: ""),
             "goalSummary" to (experience.goalSummary ?: ""),
-            "additionalSections" to experience.sections.joinToString("\n") { "- [${it.kind} / id:(${it.id})] ${it.content}" },
+            "additionalSections" to additionalSectionInfo,
             "format" to converter.format
         )
 

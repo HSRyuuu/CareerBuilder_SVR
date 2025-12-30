@@ -1,9 +1,12 @@
 package com.hsryuuu.careerbuilder.domain.ai.model.entity
 
 import com.hsryuuu.careerbuilder.domain.ai.model.ExperienceAnalysisResponse
+import com.hsryuuu.careerbuilder.domain.ai.model.ScoreMetrics
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
 import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.UuidGenerator
+import org.hibernate.type.SqlTypes
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
@@ -23,6 +26,13 @@ class AiExperienceAnalysis(
     @Column(name = "experience_id", nullable = false)
     val experienceId: UUID,
 
+    @Column(name = "total_score")
+    val totalScore: Int,
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "score_metrics", columnDefinition = "jsonb")
+    val scoreMetrics: ScoreMetrics? = null,
+
     @Column(name = "overall_summary", columnDefinition = "TEXT")
     var overallSummary: String? = null,
 
@@ -35,11 +45,11 @@ class AiExperienceAnalysis(
     @Column(name = "goal_improved_content", columnDefinition = "TEXT")
     var goalImprovedContent: String? = null,
 
-    @Column(name = "impact_feedback", columnDefinition = "TEXT")
-    var impactFeedback: String? = null,
+    @Column(name = "achievement_feedback", columnDefinition = "TEXT")
+    var achievementFeedback: String? = null,
 
-    @Column(name = "impact_improved_content", columnDefinition = "TEXT")
-    var impactImprovedContent: String? = null,
+    @Column(name = "achievement_improved_content", columnDefinition = "TEXT")
+    var achievementImprovedContent: String? = null,
 
     @Column(name = "recommended_category", length = 30)
     @Enumerated(EnumType.STRING)
@@ -69,17 +79,19 @@ class AiExperienceAnalysis(
             val analysis = AiExperienceAnalysis(
                 requestId = requestId,
                 experienceId = experienceId,
+                totalScore = response.totalScore,
+                scoreMetrics = response.scoreMetrics,
                 overallSummary = response.overallSummary,
                 overallFeedback = response.overallFeedback,
                 goalFeedback = response.goalImprovement.feedback,
                 goalImprovedContent = response.goalImprovement.improvedContent,
-                impactFeedback = response.impactImprovement.feedback,
-                impactImprovedContent = response.impactImprovement.improvedContent,
+                achievementFeedback = response.achievementImprovement.feedback,
+                achievementImprovedContent = response.achievementImprovement.improvedContent,
                 recommendedCategory = response.recommendedCategory,
-                recommendedKeywords = response.recommendedKeywords.joinToString(",")
+                recommendedKeywords = response.recommendedKeywords?.joinToString(",")
             )
 
-            response.sectionImprovements.forEach { improvement ->
+            response.sectionImprovements?.forEach { improvement ->
                 val sectionAnalysis = AiExperienceSectionAnalysis.create(analysis, improvement)
                 analysis.addSection(sectionAnalysis)
             }

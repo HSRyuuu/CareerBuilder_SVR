@@ -6,22 +6,35 @@ import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
 import java.util.*
 
 data class ExperienceAnalysisResponse(
+
     // 1. 경험 전체 요약 및 피드백
-    val overallSummary: String,
-    val overallFeedback: String,
+    val overallSummary: String?,
+    val overallFeedback: String?,
 
     // 2. 핵심 요약(목표) 피드백 및 수정
     val goalImprovement: ImprovementDetail,
 
     // 3. 핵심 성과 피드백 및 수정
-    val impactImprovement: ImprovementDetail,
+    val achievementImprovement: ImprovementDetail,
 
     // 4. 각 섹션별 피드백 및 수정 (STAR/PAR 등 적용)
-    val sectionImprovements: List<SectionImprovement>,
+    val sectionImprovements: List<SectionImprovement>?,
 
     // 5. 메타데이터 추천
     val recommendedCategory: WorkCategory? = null,
-    val recommendedKeywords: List<String>
+    val recommendedKeywords: List<String>?,
+
+    // 6. 총점
+    val totalScore: Int,
+    val scoreMetrics: ScoreMetrics,
+)
+
+
+data class ScoreMetrics(
+    val specificity: Int, // 구체성
+    val resultOriented: Int, // 성과 중심
+    val logicalFlow: Int, // 논리적 연결
+    val jobRelevance: Int,
 )
 
 data class ImprovementDetail(
