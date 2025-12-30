@@ -1,7 +1,9 @@
 package com.hsryuuu.careerbuilder.domain.ai.model
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import java.util.UUID
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.SectionKind
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
+import java.util.*
 
 data class ExperienceAnalysisResponse(
     // 1. 경험 전체 요약 및 피드백
@@ -17,7 +19,8 @@ data class ExperienceAnalysisResponse(
     // 4. 각 섹션별 피드백 및 수정 (STAR/PAR 등 적용)
     val sectionImprovements: List<SectionImprovement>,
 
-    // 추가: 추천 키워드
+    // 5. 메타데이터 추천
+    val recommendedCategory: WorkCategory? = null,
     val recommendedKeywords: List<String>
 )
 
@@ -33,6 +36,7 @@ data class SectionImprovement(
     val improvedContent: String,
     val reasoning: String,
     val method: String, // "STAR", "PAR", "SHORT"
+    val suggestedKind: SectionKind? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     val breakdown: MethodBreakdown?
 )
@@ -40,7 +44,9 @@ data class SectionImprovement(
 data class MethodBreakdown(
     val situation: String? = null,
     val task: String? = null,
-    val problem: String? = null,
     val action: String? = null,
-    val result: String? = null
+    val result: String? = null,
+    val decision: String? = null,
+    val troubleshooting: String? = null,
+    val learning: String? = null
 )

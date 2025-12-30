@@ -84,19 +84,19 @@ class ExperienceServiceTest {
             skills = "Kotlin, Spring Boot",
             sections = listOf(
                 CreateSectionRequest(
-                    kind = SectionKind.CONTEXT,
+                    kind = SectionKind.SITUATION,
                     title = "배경",
                     content = "프로젝트 배경 설명",
                     sortOrder = 0
                 ),
                 CreateSectionRequest(
-                    kind = SectionKind.ACTION,
+                    kind = SectionKind.TASK,
                     title = "실행 내용",
                     content = "프로젝트 실행 내용",
                     sortOrder = 1
                 ),
                 CreateSectionRequest(
-                    kind = SectionKind.RESULT,
+                    kind = SectionKind.ACHIEVEMENT,
                     title = "결과",
                     content = "프로젝트 결과",
                     sortOrder = 2

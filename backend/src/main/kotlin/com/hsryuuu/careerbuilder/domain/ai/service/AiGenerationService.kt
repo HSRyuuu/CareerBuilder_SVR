@@ -25,9 +25,12 @@ class AiGenerationService(
         // 프롬프트
         val variables: Map<String, Any> = mapOf(
             "title" to experience.title,
+            "background" to (experience.background ?: "미입력"),
+            "role" to (experience.role ?: "미입력"),
+            "category" to (experience.category?.name ?: "미지정"),
             "keyAchievements" to (experience.keyAchievements ?: ""),
             "goalSummary" to (experience.goalSummary ?: ""),
-            "additionalSections" to experience.sections.joinToString("\n") { "- [${it.title} / id:(${it.id})] ${it.content}" },
+            "additionalSections" to experience.sections.joinToString("\n") { "- [${it.kind} / id:(${it.id})] ${it.content}" },
             "format" to converter.format
         )
 

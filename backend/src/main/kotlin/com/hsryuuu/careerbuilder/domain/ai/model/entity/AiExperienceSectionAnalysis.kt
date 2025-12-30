@@ -1,8 +1,12 @@
 package com.hsryuuu.careerbuilder.domain.ai.model.entity
 
+import com.hsryuuu.careerbuilder.domain.ai.model.MethodBreakdown
 import com.hsryuuu.careerbuilder.domain.ai.model.SectionImprovement
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.SectionKind
 import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.UuidGenerator
+import org.hibernate.type.SqlTypes
 import java.time.LocalDateTime
 import java.util.*
 
@@ -20,7 +24,11 @@ class AiExperienceSectionAnalysis(
     @Column(name = "section_id", nullable = false)
     val sectionId: UUID,
 
-    @Column(length = 10)
+    @Column(name = "suggested_kind", length = 30)
+    @Enumerated(EnumType.STRING)
+    val suggestedKind: SectionKind? = null,
+
+    @Column(length = 20)
     val method: String? = null, // STAR, PAR, SHORT
 
     @Column(columnDefinition = "TEXT")
@@ -32,21 +40,9 @@ class AiExperienceSectionAnalysis(
     @Column(columnDefinition = "TEXT")
     val reasoning: String? = null,
 
-    // STAR/PAR Breakdown
-    @Column(name = "breakdown_situation", columnDefinition = "TEXT")
-    val breakdownSituation: String? = null,
-
-    @Column(name = "breakdown_task", columnDefinition = "TEXT")
-    val breakdownTask: String? = null,
-
-    @Column(name = "breakdown_problem", columnDefinition = "TEXT")
-    val breakdownProblem: String? = null,
-
-    @Column(name = "breakdown_action", columnDefinition = "TEXT")
-    val breakdownAction: String? = null,
-
-    @Column(name = "breakdown_result", columnDefinition = "TEXT")
-    val breakdownResult: String? = null,
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "method_breakdown", columnDefinition = "jsonb")
+    val methodBreakdown: MethodBreakdown? = null,
 
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
@@ -59,15 +55,12 @@ class AiExperienceSectionAnalysis(
             return AiExperienceSectionAnalysis(
                 analysis = analysis,
                 sectionId = improvement.sectionId,
+                suggestedKind = improvement.suggestedKind,
                 method = improvement.method,
                 feedback = improvement.feedback,
                 improvedContent = improvement.improvedContent,
                 reasoning = improvement.reasoning,
-                breakdownSituation = improvement.breakdown?.situation,
-                breakdownTask = improvement.breakdown?.task,
-                breakdownProblem = improvement.breakdown?.problem,
-                breakdownAction = improvement.breakdown?.action,
-                breakdownResult = improvement.breakdown?.result
+                methodBreakdown = improvement.breakdown
             )
         }
     }

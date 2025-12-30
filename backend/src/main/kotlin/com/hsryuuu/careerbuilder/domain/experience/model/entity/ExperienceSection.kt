@@ -68,4 +68,9 @@ enum class SectionKind(
     ACHIEVEMENT("성과 및 결과"),     // Result -> Achievement
     LEARNING("회고 및 성장"),       // Learning + Feedback 통합
     ARTIFACT("증빙 자료/링크");
+
+    companion object {
+        val allNamesAndDisplays: String
+            get() = entries.joinToString { "${it.name}(${it.display})" }
+    }
 }

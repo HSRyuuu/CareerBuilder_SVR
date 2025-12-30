@@ -1,6 +1,7 @@
 package com.hsryuuu.careerbuilder.domain.ai.model.entity
 
 import com.hsryuuu.careerbuilder.domain.ai.model.ExperienceAnalysisResponse
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import org.springframework.data.annotation.CreatedDate
@@ -40,6 +41,10 @@ class AiExperienceAnalysis(
     @Column(name = "impact_improved_content", columnDefinition = "TEXT")
     var impactImprovedContent: String? = null,
 
+    @Column(name = "recommended_category", length = 30)
+    @Enumerated(EnumType.STRING)
+    var recommendedCategory: WorkCategory? = null,
+
     @Column(name = "recommended_keywords", columnDefinition = "TEXT")
     var recommendedKeywords: String? = null, // Comma separated
 
@@ -70,6 +75,7 @@ class AiExperienceAnalysis(
                 goalImprovedContent = response.goalImprovement.improvedContent,
                 impactFeedback = response.impactImprovement.feedback,
                 impactImprovedContent = response.impactImprovement.improvedContent,
+                recommendedCategory = response.recommendedCategory,
                 recommendedKeywords = response.recommendedKeywords.joinToString(",")
             )
 
