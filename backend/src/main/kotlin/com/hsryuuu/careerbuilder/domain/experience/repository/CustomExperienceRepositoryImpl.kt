@@ -33,7 +33,7 @@ class CustomExperienceRepositoryImpl(
     ): Page<Experience> {
         // 검색 조건 생성
         val searchCondition = createSearchCondition(searchKeyword)
-        val statusCondition = status?.let{ experience.status.eq(status) }
+        val statusCondition = status?.let { experience.status.eq(status) }
         // 정렬 조건 생성
         val orderSpecifiers = createOrderSpecifiers(sortKey, sortDirection)
 
@@ -80,7 +80,7 @@ class CustomExperienceRepositoryImpl(
                 ExperienceStatus.COMPLETED -> completed = count
                 ExperienceStatus.ANALYZING -> analyzing = count
                 ExperienceStatus.ANALYZED -> analyzed = count
-                null -> {}
+                else -> {}
             }
         }
 

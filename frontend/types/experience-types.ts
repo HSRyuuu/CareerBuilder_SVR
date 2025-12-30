@@ -52,6 +52,8 @@ export interface ExperienceFormData {
 export enum ExperienceStatus {
   INCOMPLETE = 'INCOMPLETE', // 보완 필요
   COMPLETED = 'COMPLETED', // 작성 완료
+  MODIFIED = 'MODIFIED', // 수정 완료
+  AI_REQUEST = 'AI_REQUEST', // AI 요청
   ANALYZING = 'ANALYZING', // AI 분석 중
   ANALYZED = 'ANALYZED', // 분석 완료
 }
@@ -62,6 +64,8 @@ export enum ExperienceStatus {
 export const STATUS_INFO: Record<ExperienceStatus, { display: string; color: string }> = {
   [ExperienceStatus.INCOMPLETE]: { display: '보완 필요', color: 'status-incomplete' },
   [ExperienceStatus.COMPLETED]: { display: '작성 완료', color: 'status-completed' },
+  [ExperienceStatus.MODIFIED]: { display: '수정 완료', color: 'status-completed' },
+  [ExperienceStatus.AI_REQUEST]: { display: '분석 요청됨', color: 'status-completed' },
   [ExperienceStatus.ANALYZING]: { display: 'AI 분석 중', color: 'status-analyzing' },
   [ExperienceStatus.ANALYZED]: { display: '분석 완료', color: 'status-analyzed' },
 };
