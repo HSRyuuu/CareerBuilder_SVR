@@ -7,10 +7,11 @@
   background: var(--bg-glass);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  padding: 20px 26px; // Scaled padding
-  margin: 0 0 20px; // No negative margin needed
-  border-bottom: 1px solid var(--border-color); // Full width divider
-  width: 100%;
+  padding: 16px 26px; // Scaled padding
+  margin: -26px -26px 20px; // Counteract page padding to stay full width
+  width: calc(100% + 52px);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0; // Full width header should have no radius
 
   // Old ::after divider removed in favor of border-bottom or kept if specific gradient needed
   // Using border-bottom for simplicity as per full-width requirement

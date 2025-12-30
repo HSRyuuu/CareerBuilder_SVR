@@ -1,6 +1,6 @@
 <template>
-  <div class="content-wrapper">
-    <div class="home-page">
+  <div class="home-page">
+    <div class="content-wrapper">
       <!-- 상단 환영 문구 및 퀵 액션 -->
       <div class="home-hero-section">
         <div class="hero-content">

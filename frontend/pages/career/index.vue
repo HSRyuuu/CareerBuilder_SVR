@@ -1,6 +1,6 @@
 <template>
-  <div class="content-wrapper">
-    <div class="career-list-page">
+  <div class="career-list-page">
+    <div class="content-wrapper">
       <!-- Part1: 카드 그리드 -->
       <div class="career-list-cards-grid">
         <div class="career-list-info-card" @click="handleAiAnalysis">

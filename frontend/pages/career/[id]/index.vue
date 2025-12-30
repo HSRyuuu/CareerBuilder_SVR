@@ -199,8 +199,8 @@ onMounted(() => {
 <style lang="scss" scoped>
 .career-detail-page {
   min-height: 100vh;
-  margin: 0; // Removed negative margin
-  padding: 0;
+  margin: 0;
+  padding: 26px; // Apply padding to all sides
   display: flex;
   flex-direction: column;
 }
