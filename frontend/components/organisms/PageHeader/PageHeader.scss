@@ -2,33 +2,33 @@
 
 .page-header {
   position: sticky;
-  top: -32px; // layout-content의 padding 만큼 위로
+  top: 0; // Stick to top of layout-main
   z-index: 10;
   background: var(--bg-glass);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  padding: 32px 0 32px;
-  margin: -32px -32px 32px; // layout-content padding에 맞춤
-  padding-left: 32px;
-  padding-right: 32px;
-  border-radius: 16px 16px 0 0; // 상단만 둥글게
+  padding: 20px 26px; // Scaled padding
+  margin: 0 0 20px; // No negative margin needed
+  border-bottom: 1px solid var(--border-color); // Full width divider
+  width: 100%;
 
-  // 하단 구분선
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 32px;
-    right: 32px;
-    height: 1px;
-    background: var(--header-divider);
-  }
+  // Old ::after divider removed in favor of border-bottom or kept if specific gradient needed
+  // Using border-bottom for simplicity as per full-width requirement
 
   &__content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: 20px; // 24px * 0.8
+    max-width: 1120px; // Optional: Center content if desired, or keep full width.
+    // Given the request "PageHeader taking full width", keeping content full width or centered?
+    // Usually header content aligns with page content.
+    // Let's add margin auto to align with .content-wrapper if needed, but the background should be full.
+    // We'll leave it full width for now, user can center if asked.
+    // Actually, to match the "content-wrapper" alignment, we might want the TEXT to be centered?
+    // "PageHeader ... occupying the full width left and right" usually means the BAR background.
+    // I will add a container inside for content if I want to align it with page content, but existing code didn't have it.
+    // I will keep it simple.
   }
 
   &__text {
@@ -37,7 +37,7 @@
   }
 
   &__title {
-    font-size: 28px;
+    font-size: 22px; // 28px * 0.8
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
@@ -46,16 +46,16 @@
   }
 
   &__subtitle {
-    font-size: 14px;
+    font-size: 11px; // 14px * 0.8
     color: var(--text-secondary);
-    margin: 6px 0 0 0;
+    margin: 5px 0 0 0;
     line-height: 1.5;
   }
 
   &__actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px; // 12px * 0.8
     flex-shrink: 0;
   }
 }
@@ -63,31 +63,26 @@
 // 반응형 대응
 @media (max-width: 768px) {
   .page-header {
-    padding: 20px 16px 16px;
-    margin: -24px -24px 20px;
+    padding: 16px 16px; // Scaled
+    margin: 0 0 16px;
 
     &__content {
       flex-direction: column;
       align-items: flex-start;
-      gap: 16px;
+      gap: 12px;
     }
 
     &__title {
-      font-size: 24px;
+      font-size: 19px; // Scaled
     }
 
     &__subtitle {
-      font-size: 13px;
+      font-size: 10px; // Scaled
     }
 
     &__actions {
       width: 100%;
       justify-content: flex-end;
-    }
-
-    &::after {
-      left: 16px;
-      right: 16px;
     }
   }
 }

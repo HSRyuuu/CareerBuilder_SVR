@@ -1,122 +1,124 @@
 <template>
-  <div class="career-list-page">
-    <!-- Part1: 카드 그리드 -->
-    <div class="career-list-cards-grid">
-      <div class="career-list-info-card" @click="handleAiAnalysis">
-        <div class="career-list-card-icon ai-analysis">
-          <v-icon color="white">mdi-brain</v-icon>
-        </div>
-        <h3 class="career-list-card-title">AI 커리어 분석</h3>
-        <p class="career-list-card-description">
-          AI가 당신의 커리어를 분석하고 인사이트를 제공합니다
-        </p>
-        <div class="career-list-card-action-link">분석 시작 →</div>
-      </div>
-
-      <div class="career-list-info-card" @click="handleDashboard">
-        <div class="career-list-card-icon dashboard">
-          <v-icon color="white">mdi-chart-box</v-icon>
-        </div>
-        <h3 class="career-list-card-title">현재 분석 결과 대시보드</h3>
-        <p class="career-list-card-description">커리어 분석 결과를 한눈에 확인하세요</p>
-        <div class="career-list-card-action-link">대시보드 →</div>
-      </div>
-
-      <div class="career-list-info-card" @click="handleExport">
-        <div class="career-list-card-icon export">
-          <v-icon color="white">mdi-download</v-icon>
-        </div>
-        <h3 class="career-list-card-title">내 전체 커리어 Export</h3>
-        <p class="career-list-card-description">전체 커리어 데이터를 다운로드 받으세요</p>
-        <div class="career-list-card-action-link">Export →</div>
-      </div>
-    </div>
-
-    <!-- Part2: 통계 섹션 -->
-    <div class="career-list-stats-section">
-      <div class="career-list-stat-item">
-        <div class="career-list-stat-number">{{ stats.total }}</div>
-        <div class="career-list-stat-label">전체 경험</div>
-      </div>
-      <div class="career-list-stat-divider" />
-      <div class="career-list-stat-item">
-        <div class="career-list-stat-number">{{ stats.completed }}</div>
-        <div class="career-list-stat-label">작성 완료</div>
-      </div>
-      <div class="career-list-stat-divider" />
-      <div class="career-list-stat-item">
-        <div class="career-list-stat-number">{{ stats.incomplete }}</div>
-        <div class="career-list-stat-label">보완 필요</div>
-      </div>
-      <div class="career-list-stat-divider" />
-      <div class="career-list-stat-item">
-        <div class="career-list-stat-number">{{ stats.analyzed }}</div>
-        <div class="career-list-stat-label">AI 분석 완료</div>
-      </div>
-    </div>
-
-    <!-- Part3: 경험 목록 테이블 -->
-    <div class="career-list-table-section">
-      <div class="career-list-table-header">
-        <h2 class="career-list-section-title">내 경험 목록</h2>
-        <Button
-          :variant="ButtonVariant.Primary"
-          :size="CommonSize.Medium"
-          :round="true"
-          @click="handleRegister"
-        >
-          <v-icon size="small">mdi-plus</v-icon>
-          경험 등록
-        </Button>
-      </div>
-      
-      <div class="career-list-filter-bar">
-        <div class="career-list-filter-item">
-          <label class="career-list-filter-label">상태:</label>
-          <Select
-            v-model="statusFilter"
-            :items="statusOptions"
-            :size="FormSize.Compact"
-            :variant="FormVariant.Outlined"
-            class="career-list-status-select"
-          />
+  <div class="content-wrapper">
+    <div class="career-list-page">
+      <!-- Part1: 카드 그리드 -->
+      <div class="career-list-cards-grid">
+        <div class="career-list-info-card" @click="handleAiAnalysis">
+          <div class="career-list-card-icon ai-analysis">
+            <v-icon color="white">mdi-brain</v-icon>
+          </div>
+          <h3 class="career-list-card-title">AI 커리어 분석</h3>
+          <p class="career-list-card-description">
+            AI가 당신의 커리어를 분석하고 인사이트를 제공합니다
+          </p>
+          <div class="career-list-card-action-link">분석 시작 →</div>
         </div>
 
-        <div class="career-list-sort-wrapper">
-          <label class="career-list-sort-label">정렬:</label>
-          <Select
-            v-model="sortOption"
-            :items="sortOptions"
-            :size="FormSize.Compact"
-            :variant="FormVariant.Outlined"
-            class="career-list-sort-select-component"
-          />
-          <button
-            :title="sortDirection === 'DESC' ? '내림차순' : '오름차순'"
-            class="career-list-sort-direction-button"
-            @click="toggleSortDirection"
+        <div class="career-list-info-card" @click="handleDashboard">
+          <div class="career-list-card-icon dashboard">
+            <v-icon color="white">mdi-chart-box</v-icon>
+          </div>
+          <h3 class="career-list-card-title">현재 분석 결과 대시보드</h3>
+          <p class="career-list-card-description">커리어 분석 결과를 한눈에 확인하세요</p>
+          <div class="career-list-card-action-link">대시보드 →</div>
+        </div>
+
+        <div class="career-list-info-card" @click="handleExport">
+          <div class="career-list-card-icon export">
+            <v-icon color="white">mdi-download</v-icon>
+          </div>
+          <h3 class="career-list-card-title">내 전체 커리어 Export</h3>
+          <p class="career-list-card-description">전체 커리어 데이터를 다운로드 받으세요</p>
+          <div class="career-list-card-action-link">Export →</div>
+        </div>
+      </div>
+
+      <!-- Part2: 통계 섹션 -->
+      <div class="career-list-stats-section">
+        <div class="career-list-stat-item">
+          <div class="career-list-stat-number">{{ stats.total }}</div>
+          <div class="career-list-stat-label">전체 경험</div>
+        </div>
+        <div class="career-list-stat-divider" />
+        <div class="career-list-stat-item">
+          <div class="career-list-stat-number">{{ stats.completed }}</div>
+          <div class="career-list-stat-label">작성 완료</div>
+        </div>
+        <div class="career-list-stat-divider" />
+        <div class="career-list-stat-item">
+          <div class="career-list-stat-number">{{ stats.incomplete }}</div>
+          <div class="career-list-stat-label">보완 필요</div>
+        </div>
+        <div class="career-list-stat-divider" />
+        <div class="career-list-stat-item">
+          <div class="career-list-stat-number">{{ stats.analyzed }}</div>
+          <div class="career-list-stat-label">AI 분석 완료</div>
+        </div>
+      </div>
+
+      <!-- Part3: 경험 목록 테이블 -->
+      <div class="career-list-table-section">
+        <div class="career-list-table-header">
+          <h2 class="career-list-section-title">내 경험 목록</h2>
+          <Button
+            :variant="ButtonVariant.Primary"
+            :size="CommonSize.Medium"
+            :round="true"
+            @click="handleRegister"
           >
-            <v-icon>
-              {{ sortDirection === 'DESC' ? 'mdi-sort-descending' : 'mdi-sort-ascending' }}
-            </v-icon>
-          </button>
+            <v-icon size="small">mdi-plus</v-icon>
+            경험 등록
+          </Button>
         </div>
-      </div>
+        
+        <div class="career-list-filter-bar">
+          <div class="career-list-filter-item">
+            <label class="career-list-filter-label">상태:</label>
+            <Select
+              v-model="statusFilter"
+              :items="statusOptions"
+              :size="FormSize.Compact"
+              :variant="FormVariant.Outlined"
+              class="career-list-status-select"
+            />
+          </div>
 
-      <Table
-        :columns="experienceColumns"
-        :rows="experiences"
-        row-key="id"
-        row-class="career-list-table-row"
-        @row-click="handleRowClick"
-      >
-        <!-- 상태 셀만 커스텀 렌더링 -->
-        <template #cell(status)="{ value }">
-          <span :class="['career-list-status-chip', getStatusClass(value)]">
-            {{ getStatusDisplay(value) }}
-          </span>
-        </template>
-      </Table>
+          <div class="career-list-sort-wrapper">
+            <label class="career-list-sort-label">정렬:</label>
+            <Select
+              v-model="sortOption"
+              :items="sortOptions"
+              :size="FormSize.Compact"
+              :variant="FormVariant.Outlined"
+              class="career-list-sort-select-component"
+            />
+            <button
+              :title="sortDirection === 'DESC' ? '내림차순' : '오름차순'"
+              class="career-list-sort-direction-button"
+              @click="toggleSortDirection"
+            >
+              <v-icon>
+                {{ sortDirection === 'DESC' ? 'mdi-sort-descending' : 'mdi-sort-ascending' }}
+              </v-icon>
+            </button>
+          </div>
+        </div>
+
+        <Table
+          :columns="experienceColumns"
+          :rows="experiences"
+          row-key="id"
+          row-class="career-list-table-row"
+          @row-click="handleRowClick"
+        >
+          <!-- 상태 셀만 커스텀 렌더링 -->
+          <template #cell(status)="{ value }">
+            <span :class="['career-list-status-chip', getStatusClass(value)]">
+              {{ getStatusDisplay(value) }}
+            </span>
+          </template>
+        </Table>
+      </div>
     </div>
   </div>
 </template>

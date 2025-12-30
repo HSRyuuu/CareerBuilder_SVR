@@ -23,10 +23,12 @@
       </template>
     </PageHeader>
 
-    <ExperienceForm
-      v-model="formData"
-      :is-new="true"
-    />
+    <div class="content-wrapper">
+      <ExperienceForm
+        v-model="formData"
+        :is-new="true"
+      />
+    </div>
   </div>
 </template>
 
@@ -113,7 +115,7 @@ const handleCancel = () => {
 <style lang="scss" scoped>
 .career-register-page {
   min-height: 100vh;
-  margin: -32px;
+  margin: 0; // Removed negative margin
   padding: 0;
   display: flex;
   flex-direction: column;

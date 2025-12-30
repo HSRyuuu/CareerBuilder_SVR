@@ -2,8 +2,8 @@
 
 .card {
   background: var(--bg-primary);
-  border-radius: 20px;
-  padding: 28px 32px;
+  border-radius: 16px; // 20 -> 16
+  padding: 22px 26px; // 28 32 -> 22 26
   box-shadow: var(--card-shadow);
   border: 1px solid var(--border-color);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -18,14 +18,14 @@
   &__header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px; // 12 -> 10
+    margin-bottom: 16px; // 20 -> 16
   }
 
   &__icon-wrapper {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 28px; // 36 -> 28
+    height: 28px;
+    border-radius: 8px; // 10 -> 8
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,7 +34,7 @@
   }
 
   &__title {
-    font-size: 20px;
+    font-size: 16px; // 20 -> 16
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;

@@ -4,6 +4,7 @@ body {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 13px; // Scaled base font size
 }
 
 // Global Transition for Theme Switching
@@ -27,4 +28,5 @@ body {
   --dp-menu-background-color: var(--bg-primary);
   --dp-divider-color: var(--border-color);
   --dp-icon-color: var(--text-secondary);
+  --dp-font-size: 13px; // Datepicker font size
 }

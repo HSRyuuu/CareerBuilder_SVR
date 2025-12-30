@@ -3,12 +3,12 @@
 .cb-input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px; // 8 -> 6
   width: 100%;
 }
 
 .cb-input-label {
-  font-size: 14px;
+  font-size: 12px; // 14 -> 12
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -21,8 +21,8 @@
 .cb-input {
   width: 100%;
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 8px; // 10 -> 8
+  font-size: 12px; // 14 -> 12
   color: var(--text-primary);
   background: var(--bg-primary);
   transition: all 0.2s ease;
@@ -40,18 +40,18 @@
 
   // Sizes
   &--small {
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 6px 10px; // 8 12 -> 6 10
+    font-size: 11px; // 13 -> 11
   }
 
   &--medium {
-    padding: 12px 16px;
-    font-size: 14px;
+    padding: 10px 13px; // 12 16 -> 10 13
+    font-size: 12px; // 14 -> 12
   }
 
   &--large {
-    padding: 14px 18px;
-    font-size: 15px;
+    padding: 11px 15px; // 14 18 -> 11 15
+    font-size: 13px; // 15 -> 13
   }
 
   // States

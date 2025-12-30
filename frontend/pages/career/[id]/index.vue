@@ -49,14 +49,16 @@
       </template>
     </PageHeader>
 
-    <ExperienceForm
-      v-if="!isLoading"
-      v-model="formData"
-      v-model:is-edit-mode="isEditMode"
-      :is-new="false"
-    />
-    <div v-else class="loading-container">
-      <v-progress-circular indeterminate color="primary" />
+    <div class="content-wrapper">
+      <ExperienceForm
+        v-if="!isLoading"
+        v-model="formData"
+        v-model:is-edit-mode="isEditMode"
+        :is-new="false"
+      />
+      <div v-else class="loading-container">
+        <v-progress-circular indeterminate color="primary" />
+      </div>
     </div>
   </div>
 </template>
@@ -197,7 +199,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .career-detail-page {
   min-height: 100vh;
-  margin: -32px;
+  margin: 0; // Removed negative margin
   padding: 0;
   display: flex;
   flex-direction: column;
