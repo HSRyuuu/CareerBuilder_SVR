@@ -4,7 +4,7 @@
       <!-- Part1: 카드 그리드 -->
       <div class="career-list-cards-grid">
       
-        <div class="career-list-info-card ai-card" @click="handleAiAnalysisRequest">
+        <div class="career-list-info-card ai-card theme-purple" @click="handleAiAnalysisRequest">
           <div class="career-list-card-icon ai-analysis">
             <v-icon color="white">mdi-brain</v-icon>
           </div>
@@ -15,22 +15,24 @@
           <div class="career-list-card-action-link">분석 요청하기 →</div>
         </div>
 
-        <div class="career-list-info-card" @click="handleDashboard">
-          <div class="career-list-card-icon dashboard">
-            <v-icon color="white">mdi-chart-box</v-icon>
+        <div class="career-list-info-card ai-card theme-blue" @click="handleFeedback">
+          <div class="ai-card-tag">Coming Soon</div>
+          <div class="career-list-card-icon feedback">
+            <v-icon color="white">mdi-comment-check-outline</v-icon>
           </div>
-          <h3 class="career-list-card-title">현재 분석 결과 대시보드</h3>
-          <p class="career-list-card-description">커리어 분석 결과를 한눈에 확인하세요</p>
-          <div class="career-list-card-action-link">대시보드 →</div>
+          <h3 class="career-list-card-title">전체 커리어 피드백</h3>
+          <p class="career-list-card-description">경험 데이터를 바탕으로 커리어 방향성과 개선점을 제안받으세요</p>
+          <div class="career-list-card-action-link">피드백 보기 →</div>
         </div>
 
-        <div class="career-list-info-card" @click="handleExport">
-          <div class="career-list-card-icon export">
-            <v-icon color="white">mdi-download</v-icon>
+        <div class="career-list-info-card ai-card theme-emerald" @click="handleResumeCreate">
+          <div class="ai-card-tag">Coming Soon</div>
+          <div class="career-list-card-icon resume">
+            <v-icon color="white">mdi-file-document-edit-outline</v-icon>
           </div>
-          <h3 class="career-list-card-title">내 전체 커리어 Export</h3>
-          <p class="career-list-card-description">전체 커리어 데이터를 다운로드 받으세요</p>
-          <div class="career-list-card-action-link">Export →</div>
+          <h3 class="career-list-card-title">이력서 생성</h3>
+          <p class="career-list-card-description">내 경험을 바탕으로 직무 맞춤형 이력서를 자동 생성합니다</p>
+          <div class="career-list-card-action-link">이력서 생성 →</div>
         </div>
       </div>
 
@@ -186,12 +188,12 @@ const handleAiAnalysisRequest = () => {
   navigateTo('/career/analysis/exp');
 };
 
-const handleDashboard = () => {
-  console.log('현재 분석 결과 대시보드 클릭');
+const handleFeedback = () => {
+  useToast().warning('전체 커리어 피드백 기능 준비중입니다.');
 };
 
-const handleExport = () => {
-  console.log('내 전체 커리어 Export 클릭');
+const handleResumeCreate = () => {
+  useToast().warning('이력서 생성 기능 준비중입니다.');
 };
 
 // 테이블 관련 함수

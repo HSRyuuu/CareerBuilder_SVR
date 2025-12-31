@@ -41,7 +41,7 @@
             :variant="ButtonVariant.Secondary"
             :size="CommonSize.Medium"
             :round="true"
-            class="ai-special-btn mr-2"
+            class="ai-special-btn"
             @click="handleNavigateToAiEdit"
           >
             <v-icon size="small">mdi-robot-outline</v-icon>
@@ -52,7 +52,7 @@
             :variant="ButtonVariant.Secondary"
             :size="CommonSize.Medium"
             :round="true"
-            class="ai-request-btn mr-2"
+            class="ai-request-btn"
             @click="handleRequestAiAnalysis"
           >
             <v-icon size="small">mdi-sparkles</v-icon>

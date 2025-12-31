@@ -59,8 +59,17 @@
       <div class="table-section">
         <ExperienceTable
           :rows="experiences"
-          @row-click="handleRowClick"
+          :show-select-button="true"
+          select-button-label="분석 요청"
+          @select="handleSelect"
           @update:filters="handleFilterUpdate"
+        />
+
+        <!-- 분석 요청 모달 -->
+        <ExperienceAnalysisModal
+          v-model="showAnalysisModal"
+          :experience="selectedExperience"
+          @request="handleAnalysisRequest"
         />
 
         <div v-if="isLoading" class="loading-overlay">
@@ -77,6 +86,7 @@ import { ExperienceStatus } from '@/types/experience-types';
 import type { TExperience, TExperienceListParams, SortDirection, ExperienceSortKey } from '~/api/experience/types';
 import { fetchExperiences } from '~/api/experience/api';
 import ExperienceTable from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
+import ExperienceAnalysisModal from '@/components/organisms/ExperienceAnalysisModal/ExperienceAnalysisModal.vue';
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
 import Select from '@/components/atoms/Select/Select.vue';
 import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
@@ -100,6 +110,10 @@ const filters = ref<TExperienceTableFilters>({
 
 const experiences = ref<TExperience[]>([]);
 const isLoading = ref(false);
+
+// 모달 상태
+const showAnalysisModal = ref(false);
+const selectedExperience = ref<TExperience | null>(null);
 
 const apiParams = computed<TExperienceListParams>(() => {
   return {
@@ -137,7 +151,18 @@ watch(filters, () => {
 }, { deep: true });
 
 const handleRowClick = (row: TExperience) => {
-  toast.info(`'${row.title}' 경험에 대한 분석 요청 기능은 개발 중입니다.`);
+  navigateTo(`/career/${row.id}`);
+};
+
+const handleSelect = (row: TExperience) => {
+  selectedExperience.value = row;
+  showAnalysisModal.value = true;
+};
+
+const handleAnalysisRequest = (experience: TExperience, options: any) => {
+  toast.success(`'${experience.title}'에 대한 AI 분석을 시작합니다.`);
+  console.log('Analysis Options:', options);
+  // TODO: API 연동
 };
 
 const handleBack = () => {

@@ -1,0 +1,197 @@
+.modal-card {
+  border-radius: 20px !important;
+  padding: 24px;
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-text {
+    flex: 1;
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .modal-subtitle {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+  }
+}
+
+.modal-body {
+  padding: 0 !important;
+}
+
+.experience-info {
+  margin-bottom: 20px;
+  background: var(--bg-secondary);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--border-color);
+
+  .info-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+  .info-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+}
+
+.usage-status-card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+
+  .status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .status-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+
+      &.free {
+        background: #e2e8f0;
+        color: #64748b;
+      }
+      &.premium {
+        background: #8b5cf6;
+        color: white;
+      }
+    }
+
+    .usage-count {
+      font-size: 12px;
+      color: var(--text-secondary);
+      span {
+        font-weight: 800;
+        color: #8b5cf6;
+      }
+    }
+  }
+
+  .usage-progress {
+    margin-bottom: 12px;
+  }
+
+  .upgrade-info {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    span {
+      font-weight: 700;
+      color: #8b5cf6;
+    }
+  }
+}
+
+.analysis-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+
+    &:hover:not(.disabled) {
+      background: var(--bg-secondary);
+      border-color: rgba(139, 92, 246, 0.1);
+    }
+
+    &.disabled {
+      opacity: 0.5;
+      background: var(--bg-secondary);
+    }
+
+    .checkbox-area {
+      flex: 0 0 40px; // 체크박스 영역 고정 (2:8 비율 느낌의 폭 확보)
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .option-text {
+      flex: 1;
+      .option-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .premium-tag {
+          font-size: 9px;
+          background: #8b5cf6;
+          color: white;
+          padding: 1px 4px;
+          border-radius: 4px;
+        }
+      }
+      .option-desc {
+        font-size: 12px;
+        color: var(--text-tertiary);
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+.modal-actions {
+  padding: 0 !important;
+  display: flex;
+  gap: 12px;
+
+  .cancel-btn {
+    flex: 1;
+  }
+  .confirm-btn {
+    flex: 2;
+  }
+}

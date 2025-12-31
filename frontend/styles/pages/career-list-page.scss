@@ -39,9 +39,8 @@
   }
 
   &.ai-card {
+    position: relative;
     border: 1px solid transparent;
-    background-image: linear-gradient(var(--bg-primary), var(--bg-primary)), 
-                      linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
     background-origin: border-box;
     background-clip: padding-box, border-box;
     box-shadow: 0 10px 30px rgba(139, 92, 246, 0.08);
@@ -51,16 +50,52 @@
       transform: translateY(-6px);
     }
 
+    &.theme-purple {
+      --ai-card-gradient: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+      --ai-card-accent: #8b5cf6;
+      --ai-card-accent-rgb: 139, 92, 246;
+      background-image: linear-gradient(var(--bg-primary), var(--bg-primary)), var(--ai-card-gradient);
+    }
+
+    &.theme-blue {
+      --ai-card-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      --ai-card-accent: #3b82f6;
+      --ai-card-accent-rgb: 59, 130, 246;
+      background-image: linear-gradient(var(--bg-primary), var(--bg-primary)), var(--ai-card-gradient);
+    }
+
+    &.theme-emerald {
+      --ai-card-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      --ai-card-accent: #10b981;
+      --ai-card-accent-rgb: 16, 185, 129;
+      background-image: linear-gradient(var(--bg-primary), var(--bg-primary)), var(--ai-card-gradient);
+    }
+
     .career-list-card-title {
-      background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+      background: var(--ai-card-gradient);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .career-list-card-action-link {
-      color: #8b5cf6;
+      color: var(--ai-card-accent);
       font-weight: 700;
+    }
+
+    .ai-card-tag {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(var(--ai-card-accent-rgb), 0.1);
+      color: var(--ai-card-accent);
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(var(--ai-card-accent-rgb), 0.2);
     }
   }
 }
@@ -79,11 +114,11 @@
     background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
   }
 
-  &.dashboard {
+  &.feedback {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   }
 
-  &.export {
+  &.resume {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   }
 }

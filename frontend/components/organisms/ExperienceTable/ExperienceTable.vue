@@ -50,7 +50,7 @@
     </div>
 
     <Table
-      :columns="experienceColumns"
+      :columns="computedColumns"
       :rows="rows"
       row-key="id"
       row-class="experience-table-row"
@@ -62,20 +62,34 @@
           {{ getStatusDisplay(value) }}
         </span>
       </template>
+
+      <!-- 선택 버튼 셀 커스텀 렌더링 -->
+      <template #cell(select)="{ row }">
+        <Button
+          :variant="ButtonVariant.Outlined"
+          :size="CommonSize.Small"
+          :round="true"
+          class="row-select-btn"
+          @click.stop="handleSelect(row)"
+        >
+          {{ selectButtonLabel }}
+        </Button>
+      </template>
     </Table>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
+import { reactive, watch, computed } from 'vue';
 import { experienceColumns } from '@/columns/experience';
 import Table from '@/components/organisms/Table/Table.vue';
 import Input from '@/components/atoms/Input/Input.vue';
 import Select from '@/components/atoms/Select/Select.vue';
+import Button from '@/components/atoms/Button/Button.vue';
 import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
 import { ExperienceStatus, STATUS_INFO } from '@/types/experience-types';
 import type { TExperience, ExperienceSortKey, SortDirection } from '~/api/experience/types';
-import { FormSize, FormVariant, CommonSize } from '@/constants/enums/style-enum';
+import { FormSize, FormVariant, CommonSize, ButtonVariant } from '@/constants/enums/style-enum';
 
 export type TExperienceTableFilters = {
   q: string;
@@ -86,14 +100,36 @@ export type TExperienceTableFilters = {
 
 interface Props {
   rows: TExperience[];
+  showSelectButton?: boolean;
+  selectButtonLabel?: string;
 }
 
-defineProps<Props>();
+const {
+  rows,
+  showSelectButton = false,
+  selectButtonLabel = '선택',
+} = defineProps<Props>();
 
 const emit = defineEmits<{
   'row-click': [TExperience];
+  'select': [TExperience];
   'update:filters': [TExperienceTableFilters];
 }>();
+
+// 컬럼 정의 (선택 버튼 여부에 따라 동적 생성)
+const computedColumns = computed(() => {
+  const cols = [...experienceColumns];
+  if (showSelectButton) {
+    cols.push({
+      field: 'select',
+      headerName: selectButtonLabel,
+      flex: 1.5,
+      width: '80px',
+      align: 'center',
+    });
+  }
+  return cols;
+});
 
 // 내부 필터 상태
 const filters = reactive<TExperienceTableFilters>({
@@ -130,6 +166,10 @@ const handleRowClick = (row: TExperience) => {
   emit('row-click', row);
 };
 
+const handleSelect = (row: TExperience) => {
+  emit('select', row);
+};
+
 const getStatusDisplay = (status: any) => {
   return STATUS_INFO[status as ExperienceStatus]?.display || status;
 };
@@ -140,149 +180,5 @@ const getStatusClass = (status: any) => {
 </script>
 
 <style lang="scss" scoped>
-.experience-table-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.experience-table-filter-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.filter-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  &.search-group {
-    position: relative;
-    flex: 1;
-    max-width: 400px;
-    min-width: 250px;
-
-    .experience-search-input {
-      width: 100%;
-      :deep(input) {
-        padding-left: 38px;
-      }
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-tertiary);
-      pointer-events: none;
-    }
-  }
-}
-
-.filter-controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-}
-
-.filter-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-.status-select, .sort-select {
-  min-width: 110px;
-}
-
-.sort-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sort-direction-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-primary);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    background: var(--bg-tertiary);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.experience-table-row {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: var(--bg-tertiary) !important;
-  }
-}
-
-.experience-status-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 11.5px;
-  font-weight: 600;
-
-  &.status-incomplete {
-    background-color: rgba(241, 115, 115, 0.1);
-    color: #f17373;
-  }
-
-  &.status-completed {
-    background-color: rgba(61, 183, 131, 0.1);
-    color: #3db783;
-  }
-
-  &.status-analyzing {
-    background-color: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-  }
-
-  &.status-analyzed {
-    background-color: rgba(139, 92, 246, 0.1);
-    color: #8b5cf6;
-  }
-}
-
-.dark-mode {
-  .experience-status-chip {
-    &.status-incomplete {
-      background-color: rgba(241, 115, 115, 0.2);
-    }
-    &.status-completed {
-      background-color: rgba(61, 183, 131, 0.2);
-    }
-    &.status-analyzing {
-      background-color: rgba(59, 130, 246, 0.2);
-    }
-    &.status-analyzed {
-      background-color: rgba(139, 92, 246, 0.2);
-    }
-  }
-}
+@use './ExperienceTable.scss';
 </style>

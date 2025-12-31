@@ -109,15 +109,14 @@
         <div class="ai-services-preview">
           <h3 class="section-title">AI 커리어 엔진</h3>
           <div class="ai-cards">
-            <div class="ai-card">
-              <div class="ai-card-tag">Coming Soon</div>
+            <div class="ai-card" @click="handleAiAnalysis">
               <v-icon color="#2563eb" class="ai-icon">mdi-brain</v-icon>
               <div class="ai-card-info">
-                <h4 class="ai-card-title">AI 커리어 분석</h4>
+                <h4 class="ai-card-title">AI 경험 분석</h4>
                 <p class="ai-card-desc">등록된 경험을 분석하여 당신의 강점과 핵심 역량을 추출합니다.</p>
               </div>
             </div>
-            <div class="ai-card">
+            <div class="ai-card" @click="handleAiResume">
               <div class="ai-card-tag">Coming Soon</div>
               <v-icon color="#8b5cf6" class="ai-icon">mdi-file-document-edit-outline</v-icon>
               <div class="ai-card-info">
@@ -125,12 +124,12 @@
                 <p class="ai-card-desc">경험 데이터를 기반으로 직무 맞춤형 이력서를 자동 생성합니다.</p>
               </div>
             </div>
-            <div class="ai-card">
+            <div class="ai-card" @click="handleAiFeedback">
               <div class="ai-card-tag">Coming Soon</div>
               <v-icon color="#10b981" class="ai-icon">mdi-comment-check-outline</v-icon>
               <div class="ai-card-info">
-                <h4 class="ai-card-title">AI 첨삭 및 피드백</h4>
-                <p class="ai-card-desc">현재 작성된 경험 내용을 더 매력적으로 다듬어드립니다.</p>
+                <h4 class="ai-card-title">전체 커리어 피드백</h4>
+                <p class="ai-card-desc">내 전체 경험 데이터를 바탕으로 커리어 방향성과 개선점을 제안합니다.</p>
               </div>
             </div>
           </div>
@@ -190,6 +189,18 @@ const formatDate = (dateStr: string) => {
 onMounted(() => {
   loadDashboardData();
 });
+
+const handleAiAnalysis = () => {
+  navigateTo('/career/analysis/exp');
+};
+
+const handleAiResume = () => {
+  useToast().warning('AI 이력서 생성 기능 준비중입니다.');
+};
+
+const handleAiFeedback = () => {
+  useToast().warning('전체 커리어 피드백 기능 준비중입니다.');
+};
 </script>
 
 <style lang="scss" scoped>

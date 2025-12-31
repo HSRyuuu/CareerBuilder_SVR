@@ -60,7 +60,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
   {
     field: 'periodStart',
     headerName: '시작일',
-    flex: 1.2,
+    flex: 1,
     align: 'center',
     cellClass: 'career-list-table-date',
     valueFormatter: (value) => formatDate(value),
@@ -68,7 +68,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
   {
     field: 'periodEnd',
     headerName: '종료일',
-    flex: 1.2,
+    flex: 1,
     align: 'center',
     cellClass: 'career-list-table-date',
     valueFormatter: (value) => formatDate(value),
@@ -84,7 +84,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
   {
     field: 'category',
     headerName: '업무 유형',
-    flex: 1.2,
+    flex: 1,
     align: 'center',
     cellClass: 'career-list-table-work-type',
     valueFormatter: (value) => getcategoryDisplay(value),
