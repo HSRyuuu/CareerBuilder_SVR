@@ -7,7 +7,7 @@
   background: var(--bg-glass);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  padding: 16px 26px; // Scaled padding
+  padding: 26px 26px; // Scaled padding
   margin: -26px -26px 20px; // Counteract page padding to stay full width
   width: calc(100% + 52px);
   border-bottom: 1px solid var(--border-color);
@@ -21,7 +21,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    margin: 0 auto;
+    margin: 10 auto;
     max-width: 1120px;
     // Given the request "PageHeader taking full width", keeping content full width or centered?
     // Usually header content aligns with page content.
