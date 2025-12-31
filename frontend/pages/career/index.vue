@@ -9,7 +9,7 @@
           </div>
           <h3 class="career-list-card-title">AI 경험 분석 요청</h3>
           <p class="career-list-card-description">
-            AI가 당신의 경험을 분석하여 전문성을 강화할 수 있는 가이드를 가이드해 드립니다.
+            AI가 당신의 경험을 분석하여 전문성을 강화할 수 있도록 도와드립니다
           </p>
           <div class="career-list-card-action-link">분석 요청하기 →</div>
         </div>
