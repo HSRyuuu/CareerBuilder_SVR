@@ -213,7 +213,7 @@ class CustomExperienceRepositoryImpl(
 
         val keyword = searchKeyword.lowercase()
         return experience.title.lower().contains(keyword)
-            .or(experience.background.lower().contains(keyword))
+            .or(experience.role.upper().contains(keyword))
     }
 
     /**

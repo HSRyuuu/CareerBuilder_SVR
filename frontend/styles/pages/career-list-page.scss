@@ -37,6 +37,32 @@
     box-shadow: var(--card-shadow);
     border-color: var(--text-tertiary);
   }
+
+  &.ai-card {
+    border: 1px solid transparent;
+    background-image: linear-gradient(var(--bg-primary), var(--bg-primary)), 
+                      linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.08);
+
+    &:hover {
+      box-shadow: 0 15px 40px rgba(139, 92, 246, 0.15);
+      transform: translateY(-6px);
+    }
+
+    .career-list-card-title {
+      background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .career-list-card-action-link {
+      color: #8b5cf6;
+      font-weight: 700;
+    }
+  }
 }
 
 .career-list-card-icon {

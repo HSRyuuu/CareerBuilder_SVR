@@ -11,11 +11,11 @@ import type { TTableColumn } from '@/components/organisms/Table/Table.vue';
  */
 export const formatDate = (date?: string | null) => {
   if (!date) return '진행중';
-  return new Date(date).toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
+  // yyyy-MM 형식이면 하이픈을 점으로 치환하여 표시
+  if (typeof date === 'string' && date.includes('-')) {
+    return date.replace('-', '.');
+  }
+  return date;
 };
 
 /**
