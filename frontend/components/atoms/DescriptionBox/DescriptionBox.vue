@@ -43,5 +43,5 @@ const variantClass = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-@import './DescriptionBox.scss';
+@use './DescriptionBox.scss';
 </style>

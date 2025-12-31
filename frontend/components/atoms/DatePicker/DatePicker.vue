@@ -116,5 +116,5 @@ const handleUpdate = (value: any) => {
 </script>
 
 <style lang="scss" scoped>
-@import './DatePicker.scss';
+@use './DatePicker.scss';
 </style>
