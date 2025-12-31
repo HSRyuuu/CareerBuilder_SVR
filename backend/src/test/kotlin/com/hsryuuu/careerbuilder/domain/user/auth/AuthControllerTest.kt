@@ -9,6 +9,7 @@ import com.hsryuuu.careerbuilder.generator.TestDataGenerator.generateTestUsernam
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -21,13 +22,16 @@ import org.springframework.security.crypto.password.PasswordEncoder
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @DisplayName("인증/인가 API TEST")
-class AuthControllerTest(
-    @Autowired private val appUserRepository: AppUserRepository,
-) {
+class AuthControllerTest {
 
-    companion object {
-        private const val TEST_USERNAME = "test-user"
-    }
+    @Autowired
+    private lateinit var appUserRepository: AppUserRepository
+
+    @Autowired
+    private lateinit var client: TestRestTemplate
+
+    @Autowired
+    private lateinit var passwordEncoder: PasswordEncoder
 
     @AfterEach
     fun deleteUser() {
@@ -35,201 +39,180 @@ class AuthControllerTest(
         appUserRepository.deleteByEmailLike(TestDataGenerator.TEST_EMAIL_SUFFIX)
     }
 
-    @Test
-    fun signup_올바르게_요청시_204_No_Content를_반환(
-        @Autowired client: TestRestTemplate
-    ) {
-        // Arrange
-        val request = UserSignUpRequest(
-            email = generateTestEmail(),
-            username = generateTestUsername(),
-            password = "test-password",
-        )
-        // Act
-        val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
-        // Assert
-        assertThat(response.statusCode.value()).isEqualTo(204)
-    }
+    @Nested
+    @DisplayName("회원가입 - /api/auth/signup")
+    inner class Signup {
 
-    @ParameterizedTest
-    @ValueSource(
-        strings = [
-            "invalid-email",
-            "invalid-email@",
-            "invalid-email@test",
-            "invalid-email@test.",
-            "invalid-email@.com"
-        ]
-    )
-    fun signup_email_형식이_올바르지_않을_경우_400_Bad_Request_상태_응답(
-        email: String,
-        @Autowired client: TestRestTemplate
-    ) {
-        // Arrange
-        val request = UserSignUpRequest(
-            email,
-            username = generateTestUsername(),
-            password = "test-password",
-        )
-        // Act
-        val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
-        // Assert
-        assertThat(response.statusCode.value()).isEqualTo(400)
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-        strings = [
-            "",
-            "te",
-            "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"// 아이디는 4-20자
-        ]
-    )
-    fun signup_username_형식이_올바르지_않을_경우_400_Bad_Request_상태_응답(
-        username: String,
-        @Autowired client: TestRestTemplate
-    ) {
-        // Arrange
-        val request = UserSignUpRequest(
-            email = generateTestEmail(),
-            username = username,
-            password = "test-password",
-        )
-        // Act
-        val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
-        // Assert
-        assertThat(response.statusCode.value()).isEqualTo(400)
-
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-        strings = [
-            "test-username",
-            "ABCDEFG",
-            "test-user-",
-            "test."
-        ]
-    )
-    fun signup_username_형식이_올바른_형식일_경우_204_No_Content_상태_응답(
-        username: String,
-        @Autowired client: TestRestTemplate
-    ) {
-        // Arrange
-        val request = UserSignUpRequest(
-            email = generateTestEmail(),
-            password = "test-password",
-            username
-        )
-        // Act
-        val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
-        // Assert
-        assertThat(response.statusCode.value()).isEqualTo(204)
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-        strings = [
-            "",
-            "short", // 8자 미만
-        ]
-    )
-    fun signup_password_형식이_올바르지_않을_경우_400_Bad_Request_상태_응답(
-        password: String,
-        @Autowired client: TestRestTemplate
-    ) {
-        // Arrange
-        val request = UserSignUpRequest(
-            email = generateTestEmail(),
-            username = generateTestUsername(),
-            password = password,
-        )
-        // Act
-        val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
-        // Assert
-        assertThat(response.statusCode.value()).isEqualTo(400)
-    }
-
-    @Test
-    fun signup_email이_중복일_경우_409_Conflict_상태_응답(
-        @Autowired client: TestRestTemplate
-    ) {
-        // Arrange
-        val email = generateTestEmail()
-        client.postForEntity(
-            "/api/auth/signup",
-            UserSignUpRequest(
-                email = email,
+        @Test
+        fun `올바르게 요청시 204 No Content를 반환`() {
+            // Arrange
+            val request = UserSignUpRequest(
+                email = generateTestEmail(),
                 username = generateTestUsername(),
                 password = "test-password",
-            ),
-            Void::class.java
+            )
+            // Act
+            val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
+            // Assert
+            assertThat(response.statusCode.value()).isEqualTo(204)
+        }
+
+        @ParameterizedTest
+        @ValueSource(
+            strings = [
+                "invalid-email",
+                "invalid-email@",
+                "invalid-email@test",
+                "invalid-email@test.",
+                "invalid-email@.com"
+            ]
         )
-        // Act
-        val response = client.postForEntity(
-            "/api/auth/signup",
-            UserSignUpRequest(
-                email = email,
-                password = "test-password",
+        fun `email 형식이 올바르지 않을 경우 400 Bad Request 상태 응답`(email: String) {
+            // Arrange
+            val request = UserSignUpRequest(
+                email,
                 username = generateTestUsername(),
-            ),
-            Void::class.java
+                password = "test-password",
+            )
+            // Act
+            val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
+            // Assert
+            assertThat(response.statusCode.value()).isEqualTo(400)
+        }
+
+        @ParameterizedTest
+        @ValueSource(
+            strings = [
+                "",
+                "te",
+                "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"// 아이디는 4-20자
+            ]
         )
-        // Assert
-        assertThat(response.statusCode.value()).isEqualTo(409)
-
-    }
-
-    @Test
-    fun signup_username이_중복일_경우_409_Conflict_상태_응답(
-        @Autowired client: TestRestTemplate
-    ) {
-        // Arrange
-        val username = generateTestUsername()
-        client.postForEntity(
-            "/api/auth/signup",
-            UserSignUpRequest(
+        fun `username 형식이 올바르지 않을 경우 400 Bad Request 상태 응답`(username: String) {
+            // Arrange
+            val request = UserSignUpRequest(
                 email = generateTestEmail(),
                 username = username,
                 password = "test-password",
-            ),
-            Void::class.java
+            )
+            // Act
+            val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
+            // Assert
+            assertThat(response.statusCode.value()).isEqualTo(400)
+        }
+
+        @ParameterizedTest
+        @ValueSource(
+            strings = [
+                "test-username",
+                "ABCDEFG",
+                "test-user-",
+                "test."
+            ]
         )
-        // Act
-        val response = client.postForEntity(
-            "/api/auth/signup",
-            UserSignUpRequest(
+        fun `username 형식이 올바른 형식일 경우 204 No Content 상태 응답`(username: String) {
+            // Arrange
+            val request = UserSignUpRequest(
                 email = generateTestEmail(),
                 password = "test-password",
-                username,
-            ),
-            Void::class.java
+                username
+            )
+            // Act
+            val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
+            // Assert
+            assertThat(response.statusCode.value()).isEqualTo(204)
+        }
+
+        @ParameterizedTest
+        @ValueSource(
+            strings = [
+                "",
+                "short", // 8자 미만
+            ]
         )
-        // Assert
-        assertThat(response.statusCode.value()).isEqualTo(409)
-    }
+        fun `password 형식이 올바르지 않을 경우 400 Bad Request 상태 응답`(password: String) {
+            // Arrange
+            val request = UserSignUpRequest(
+                email = generateTestEmail(),
+                username = generateTestUsername(),
+                password = password,
+            )
+            // Act
+            val response = client.postForEntity("/api/auth/signup", request, Void::class.java)
+            // Assert
+            assertThat(response.statusCode.value()).isEqualTo(400)
+        }
 
-    @Test
-    fun signup_password를_올바르게_암호화_한다(
-        @Autowired client: TestRestTemplate,
-        @Autowired appUserRepository: AppUserRepository,
-        @Autowired passwordEncoder: PasswordEncoder
-    ) {
+        @Test
+        fun `email이 중복일 경우 409 Conflict 상태 응답`() {
+            // Arrange
+            val email = generateTestEmail()
+            client.postForEntity(
+                "/api/auth/signup",
+                UserSignUpRequest(
+                    email = email,
+                    username = generateTestUsername(),
+                    password = "test-password",
+                ),
+                Void::class.java
+            )
+            // Act
+            val response = client.postForEntity(
+                "/api/auth/signup",
+                UserSignUpRequest(
+                    email = email,
+                    password = "test-password",
+                    username = generateTestUsername(),
+                ),
+                Void::class.java
+            )
+            // Assert
+            assertThat(response.statusCode.value()).isEqualTo(409)
+        }
 
-        // Arrange
-        val request = UserSignUpRequest(
-            email = generateTestEmail(),
-            username = generateTestUsername(),
-            password = generateTestPassword(),
-        )
-        // Act
-        client.postForEntity("/api/auth/signup", request, Void::class.java)
-        // Assert
-        val appUser = appUserRepository.findByEmail(request.email)
-            ?: throw IllegalArgumentException("no-data")
-        val actual = appUser.password
-        assertThat(actual).isNotNull
-        assertThat(passwordEncoder.matches(request.password, actual)).isTrue
+        @Test
+        fun `username이 중복일 경우 409 Conflict 상태 응답`() {
+            // Arrange
+            val username = generateTestUsername()
+            client.postForEntity(
+                "/api/auth/signup",
+                UserSignUpRequest(
+                    email = generateTestEmail(),
+                    username = username,
+                    password = "test-password",
+                ),
+                Void::class.java
+            )
+            // Act
+            val response = client.postForEntity(
+                "/api/auth/signup",
+                UserSignUpRequest(
+                    email = generateTestEmail(),
+                    password = "test-password",
+                    username,
+                ),
+                Void::class.java
+            )
+            // Assert
+            assertThat(response.statusCode.value()).isEqualTo(409)
+        }
 
+        @Test
+        fun `password를 올바르게 암호화 한다`() {
+            // Arrange
+            val request = UserSignUpRequest(
+                email = generateTestEmail(),
+                username = generateTestUsername(),
+                password = generateTestPassword(),
+            )
+            // Act
+            client.postForEntity("/api/auth/signup", request, Void::class.java)
+            // Assert
+            val appUser = appUserRepository.findByEmail(request.email)
+                ?: throw IllegalArgumentException("no-data")
+            val actual = appUser.password
+            assertThat(actual).isNotNull
+            assertThat(passwordEncoder.matches(request.password, actual)).isTrue
+        }
     }
 }
