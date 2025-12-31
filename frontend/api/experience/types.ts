@@ -139,3 +139,73 @@ export type TPageResponse<T> = {
  */
 export type { TExperienceStatsSummary };
 export type TExperienceStats = TExperienceStatsSummary;
+
+/**
+ * AI 분석 점수 메트릭
+ */
+export type TScoreMetrics = {
+  specificity: number;
+  resultOriented: number;
+  logicalFlow: number;
+  jobRelevance: number;
+};
+
+/**
+ * AI 전체 분석 결과
+ */
+export type TExperienceOverallAnalysis = {
+  id: string;
+  totalScore: number;
+  scoreMetrics: TScoreMetrics;
+  overallSummary: string;
+  overallFeedback: string;
+  goalFeedback: string;
+  goalImprovedContent: string;
+  achievementFeedback: string;
+  achievementImprovedContent: string;
+  recommendedKeywords: string[];
+};
+
+/**
+ * STAR/PAR 분석 내역
+ */
+export type TMethodBreakdown = {
+  situation?: string | null;
+  task?: string | null;
+  action?: string | null;
+  result?: string | null;
+  decision?: string | null;
+  troubleshooting?: string | null;
+  learning?: string | null;
+};
+
+/**
+ * 경험 블록별 AI 분석 결과
+ */
+export type TExperienceSectionAnalysis = {
+  id: string;
+  sectionId: string;
+  suggestedKind: ExperienceSectionKind | string;
+  method: 'STAR' | 'PAR' | string;
+  feedback: string;
+  improvedContent: string;
+  reasoning: string;
+  methodBreakdown: TMethodBreakdown;
+};
+
+/**
+ * 경험 블록과 해당 분석 결과 쌍
+ */
+export type TExperienceSectionWithAnalysis = {
+  section: TExperienceSection;
+  analysis: TExperienceSectionAnalysis;
+};
+
+/**
+ * AI 분석 단건 조회 응답 타입
+ */
+export type TExperienceAIAnalysisResponse = {
+  experience: TExperience;
+  analysis: TExperienceOverallAnalysis;
+  sections: TExperienceSectionWithAnalysis[];
+};

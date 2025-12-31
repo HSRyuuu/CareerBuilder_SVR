@@ -2,7 +2,6 @@ package com.hsryuuu.careerbuilder.domain.ai.model.entity
 
 import com.hsryuuu.careerbuilder.domain.ai.model.ExperienceAnalysisResponse
 import com.hsryuuu.careerbuilder.domain.ai.model.ScoreMetrics
-import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.UuidGenerator
@@ -51,10 +50,6 @@ class AiExperienceAnalysis(
     @Column(name = "achievement_improved_content", columnDefinition = "TEXT")
     var achievementImprovedContent: String? = null,
 
-    @Column(name = "recommended_category", length = 30)
-    @Enumerated(EnumType.STRING)
-    var recommendedCategory: WorkCategory? = null,
-
     @Column(name = "recommended_keywords", columnDefinition = "TEXT")
     var recommendedKeywords: String? = null, // Comma separated
 
@@ -87,7 +82,6 @@ class AiExperienceAnalysis(
                 goalImprovedContent = response.goalImprovement.improvedContent,
                 achievementFeedback = response.achievementImprovement.feedback,
                 achievementImprovedContent = response.achievementImprovement.improvedContent,
-                recommendedCategory = response.recommendedCategory,
                 recommendedKeywords = response.recommendedKeywords?.joinToString(",")
             )
 

@@ -2,7 +2,6 @@ package com.hsryuuu.careerbuilder.domain.ai.model
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.SectionKind
-import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
 import java.util.*
 
 data class ExperienceAnalysisResponse(
@@ -21,7 +20,6 @@ data class ExperienceAnalysisResponse(
     val sectionImprovements: List<SectionImprovement>?,
 
     // 5. 메타데이터 추천
-    val recommendedCategory: WorkCategory? = null,
     val recommendedKeywords: List<String>?,
 
     // 6. 총점

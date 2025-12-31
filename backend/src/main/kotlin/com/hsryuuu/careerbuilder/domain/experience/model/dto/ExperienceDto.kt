@@ -213,7 +213,6 @@ data class AiExperienceAnalysisDto(
     val goalImprovedContent: String?,
     val achievementFeedback: String?,
     val achievementImprovedContent: String?,
-    val recommendedCategory: WorkCategory?,
     val recommendedKeywords: List<String>?,
     val sectionAnalyses: List<AiExperienceSectionAnalysisDto> = emptyList() // Default to empty if not used or explicit empty list passed
 ) {
@@ -229,8 +228,8 @@ data class AiExperienceAnalysisDto(
                 goalImprovedContent = analysis.goalImprovedContent,
                 achievementFeedback = analysis.achievementFeedback,
                 achievementImprovedContent = analysis.achievementImprovedContent,
-                recommendedCategory = analysis.recommendedCategory,
-                recommendedKeywords = analysis.recommendedKeywords?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() },
+                recommendedKeywords = analysis.recommendedKeywords?.split(",")?.map { it.trim() }
+                    ?.filter { it.isNotEmpty() },
                 sectionAnalyses = analysis.sections.map { AiExperienceSectionAnalysisDto.from(it) }
             )
         }

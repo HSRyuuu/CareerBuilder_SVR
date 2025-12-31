@@ -26,7 +26,7 @@
     <div class="content-wrapper">
       <ExperienceForm
         v-model="formData"
-        :is-new="true"
+        :mode="ExperienceFormMode.REGISTER"
       />
     </div>
   </div>
@@ -35,7 +35,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ExperienceForm from '@/components/page/ExperienceForm.vue';
-import type { TExperienceFormData } from '@/components/page/ExperienceForm.vue';
+import { ExperienceFormMode } from '@/types/experience-types';
+import type { TExperienceFormData, TExperienceFormSection } from '@/types/experience-types';
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
@@ -85,7 +86,7 @@ const handleSave = async () => {
     goalSummary: formData.value.goalSummary || undefined,
     keyAchievements: formData.value.keyAchievements || undefined,
     skills: formData.value.skills || undefined,
-    sections: formData.value.sections.map((section, index) => ({
+    sections: formData.value.sections.map((section: TExperienceFormSection, index: number) => ({
       kind: section.kind,
       title: section.title || `블록 ${index + 1}`,
       content: section.content,

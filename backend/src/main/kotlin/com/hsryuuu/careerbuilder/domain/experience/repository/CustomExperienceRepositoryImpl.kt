@@ -173,7 +173,6 @@ class CustomExperienceRepositoryImpl(
                 goalImprovedContent = entity.goalImprovedContent,
                 achievementFeedback = entity.achievementFeedback,
                 achievementImprovedContent = entity.achievementImprovedContent,
-                recommendedCategory = entity.recommendedCategory,
                 recommendedKeywords = entity.recommendedKeywords?.split(",")?.map { it.trim() }
                     ?.filter { it.isNotEmpty() },
                 sectionAnalyses = emptyList() // 상세 분석은 별도 필드로 전달

@@ -1,8 +1,53 @@
 <template>
   <div class="experience-form-component">
     <div class="page-layout">
+      <!-- AI 종합 분석 영역 -->
+      <div v-if="hasAiAnalysis" class="ai-overall-container">
+        <Card
+          title="AI 분석 결과"
+          icon="mdi-robot"
+          icon-color="linear-gradient(135deg, #10b981 0%, #3b82f6 100%)"
+        >
+          <div class="ai-analysis-header">
+            <div class="score-summary">
+              <div class="score-circle">
+                <span class="score-value">{{ aiAnalysis?.analysis.totalScore }}</span>
+                <span class="score-label">점</span>
+              </div>
+              <div class="score-metrics">
+                <div v-for="(value, key) in aiAnalysis?.analysis.scoreMetrics" :key="key" class="metric-item">
+                  <span class="metric-label">{{
+                    key === 'specificity' ? '구체성' :
+                    key === 'resultOriented' ? '성과중심' :
+                    key === 'logicalFlow' ? '논리성' : '직무적합성'
+                  }}</span>
+                  <v-progress-linear :model-value="value" color="primary" height="6" rounded></v-progress-linear>
+                  <span class="metric-value">{{ value }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="overall-feedback-box">
+              <h4 class="feedback-title">종합 의견</h4>
+              <p class="feedback-text">{{ aiAnalysis?.analysis.overallFeedback }}</p>
+              <div class="keyword-tags">
+                <v-chip
+                  v-for="keyword in aiAnalysis?.analysis.recommendedKeywords"
+                  :key="keyword"
+                  size="small"
+                  variant="flat"
+                  color="blue-lighten-4"
+                  class="mr-1 mb-1"
+                >
+                  # {{ keyword }}
+                </v-chip>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
       <!-- 왼쪽: 메인 폼 영역 (4) -->
-      <div class="form-container">
+      <div class="form-container" :class="{ 'with-ai': hasAiAnalysis }">
         <!-- 기본 정보 블록 -->
         <Card
           title="기본 정보"
@@ -75,42 +120,46 @@
           icon-color="linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)"
         >
           <div class="form-grid">
-            <div class="form-field full-width">
-              <label class="field-label">업무 유형</label>
-              <div class="select-with-description">
-                <Select
-                  v-model="modelValue.category"
-                  :items="categoryOptions"
-                  placeholder="선택"
-                  :size="FormSize.Compact"
-                  :disabled="!localIsEditMode"
-                />
-                <DescriptionBox
-                  :text="
-                    modelValue.category
-                      ? getcategoryDescription(modelValue.category)
-                      : '업무 유형을 선택해주세요'
-                  "
-                />
+
+            <!-- 사용자 입력 영역 -->
+            <div class="user-side">
+              <div class="form-field full-width">
+                <label class="field-label">업무 유형</label>
+                <div class="select-with-description">
+                  <Select
+                    v-model="modelValue.category"
+                    :items="categoryOptions"
+                    placeholder="선택"
+                    :size="FormSize.Compact"
+                    :disabled="!localIsEditMode"
+                  />
+                  <DescriptionBox
+                    :text="
+                      modelValue.category
+                        ? getcategoryDescription(modelValue.category)
+                        : '업무 유형을 선택해주세요'
+                    "
+                  />
+                </div>
               </div>
-            </div>
-            <div class="form-field full-width">
-              <label class="field-label">기여도/참여도</label>
-              <div class="select-with-description">
-                <Select
-                  v-model="modelValue.contributionLevel"
-                  :items="contributionLevelOptions"
-                  placeholder="선택"
-                  :size="FormSize.Compact"
-                  :disabled="!localIsEditMode"
-                />
-                <DescriptionBox
-                  :text="
-                    modelValue.contributionLevel
-                      ? getContributionLevelDescription(modelValue.contributionLevel)
-                      : '기여도를 선택해주세요'
-                  "
-                />
+              <div class="form-field full-width">
+                <label class="field-label">기여도/참여도</label>
+                <div class="select-with-description">
+                  <Select
+                    v-model="modelValue.contributionLevel"
+                    :items="contributionLevelOptions"
+                    placeholder="선택"
+                    :size="FormSize.Compact"
+                    :disabled="!localIsEditMode"
+                  />
+                  <DescriptionBox
+                    :text="
+                      modelValue.contributionLevel
+                        ? getContributionLevelDescription(modelValue.contributionLevel)
+                        : '기여도를 선택해주세요'
+                    "
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -122,14 +171,35 @@
           icon="mdi-flag-checkered"
           icon-color="linear-gradient(135deg, #10b981 0%, #059669 100%)"
         >
-          <div class="form-grid">
-            <div class="form-field full-width">
-              <TextArea
-                v-model="modelValue.goalSummary"
-                placeholder="달성하고자 했던 목표를 작성하세요"
-                :rows="3"
-                :disabled="!localIsEditMode"
-              />
+          <div class="form-grid" :class="{ 'split-view': hasAiAnalysis }">
+            <!-- AI 영역 -->
+            <div v-if="hasAiAnalysis" class="ai-side">
+              <div class="ai-content-box">
+                <div class="ai-badge">AI 제안</div>
+                <div class="ai-feedback-box">{{ aiAnalysis?.analysis.goalFeedback }}</div>
+                <div class="ai-improved-content highlight">{{ aiAnalysis?.analysis.goalImprovedContent }}</div>
+                <div v-if="localIsEditMode" class="ai-action-row">
+                  <Button
+                    :variant="ButtonVariant.Secondary"
+                    :size="CommonSize.Small"
+                    @click="applyAiImprovedContent('goal')"
+                  >
+                    이 내용으로 수정
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 사용자 입력 영역 -->
+            <div class="user-side">
+              <div class="form-field full-width">
+                <TextArea
+                  v-model="modelValue.goalSummary"
+                  placeholder="달성하고자 했던 목표를 작성하세요"
+                  :rows="3"
+                  :disabled="!localIsEditMode"
+                />
+              </div>
             </div>
           </div>
         </Card>
@@ -140,14 +210,35 @@
           icon="mdi-star-circle"
           icon-color="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
         >
-          <div class="form-grid">
-            <div class="form-field full-width">
-              <TextArea
-                v-model="modelValue.keyAchievements"
-                placeholder="이 경험을 통해 얻은 성과와 영향을 간략히 설명하세요"
-                :rows="3"
-                :disabled="!localIsEditMode"
-              />
+          <div class="form-grid" :class="{ 'split-view': hasAiAnalysis }">
+            <!-- AI 영역 -->
+            <div v-if="hasAiAnalysis" class="ai-side">
+              <div class="ai-content-box">
+                <div class="ai-badge">AI 제안</div>
+                <div class="ai-feedback-box">{{ aiAnalysis?.analysis.achievementFeedback }}</div>
+                <div class="ai-improved-content highlight">{{ aiAnalysis?.analysis.achievementImprovedContent }}</div>
+                <div v-if="localIsEditMode" class="ai-action-row">
+                  <Button
+                    :variant="ButtonVariant.Secondary"
+                    :size="CommonSize.Small"
+                    @click="applyAiImprovedContent('achievement')"
+                  >
+                    이 내용으로 수정
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 사용자 입력 영역 -->
+            <div class="user-side">
+              <div class="form-field full-width">
+                <TextArea
+                  v-model="modelValue.keyAchievements"
+                  placeholder="이 경험을 통해 얻은 성과와 영향을 간략히 설명하세요"
+                  :rows="3"
+                  :disabled="!localIsEditMode"
+                />
+              </div>
             </div>
           </div>
         </Card>
@@ -241,47 +332,80 @@
             </div>
           </template>
 
-          <div class="form-grid">
-            <div class="form-field full-width">
-              <div class="section-kind-group">
-                <Select
-                  v-model="section.kind"
-                  :items="sectionKindOptions"
-                  placeholder="블록 유형을 선택하세요"
-                  :size="FormSize.Compact"
-                  :disabled="!localIsEditMode"
-                  @update:model-value="onSectionKindChange(index)"
-                />
-                <button
-                  v-if="localIsEditMode"
-                  class="section-help-btn"
-                  :class="{ active: section.showHelp }"
-                  @click="toggleSectionHelp(index)"
-                >
-                  <v-icon size="small">mdi-help-circle-outline</v-icon>
-                  <span class="help-btn-text">Help</span>
-                </button>
-                <DescriptionBox :text="getSectionDescription(section.kind)" />
-              </div>
-              <Transition name="fade">
-                <div v-if="section.showHelp && localIsEditMode" class="section-help-detail">
-                  <div class="help-detail-icon">
-                    <v-icon size="18">mdi-lightbulb-on-outline</v-icon>
-                  </div>
-                  <div class="help-detail-content">
-                    {{ getSectionHelp(section.kind) }}
+          <div class="form-grid" :class="{ 'split-view': hasAiAnalysis && getAiSectionAnalysis(section.id) }">
+            <!-- AI 영역 -->
+            <div v-if="hasAiAnalysis && getAiSectionAnalysis(section.id)" class="ai-side">
+              <div class="ai-content-box">
+                <div class="ai-badge">AI 제안</div>
+                <div class="ai-feedback-box">{{ getAiSectionAnalysis(section.id)?.feedback }}</div>
+                <div class="ai-improved-content highlight">{{ getAiSectionAnalysis(section.id)?.improvedContent }}</div>
+                
+                <!-- STAR/PAR Breakdown -->
+                <div class="method-breakdown" v-if="getAiSectionAnalysis(section.id)?.methodBreakdown">
+                  <div class="method-type">분석 기법: {{ getAiSectionAnalysis(section.id)?.method }}</div>
+                  <div v-for="(v, k) in getAiSectionAnalysis(section.id)?.methodBreakdown" :key="k">
+                    <div v-if="v" class="breakdown-item">
+                      <span class="breakdown-label">{{ k.toUpperCase() }}:</span>
+                      <span class="breakdown-value">{{ v }}</span>
+                    </div>
                   </div>
                 </div>
-              </Transition>
+
+                <div v-if="localIsEditMode" class="ai-action-row">
+                  <Button
+                    :variant="ButtonVariant.Secondary"
+                    :size="CommonSize.Small"
+                    @click="applyAiImprovedContent(index)"
+                  >
+                    이 내용으로 수정
+                  </Button>
+                </div>
+              </div>
             </div>
 
-            <div class="form-field full-width">
-              <TextArea
-                v-model="section.content"
-                placeholder="Help 버튼을 눌러서 작성 가이드를 확인하세요"
-                :rows="5"
-                :disabled="!localIsEditMode"
-              />
+            <!-- 사용자 입력 영역 -->
+            <div class="user-side">
+              <div class="form-field full-width">
+                <div class="section-kind-group">
+                  <Select
+                    v-model="section.kind"
+                    :items="sectionKindOptions"
+                    placeholder="블록 유형을 선택하세요"
+                    :size="FormSize.Compact"
+                    :disabled="!localIsEditMode"
+                    @update:model-value="onSectionKindChange(index)"
+                  />
+                  <button
+                    v-if="localIsEditMode"
+                    class="section-help-btn"
+                    :class="{ active: section.showHelp }"
+                    @click="toggleSectionHelp(index)"
+                  >
+                    <v-icon size="small">mdi-help-circle-outline</v-icon>
+                    <span class="help-btn-text">Help</span>
+                  </button>
+                  <DescriptionBox :text="getSectionDescription(section.kind)" />
+                </div>
+                <Transition name="fade">
+                  <div v-if="section.showHelp && localIsEditMode" class="section-help-detail">
+                    <div class="help-detail-icon">
+                      <v-icon size="18">mdi-lightbulb-on-outline</v-icon>
+                    </div>
+                    <div class="help-detail-content">
+                      {{ getSectionHelp(section.kind) }}
+                    </div>
+                  </div>
+                </Transition>
+              </div>
+
+              <div class="form-field full-width">
+                <TextArea
+                  v-model="section.content"
+                  placeholder="Help 버튼을 눌러서 작성 가이드를 확인하세요"
+                  :rows="5"
+                  :disabled="!localIsEditMode"
+                />
+              </div>
             </div>
           </div>
         </Card>
@@ -439,49 +563,57 @@ import {
   SECTION_KIND_INFO,
   CATEGORY_INFO,
   CONTRIBUTION_LEVEL_INFO,
+  Category,
+  ExperienceFormMode,
 } from '@/types/experience-types';
-import type { ExperienceSection } from '@/types/experience-types';
-
-export interface TExperienceFormSection extends ExperienceSection {
-  isEditingTitle?: boolean;
-  tempTitle: string;
-  showHelp?: boolean;
-}
-
-export interface TExperienceFormData {
-  id?: string;
-  title: string;
-  background: string;
-  periodStart: string;
-  periodEnd: string;
-  role: string;
-  category: string | null;
-  contributionLevel: string | null;
-  goalSummary: string;
-  keyAchievements: string;
-  skills: string;
-  sections: TExperienceFormSection[];
-}
+import type { TExperienceFormSection, TExperienceFormData } from '@/types/experience-types';
+import type { TExperienceAIAnalysisResponse } from '@/api/experience/types';
 
 interface Props {
   modelValue: TExperienceFormData;
-  isEditMode?: boolean;
-  isNew?: boolean;
+  mode?: ExperienceFormMode | string;
+  aiAnalysis?: TExperienceAIAnalysisResponse;
 }
 
 const {
   modelValue,
-  isEditMode = true,
-  isNew = false,
+  mode = ExperienceFormMode.EDIT,
+  aiAnalysis = undefined,
 } = defineProps<Props>();
 
 const emit = defineEmits<{
   'update:modelValue': [TExperienceFormData];
-  'update:isEditMode': [boolean];
 }>();
 
 const toast = useToast();
-const localIsEditMode = computed(() => isEditMode);
+const localIsEditMode = computed(() => [ExperienceFormMode.REGISTER, ExperienceFormMode.EDIT, ExperienceFormMode.EDIT_WITH_AI].includes(mode as ExperienceFormMode));
+const hasAiAnalysis = computed(() => !!aiAnalysis && mode === ExperienceFormMode.EDIT_WITH_AI);
+
+// AI 섹션 매핑
+const getAiSectionAnalysis = (sectionId?: string) => {
+  if (!aiAnalysis || !sectionId) return null;
+  return aiAnalysis.sections.find((s) => s.section.id === sectionId)?.analysis;
+};
+
+
+// AI 개선 내용 적용 (Goal/Achievement/Section)
+const applyAiImprovedContent = (target: 'goal' | 'achievement' | number) => {
+  if (!aiAnalysis) return;
+
+  if (target === 'goal') {
+    modelValue.goalSummary = aiAnalysis.analysis.goalImprovedContent;
+  } else if (target === 'achievement') {
+    modelValue.keyAchievements = aiAnalysis.analysis.achievementImprovedContent;
+  } else if (typeof target === 'number') {
+    const section = modelValue.sections[target];
+    const analysis = getAiSectionAnalysis(section.id);
+    if (analysis) {
+      section.content = analysis.improvedContent;
+      section.kind = analysis.suggestedKind as ExperienceSectionKind;
+    }
+  }
+  toast.success('AI 개선 내용이 적용되었습니다.');
+};
 
 // 블록 유형 옵션 생성
 const sectionKindOptions = computed<TSelectItem[]>(() => {

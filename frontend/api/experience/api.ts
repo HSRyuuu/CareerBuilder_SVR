@@ -9,6 +9,7 @@ import type {
   TExperienceListParams,
   TPageResponse,
   TExperienceStatsSummary,
+  TExperienceAIAnalysisResponse,
 } from './types';
 
 /**
@@ -70,6 +71,16 @@ export const deleteExperience = (id: string) => {
 export const fetchExperienceStatsSummary = () => {
   return useApi<TExperienceStatsSummary>({
     url: '/api/experiences/stats/summary',
+    method: HttpMethod.GET,
+  });
+};
+
+/**
+ * 경험 AI 분석 결과 조회
+ */
+export const fetchExperienceAIAnalysis = (id: string) => {
+  return useApi<TExperienceAIAnalysisResponse>({
+    url: `/api/experiences/${id}/ai`,
     method: HttpMethod.GET,
   });
 };

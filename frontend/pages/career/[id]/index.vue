@@ -37,6 +37,17 @@
             목록으로
           </Button>
           <Button
+            v-if="hasAiAnalysis"
+            :variant="ButtonVariant.Secondary"
+            :size="CommonSize.Medium"
+            :round="true"
+            class="mr-2"
+            @click="handleNavigateToAiEdit"
+          >
+            <v-icon size="small">mdi-robot</v-icon>
+            AI와 함께 수정
+          </Button>
+          <Button
             :variant="ButtonVariant.Primary"
             :size="CommonSize.Medium"
             :round="true"
@@ -53,8 +64,7 @@
       <ExperienceForm
         v-if="!isLoading"
         v-model="formData"
-        v-model:is-edit-mode="isEditMode"
-        :is-new="false"
+        :mode="currentMode"
       />
       <div v-else class="loading-container">
         <v-progress-circular indeterminate color="primary" />
@@ -66,7 +76,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import ExperienceForm from '@/components/page/ExperienceForm.vue';
-import type { TExperienceFormData } from '@/components/page/ExperienceForm.vue';
+import { ExperienceFormMode } from '@/types/experience-types';
+import type { TExperienceFormData } from '@/types/experience-types';
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
@@ -84,10 +95,16 @@ const experienceId = computed(() => route.params.id as string);
 const isEditMode = ref(false);
 const isLoading = ref(true);
 const pageTitle = ref('');
+const hasAiAnalysis = ref(true); // 하드코딩
+
+const currentMode = computed(() => {
+  if (isEditMode.value) return ExperienceFormMode.EDIT;
+  return ExperienceFormMode.VIEW;
+});
 
 const pageTitleView = computed(() => {
   const prefix = isEditMode.value ? '경험 수정' : '경험 상세';
-  return `${prefix} - ${pageTitle.value}`;
+  return `${prefix} [ ${pageTitle.value} ]`;
 });
 
 const formData = ref<TExperienceFormData>({
@@ -129,7 +146,7 @@ const loadExperienceData = async () => {
       keyAchievements: data.keyAchievements || '',
       skills: data.skills || '',
       sections:
-        data.sections?.map((section) => ({
+        data.sections?.map((section: any) => ({
           ...section,
           isEditingTitle: false,
           tempTitle: '',
@@ -161,7 +178,7 @@ const handleSave = async () => {
     goalSummary: formData.value.goalSummary || undefined,
     keyAchievements: formData.value.keyAchievements || undefined,
     skills: formData.value.skills || undefined,
-    sections: formData.value.sections.map((section, index) => ({
+    sections: formData.value.sections.map((section: any, index: number) => ({
       id: section.id?.startsWith('new_section_') ? undefined : section.id,
       kind: section.kind,
       title: section.title || `블록 ${index + 1}`,
@@ -185,6 +202,10 @@ const handleSave = async () => {
 const handleCancel = async () => {
   await loadExperienceData();
   isEditMode.value = false;
+};
+
+const handleNavigateToAiEdit = () => {
+  navigateTo(`/career/${experienceId.value}/ai`);
 };
 
 const handleBack = () => {

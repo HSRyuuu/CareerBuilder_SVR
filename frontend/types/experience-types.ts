@@ -47,6 +47,43 @@ export interface ExperienceFormData {
 }
 
 /**
+ * 경험 폼 내의 개별 섹션 (편집 상태 포함)
+ */
+export interface TExperienceFormSection extends ExperienceSection {
+  isEditingTitle?: boolean;
+  tempTitle: string;
+  showHelp?: boolean;
+}
+
+/**
+ * ExperienceForm 컴포넌트에서 사용하는 전체 데이터 구조
+ */
+export interface TExperienceFormData {
+  id?: string;
+  title: string;
+  background: string;
+  periodStart: string;
+  periodEnd: string;
+  role: string;
+  category: string | null;
+  contributionLevel: string | null;
+  goalSummary: string;
+  keyAchievements: string;
+  skills: string;
+  sections: TExperienceFormSection[];
+}
+
+/**
+ * ExperienceForm 컴포넌트의 동작 모드
+ */
+export enum ExperienceFormMode {
+  REGISTER = 'REGISTER',
+  VIEW = 'VIEW',
+  EDIT = 'EDIT',
+  EDIT_WITH_AI = 'EDIT_WITH_AI',
+}
+
+/**
  * 경험 상태
  */
 export enum ExperienceStatus {
