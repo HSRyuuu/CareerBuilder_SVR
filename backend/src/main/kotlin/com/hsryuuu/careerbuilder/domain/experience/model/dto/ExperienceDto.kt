@@ -188,7 +188,7 @@ data class ExperienceStatsSummary(
     val total: Long,
     val incomplete: Long,
     val completed: Long,
-    val analyzing: Long,
+    val modified: Long,
     val analyzed: Long
 )
 

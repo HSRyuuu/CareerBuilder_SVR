@@ -2,6 +2,7 @@ package com.hsryuuu.careerbuilder.domain.experience.model.entity
 
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
+import com.hsryuuu.careerbuilder.domain.experience.model.dto.UpdateSectionRequest
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
@@ -44,6 +45,9 @@ class Experience(
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     var status: ExperienceStatus = ExperienceStatus.INCOMPLETE,
+
+    @Column(name = "progress_score")
+    var progressScore: Int = 0,
 
     @Column(name = "role")
     var role: String? = null,
@@ -119,10 +123,92 @@ class Experience(
      * Section 컬렉션을 업데이트합니다.
      * 전략: Clear & AddAll 방식 (orphanRemoval=true로 삭제 자동 처리)
      */
-    fun updateSections(newSections: List<ExperienceSection>) {
-        sections.clear()
-        newSections.forEach { addSection(it) }
+    fun updateSections(reqSections: List<UpdateSectionRequest>) {
+        val requestSectionIds = reqSections.mapNotNull { it.id }.toSet()
+        sections.removeIf { it.id !in requestSectionIds }
+        reqSections.forEach { section ->
+            val existingSection = this.sections.find { it.id == section.id }
+            // 새로 추가된 섹션
+            if (existingSection == null) {
+                addSection(
+                    ExperienceSection(
+                        kind = section.kind,
+                        title = section.title,
+                        content = section.content,
+                        sortOrder = section.sortOrder
+                    )
+                )
+            } else {
+                existingSection.update(
+                    kind = section.kind,
+                    title = section.title,
+                    content = section.content,
+                    sortOrder = section.sortOrder
+                )
+            }
+        }
     }
+
+    fun validateRequiredValue() {
+        if (this.title.isBlank() || this.title.length < 5) {
+            throw GlobalException(ErrorCode.EXPERIENCE_TITLE_REQUIRED)
+        }
+        if (this.background.isNullOrBlank()) {
+            throw GlobalException(ErrorCode.EXPERIENCE_BACKGROUND_REQUIRED)
+        }
+        if (this.role.isNullOrBlank()) {
+            throw GlobalException(ErrorCode.EXPERIENCE_ROLE_REQUIRED)
+        }
+    }
+
+    fun calculateProgressScore() {
+        var score = 0;
+        if (this.title.length > 5) score += 10
+        if (!this.background.isNullOrBlank()) score += 10
+        if (!this.role.isNullOrBlank()) score += 10
+        if (!this.skills.isNullOrBlank()) score += 10
+
+        if (!this.goalSummary.isNullOrBlank() && this.goalSummary!!.length > 30) {
+            score += 10
+        }
+        if (!this.keyAchievements.isNullOrBlank() && this.keyAchievements!!.length > 30) {
+            score += 10
+        }
+
+        if (this.sections.isNotEmpty()) {
+            score += 10;
+        }
+        // 여기까지 70점 아래는 유연하게 조정
+
+        val remainScore = 100 - score; // 30점
+        var sectionScore = 0;
+        this.sections.forEach {
+            if (it.content.length > 20) {
+                sectionScore += 10;
+            }
+        }
+        if (sectionScore > remainScore) {
+            score = 100;
+        } else {
+            score += sectionScore;
+        }
+
+        this.progressScore = score;
+    }
+
+    fun setStatusByProgressScore(isEdit: Boolean) {
+        if (this.progressScore < 70) {
+            this.status = ExperienceStatus.INCOMPLETE
+        } else {
+            this.status = if (isEdit) {
+                ExperienceStatus.MODIFIED
+            } else {
+                ExperienceStatus.COMPLETED
+            }
+        }
+    }
+
+
 }
 
 

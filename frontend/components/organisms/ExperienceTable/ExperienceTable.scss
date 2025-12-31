@@ -25,6 +25,7 @@
 
     .experience-search-input {
       width: 100%;
+
       :deep(input) {
         padding-left: 38px;
       }
@@ -127,7 +128,7 @@
     color: #3db783;
   }
 
-  &.status-analyzing {
+  &.status-modified {
     background-color: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
   }
@@ -143,12 +144,15 @@
     &.status-incomplete {
       background-color: rgba(241, 115, 115, 0.2);
     }
+
     &.status-completed {
       background-color: rgba(61, 183, 131, 0.2);
     }
-    &.status-analyzing {
+
+    &.status-modified {
       background-color: rgba(59, 130, 246, 0.2);
     }
+
     &.status-analyzed {
       background-color: rgba(139, 92, 246, 0.2);
     }

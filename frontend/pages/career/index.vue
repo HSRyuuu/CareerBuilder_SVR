@@ -3,7 +3,6 @@
     <div class="content-wrapper">
       <!-- Part1: 카드 그리드 -->
       <div class="career-list-cards-grid">
-      
         <div class="career-list-info-card ai-card theme-purple" @click="handleAiAnalysisRequest">
           <div class="career-list-card-icon ai-analysis">
             <v-icon color="white">mdi-brain</v-icon>
@@ -21,7 +20,9 @@
             <v-icon color="white">mdi-comment-check-outline</v-icon>
           </div>
           <h3 class="career-list-card-title">전체 커리어 피드백</h3>
-          <p class="career-list-card-description">경험 데이터를 바탕으로 커리어 방향성과 개선점을 제안받으세요</p>
+          <p class="career-list-card-description">
+            경험 데이터를 바탕으로 커리어 방향성과 개선점을 제안받으세요
+          </p>
           <div class="career-list-card-action-link">피드백 보기 →</div>
         </div>
 
@@ -31,7 +32,9 @@
             <v-icon color="white">mdi-file-document-edit-outline</v-icon>
           </div>
           <h3 class="career-list-card-title">이력서 생성</h3>
-          <p class="career-list-card-description">내 경험을 바탕으로 직무 맞춤형 이력서를 자동 생성합니다</p>
+          <p class="career-list-card-description">
+            내 경험을 바탕으로 직무 맞춤형 이력서를 자동 생성합니다
+          </p>
           <div class="career-list-card-action-link">이력서 생성 →</div>
         </div>
       </div>
@@ -81,16 +84,16 @@
         <div class="career-list-table-header">
           <h2 class="career-list-section-title">내 경험 목록</h2>
           <Button
-            :variant="ButtonVariant.Primary"
-            :size="CommonSize.Medium"
             :round="true"
+            :size="CommonSize.Medium"
+            :variant="ButtonVariant.Primary"
             icon="mdi-plus"
             @click="handleRegister"
           >
             경험 등록
           </Button>
         </div>
-        
+
         <ExperienceTable
           :rows="experiences"
           @row-click="handleRowClick"
@@ -101,24 +104,15 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { ExperienceStatus, STATUS_INFO } from '@/types/experience-types';
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue';
 import type { TExperienceStatsSummary } from '@/types/experience-types';
-import type {
-  TExperience,
-  TExperienceListParams,
-  SortDirection,
-  ExperienceSortKey,
-} from '~/api/experience/types';
+import type { TExperience, TExperienceListParams, } from '~/api/experience/types';
 import { fetchExperiences, fetchExperienceStatsSummary } from '~/api/experience/api';
-import Table from '@/components/organisms/Table/Table.vue';
-import Select from '@/components/atoms/Select/Select.vue';
-import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
 import Button from '@/components/atoms/Button/Button.vue';
-import { FormSize, FormVariant, ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
-import ExperienceTable from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
+import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import type { TExperienceTableFilters } from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
+import ExperienceTable from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
 import Card from '@/components/molecules/Card/Card.vue';
 
 definePageMeta({
@@ -130,7 +124,7 @@ const stats = ref<TExperienceStatsSummary>({
   total: 0,
   incomplete: 0,
   completed: 0,
-  analyzing: 0,
+  modified: 0,
   analyzed: 0,
 });
 
@@ -194,9 +188,13 @@ loadStats();
 loadExperiences();
 
 // 파라미터 변경 시 재조회 (디바운스 처리는 생략, 필요시 추가)
-watch(filters, () => {
-  loadExperiences();
-}, { deep: true });
+watch(
+  filters,
+  () => {
+    loadExperiences();
+  },
+  { deep: true }
+);
 
 const handleRegister = () => {
   navigateTo('/career/register');

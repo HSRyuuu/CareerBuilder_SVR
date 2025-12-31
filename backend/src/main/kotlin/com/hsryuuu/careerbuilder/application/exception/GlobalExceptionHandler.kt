@@ -16,6 +16,7 @@ import java.net.URI
 class GlobalExceptionHandler {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
+
     /**
      * 서비스 정책 예외를 ProblemDetail로 변환합니다.
      */
@@ -29,12 +30,12 @@ class GlobalExceptionHandler {
 
         return ProblemDetail.forStatusAndDetail(ec.status, ec.message).apply {
             // type은 팀/프로젝트 규칙에 맞춰 URI 형태로 정의하는 것이 일반적입니다.
-            type = URI.create("https://careerbuilder.example.com/problems/${ec.code.lowercase()}")
-            title = ec.code
+            type = URI.create("https://careerbuilder.example.com/problems/${ec.name.lowercase()}")
+            title = ec.name
             instance = URI.create(request.requestURI)
 
             // 표준 필드 외 확장 필드도 추가할 수 있습니다.
-            setProperty("code", ec.code)
+            setProperty("code", ec.name)
             if (ex.data != null) {
                 setProperty("data", ex.data)
             }
@@ -58,7 +59,7 @@ class GlobalExceptionHandler {
                 "message" to (it.defaultMessage ?: "Invalid value")
             )
         }
-        log.error("Error: {}",errors , ex)
+        log.error("Error: {}", errors, ex)
 
         return ProblemDetail.forStatusAndDetail(
             ErrorCode.INVALID_REQUEST.status,
@@ -68,7 +69,7 @@ class GlobalExceptionHandler {
             title = "Validation failed"
             instance = URI.create(request.requestURI)
 
-            setProperty("code", ErrorCode.INVALID_REQUEST.code)
+            setProperty("code", ErrorCode.INVALID_REQUEST.name)
             setProperty("errors", errors)
         }
     }

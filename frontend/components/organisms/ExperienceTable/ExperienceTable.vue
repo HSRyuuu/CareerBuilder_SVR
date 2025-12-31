@@ -6,9 +6,9 @@
       <div class="filter-item search-group">
         <Input
           v-model="filters.q"
-          placeholder="검색어를 입력하세요 (경험명, 역할 검색 가능)"
           :size="CommonSize.Small"
           class="experience-search-input"
+          placeholder="검색어를 입력하세요 (경험명, 역할 검색 가능)"
         />
         <v-icon class="search-icon">mdi-magnify</v-icon>
       </div>
@@ -52,8 +52,8 @@
     <Table
       :columns="computedColumns"
       :rows="rows"
-      row-key="id"
       row-class="experience-table-row"
+      row-key="id"
       @row-click="handleRowClick"
     >
       <!-- 상태 셀 커스텀 렌더링 -->
@@ -66,9 +66,9 @@
       <!-- 선택 버튼 셀 커스텀 렌더링 -->
       <template #cell(select)="{ row }">
         <Button
-          :variant="ButtonVariant.Outlined"
-          :size="CommonSize.Small"
           :round="true"
+          :size="CommonSize.Small"
+          :variant="ButtonVariant.Outlined"
           class="row-select-btn"
           @click.stop="handleSelect(row)"
         >
@@ -79,17 +79,17 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { reactive, watch, computed } from 'vue';
+<script lang="ts" setup>
+import { computed, reactive, watch } from 'vue';
 import { experienceColumns } from '@/columns/experience';
 import Table from '@/components/organisms/Table/Table.vue';
 import Input from '@/components/atoms/Input/Input.vue';
+import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
 import Select from '@/components/atoms/Select/Select.vue';
 import Button from '@/components/atoms/Button/Button.vue';
-import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
 import { ExperienceStatus, STATUS_INFO } from '@/types/experience-types';
-import type { TExperience, ExperienceSortKey, SortDirection } from '~/api/experience/types';
-import { FormSize, FormVariant, CommonSize, ButtonVariant } from '@/constants/enums/style-enum';
+import type { ExperienceSortKey, SortDirection, TExperience } from '~/api/experience/types';
+import { ButtonVariant, CommonSize, FormSize, FormVariant } from '@/constants/enums/style-enum';
 
 export type TExperienceTableFilters = {
   q: string;
@@ -104,15 +104,11 @@ interface Props {
   selectButtonLabel?: string;
 }
 
-const {
-  rows,
-  showSelectButton = false,
-  selectButtonLabel = '선택',
-} = defineProps<Props>();
+const { rows, showSelectButton = false, selectButtonLabel = '선택' } = defineProps<Props>();
 
 const emit = defineEmits<{
   'row-click': [TExperience];
-  'select': [TExperience];
+  select: [TExperience];
   'update:filters': [TExperienceTableFilters];
 }>();
 
@@ -144,7 +140,7 @@ const statusOptions: TSelectItem[] = [
   { title: '전체', value: 'ALL' },
   { title: '보완 필요', value: ExperienceStatus.INCOMPLETE },
   { title: '작성 완료', value: ExperienceStatus.COMPLETED },
-  { title: 'AI 분석 중', value: ExperienceStatus.ANALYZING },
+  { title: '수정 완료', value: ExperienceStatus.MODIFIED },
   { title: '분석 완료', value: ExperienceStatus.ANALYZED },
 ];
 
@@ -158,9 +154,13 @@ const toggleSortDirection = () => {
 };
 
 // 필터 변경 감지
-watch(filters, (newFilters) => {
-  emit('update:filters', { ...newFilters });
-}, { deep: true });
+watch(
+  filters,
+  (newFilters) => {
+    emit('update:filters', { ...newFilters });
+  },
+  { deep: true }
+);
 
 const handleRowClick = (row: TExperience) => {
   emit('row-click', row);

@@ -115,7 +115,7 @@ export type TExperienceStatsSummary = {
   total: number;
   incomplete: number;
   completed: number;
-  analyzing: number;
+  modified: number;
   analyzed: number;
 };
 
@@ -140,7 +140,7 @@ export const CATEGORY_INFO: Record<Category, { display: string; description: str
     description: '목표 달성을 위해 초기 기획부터 실행까지 참여한 주요 과업',
   },
   [Category.MAINTENANCE]: {
-    display: '운영 및 효율화',
+    display: '운영 및 개선',
     description: '지속적인 업무 운영과 프로세스 개선 및 품질 향상 활동',
   },
   [Category.TROUBLESHOOTING]: {

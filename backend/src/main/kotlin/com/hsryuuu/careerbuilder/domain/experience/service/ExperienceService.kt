@@ -5,7 +5,6 @@ import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.common.dto.CommonPageResponse
 import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.*
-import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceSection
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceStatus
 import com.hsryuuu.careerbuilder.domain.experience.model.type.ExperienceSortKey
 import com.hsryuuu.careerbuilder.domain.experience.repository.ExperienceRepository
@@ -32,6 +31,11 @@ class ExperienceService(
             val section = CreateSectionRequest.createEntity(sectionRequest)
             experience.addSection(section)
         }
+
+        experience.validateRequiredValue() // 필수값 검증
+        experience.calculateProgressScore() // 점수 계산
+        experience.setStatusByProgressScore(isEdit = false) // 상태 세팅
+
 
         val savedExperience = experienceRepository.save(experience)
 
@@ -88,7 +92,6 @@ class ExperienceService(
 
     @Transactional(readOnly = true)
     fun aiAnalysisResultExists(id: UUID, userId: UUID): Boolean {
-
         return experienceRepository.existsAiAnalysisResultById(id, userId)
     }
 
@@ -118,37 +121,12 @@ class ExperienceService(
             skills = request.skills
         )
 
-        // 3. Sections 업데이트 (ID 기반 Merge 전략)
-        val requestSectionIds = request.sections.mapNotNull { it.id }.toSet()
-        val existingSections = experience.sections.associateBy { it.id }
+        // 3. Sections 업데이트
+        experience.updateSections(request.sections)
 
-        // 3-1. 요청에 없는 기존 섹션 삭제
-        val sectionsToRemove = experience.sections.filter { section ->
-            section.id !in requestSectionIds
-        }
-        sectionsToRemove.forEach { experience.sections.remove(it) }
-
-        // 3-2. 섹션 수정 또는 추가
-        request.sections.forEach { sectionRequest ->
-            if (sectionRequest.id != null && existingSections.containsKey(sectionRequest.id)) {
-                // 기존 섹션 업데이트
-                existingSections[sectionRequest.id]?.update(
-                    kind = sectionRequest.kind,
-                    title = sectionRequest.title,
-                    content = sectionRequest.content,
-                    sortOrder = sectionRequest.sortOrder
-                )
-            } else {
-                // 새로운 섹션 추가
-                val newSection = ExperienceSection(
-                    kind = sectionRequest.kind,
-                    title = sectionRequest.title,
-                    content = sectionRequest.content,
-                    sortOrder = sectionRequest.sortOrder
-                )
-                experience.addSection(newSection)
-            }
-        }
+        experience.validateRequiredValue() // 필수값 검증
+        experience.calculateProgressScore() // 점수 계산
+        experience.setStatusByProgressScore(isEdit = true) // 상태 세팅
 
         experienceRepository.save(experience)
 

@@ -60,7 +60,7 @@
           </div>
           <div class="stat-info">
             <span class="stat-label">완성된 경험</span>
-            <h2 class="stat-value">{{ stats?.completed || 0 }}</h2>
+            <h2 class="stat-value">{{ (stats?.completed  || 0) + (stats?.modified || 0) }}</h2>
           </div>
         </Card>
         <Card class="stat-card">
