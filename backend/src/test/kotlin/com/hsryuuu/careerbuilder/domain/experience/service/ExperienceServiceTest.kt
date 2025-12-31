@@ -184,6 +184,8 @@ class ExperienceServiceTest {
                 title = "테스트 경험",
                 periodStart = "2024-12",
                 periodEnd = "2024-01",
+                background = "배경",
+                role = "역할"
             )
 
             // Act & Assert
@@ -193,31 +195,88 @@ class ExperienceServiceTest {
                 .isInstanceOf(GlobalException::class.java)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.VALIDATION_ERROR_DURATION_SEQUENCE)
         }
+
+        @Test
+        @DisplayName("[FAIL] 필수값(제목) 길이 미달 실패")
+        fun 필수값_누락_제목_길이_미달_실패() {
+            // Arrange
+            val request = CreateExperienceRequest(
+                title = "짧은", // 5자 미만
+                periodStart = "2024-01",
+                background = "배경",
+                role = "역할"
+            )
+
+            // Act & Assert
+            assertThatThrownBy {
+                experienceService.createExperience(testUser.id!!, request)
+            }
+                .isInstanceOf(GlobalException::class.java)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_TITLE_REQUIRED)
+        }
+
+        @Test
+        @DisplayName("[FAIL] 필수값(배경) 누락 실패")
+        fun 필수값_누락_배경_없음_실패() {
+            // Arrange
+            val request = CreateExperienceRequest(
+                title = "정상적인 제목입니다",
+                periodStart = "2024-01",
+                background = "", // 빈 값
+                role = "역할"
+            )
+
+            // Act & Assert
+            assertThatThrownBy {
+                experienceService.createExperience(testUser.id!!, request)
+            }
+                .isInstanceOf(GlobalException::class.java)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_BACKGROUND_REQUIRED)
+        }
+
+        @Test
+        @DisplayName("[FAIL] 필수값(역할) 누락 실패")
+        fun 필수값_누락_역할_없음_실패() {
+            // Arrange
+            val request = CreateExperienceRequest(
+                title = "정상적인 제목입니다",
+                periodStart = "2024-01",
+                background = "배경",
+                role = "" // 빈 값
+            )
+
+            // Act & Assert
+            assertThatThrownBy {
+                experienceService.createExperience(testUser.id!!, request)
+            }
+                .isInstanceOf(GlobalException::class.java)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_ROLE_REQUIRED)
+        }
     }
 
     @Nested
     @DisplayName("경험 검색 - searchExperience()")
     inner class SearchExperience {
         @Test
-        @DisplayName("[SUCCESS] 경험 검색 - 조건 검색 성공")
-        fun searchExperience_검색_성공() {
+        @DisplayName("[SUCCESS] 조건 검색 성공")
+        fun 검색_성공() {
             // Arrange
             experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "Backend Development",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
-                    status = ExperienceStatus.COMPLETED
+                    status = ExperienceStatus.COMPLETED,
+                    background = "백엔드 팀",
+                    role = "백엔드 개발자"
                 )
             )
             experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "Frontend Development",
                     periodStart = "2023-06",
-                    background = "xxx project",
-                    role = "web developer",
-                    status = ExperienceStatus.INCOMPLETE
+                    status = ExperienceStatus.INCOMPLETE,
+                    background = "프론트엔드 팀",
+                    role = "프론트엔드 개발자"
                 )
             )
 
@@ -241,15 +300,15 @@ class ExperienceServiceTest {
     @DisplayName("경험 조회 - getExperience()")
     inner class GetExperience {
         @Test
-        @DisplayName("[SUCCESS] 경험 조회 - 본인 경험 조회 성공")
-        fun getExperience_조회_성공() {
+        @DisplayName("[SUCCESS] 본인 경험 조회 성공")
+        fun 조회_성공() {
             // Arrange
             val created = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "My Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    background = "배경",
+                    role = "역할"
                 )
             )
 
@@ -262,8 +321,8 @@ class ExperienceServiceTest {
         }
 
         @Test
-        @DisplayName("[FAIL] 경험 조회 - 존재하지 않는 경험 조회 실패")
-        fun getExperience_존재하지_않는_경험_실패() {
+        @DisplayName("[FAIL] 존재하지 않는 경험 조회 실패")
+        fun 존재하지_않는_경험_실패() {
             // Arrange
             val nonExistentId = UUID.randomUUID()
 
@@ -276,15 +335,15 @@ class ExperienceServiceTest {
         }
 
         @Test
-        @DisplayName("[FAIL] 경험 조회 - 다른 사용자의 경험 조회 실패")
-        fun getExperience_권한_없음_실패() {
+        @DisplayName("[FAIL] 다른 사용자의 경험 조회 실패")
+        fun 권한_없음_실패() {
             // Arrange
             val created = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "User1 Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    background = "배경",
+                    role = "역할"
                 )
             )
 
@@ -301,16 +360,16 @@ class ExperienceServiceTest {
     @DisplayName("경험 및 AI 분석 결과 조회 - getExperienceWithAIAnalysisResult()")
     inner class GetExperienceWithAIAnalysisResult {
         @Test
-        @DisplayName("[SUCCESS] 경험 및 AI 분석 결과 조회 성공 - 가장 최신 결과만 조회")
-        fun getExperienceWithAIAnalysisResult_조회_성공() {
+        @DisplayName("[SUCCESS] 가장 최신 결과만 조회")
+        fun 조회_성공() {
             // Arrange
             // 1. Experience 생성
             val createdExp = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "AI Analyzed Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    background = "배경",
+                    role = "역할",
                     sections = listOf(
                         CreateSectionRequest(title = "Section 1", content = "Content 1")
                     )
@@ -389,8 +448,8 @@ class ExperienceServiceTest {
                 testUser.id!!, CreateExperienceRequest(
                     title = "AI Analyzed Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    background = "배경",
+                    role = "역할",
                     sections = listOf(CreateSectionRequest(title = "Section 1", content = "Content 1"))
                 )
             )
@@ -428,8 +487,8 @@ class ExperienceServiceTest {
                 testUser.id!!, CreateExperienceRequest(
                     title = "No Analysis Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer"
+                    background = "배경",
+                    role = "역할"
                 )
             )
 
@@ -446,15 +505,15 @@ class ExperienceServiceTest {
     @DisplayName("경험 수정 - updateExperience()")
     inner class UpdateExperience {
         @Test
-        @DisplayName("[SUCCESS] 경험 수정 - 정보 및 섹션 업데이트 성공")
-        fun updateExperience_업데이트_성공() {
+        @DisplayName("[SUCCESS] 정보 및 섹션 업데이트 성공")
+        fun 업데이트_성공() {
             // Arrange
             val created = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "Old Title",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    background = "Old Background",
+                    role = "Old Role",
                     sections = listOf(
                         CreateSectionRequest(title = "Old Section", content = "Old Content")
                     )
@@ -465,8 +524,8 @@ class ExperienceServiceTest {
             val updateRequest = UpdateExperienceRequest(
                 title = "New Title",
                 periodStart = "2023-01",
-                background = "xxx project",
-                role = "web developer",
+                background = "New Background",
+                role = "New Role",
                 sections = listOf(
                     UpdateSectionRequest(
                         id = sectionId,
@@ -493,8 +552,8 @@ class ExperienceServiceTest {
         }
 
         @Test
-        @DisplayName("[FAIL] 경험 수정 - 존재하지 않는 경험 수정 실패")
-        fun updateExperience_존재하지_않는_경험_실패() {
+        @DisplayName("[FAIL] 존재하지 않는 경험 수정 실패")
+        fun 존재하지_않는_경험_실패() {
             // Arrange
             val nonExistentId = UUID.randomUUID()
             val updateRequest = UpdateExperienceRequest(
@@ -511,15 +570,15 @@ class ExperienceServiceTest {
         }
 
         @Test
-        @DisplayName("[FAIL] 경험 수정 - 권한 없는 사용자 수정 실패")
-        fun updateExperience_권한_없음_실패() {
+        @DisplayName("[FAIL] 권한 없는 사용자 수정 실패")
+        fun 권한_없음_실패() {
             // Arrange
             val created = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "My Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    background = "배경",
+                    role = "역할"
                 )
             )
             val updateRequest = UpdateExperienceRequest(
@@ -536,15 +595,15 @@ class ExperienceServiceTest {
         }
 
         @Test
-        @DisplayName("[FAIL] 경험 수정 - 기간 검증 실패")
-        fun updateExperience_기간_오류_실패() {
+        @DisplayName("[FAIL] 기간 검증 실패")
+        fun 기간_오류_실패() {
             // Arrange
             val created = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "My Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    background = "배경",
+                    role = "역할"
                 )
             )
             val updateRequest = UpdateExperienceRequest(
@@ -560,21 +619,102 @@ class ExperienceServiceTest {
                 .isInstanceOf(GlobalException::class.java)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.VALIDATION_ERROR_DURATION_SEQUENCE)
         }
+
+        @Test
+        @DisplayName("[FAIL] 필수값(제목) 길이 미달 실패")
+        fun 필수값_누락_제목_길이_미달_실패() {
+            // Arrange
+            val created = experienceService.createExperience(
+                testUser.id!!, CreateExperienceRequest(
+                    title = "정상적인 제목",
+                    periodStart = "2023-01",
+                    background = "배경",
+                    role = "역할"
+                )
+            )
+            val updateRequest = UpdateExperienceRequest(
+                title = "짧은",
+                periodStart = "2023-01",
+                background = "배경",
+                role = "역할"
+            )
+
+            // Act & Assert
+            assertThatThrownBy {
+                experienceService.updateExperience(created.id, testUser.id!!, updateRequest)
+            }
+                .isInstanceOf(GlobalException::class.java)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_TITLE_REQUIRED)
+        }
+
+        @Test
+        @DisplayName("[FAIL] 필수값(배경) 누락 실패")
+        fun 필수값_누락_배경_없음_실패() {
+            // Arrange
+            val created = experienceService.createExperience(
+                testUser.id!!, CreateExperienceRequest(
+                    title = "정상적인 제목",
+                    periodStart = "2023-01",
+                    background = "배경",
+                    role = "역할"
+                )
+            )
+            val updateRequest = UpdateExperienceRequest(
+                title = "정상적인 제목",
+                periodStart = "2023-01",
+                background = "",
+                role = "역할"
+            )
+
+            // Act & Assert
+            assertThatThrownBy {
+                experienceService.updateExperience(created.id, testUser.id!!, updateRequest)
+            }
+                .isInstanceOf(GlobalException::class.java)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_BACKGROUND_REQUIRED)
+        }
+
+        @Test
+        @DisplayName("[FAIL] 필수값(역할) 누락 실패")
+        fun 필수값_누락_역할_없음_실패() {
+            // Arrange
+            val created = experienceService.createExperience(
+                testUser.id!!, CreateExperienceRequest(
+                    title = "정상적인 제목",
+                    periodStart = "2023-01",
+                    background = "배경",
+                    role = "역할"
+                )
+            )
+            val updateRequest = UpdateExperienceRequest(
+                title = "정상적인 제목",
+                periodStart = "2023-01",
+                background = "배경",
+                role = ""
+            )
+
+            // Act & Assert
+            assertThatThrownBy {
+                experienceService.updateExperience(created.id, testUser.id!!, updateRequest)
+            }
+                .isInstanceOf(GlobalException::class.java)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_ROLE_REQUIRED)
+        }
     }
 
     @Nested
     @DisplayName("경험 삭제 - deleteExperience()")
     inner class DeleteExperience {
         @Test
-        @DisplayName("[SUCCESS] 경험 삭제 - 삭제 성공")
-        fun deleteExperience_삭제_성공() {
+        @DisplayName("[SUCCESS] 삭제 성공")
+        fun 삭제_성공() {
             // Arrange
             val created = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "To be deleted",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer"
+                    background = "배경",
+                    role = "역할"
                 )
             )
 
@@ -590,8 +730,8 @@ class ExperienceServiceTest {
         }
 
         @Test
-        @DisplayName("[FAIL] 경험 삭제 - 존재하지 않는 경험 삭제 실패")
-        fun deleteExperience_존재하지_않는_경험_실패() {
+        @DisplayName("[FAIL] 존재하지 않는 경험 삭제 실패")
+        fun 존재하지_않는_경험_실패() {
             // Arrange
             val nonExistentId = UUID.randomUUID()
 
@@ -604,15 +744,15 @@ class ExperienceServiceTest {
         }
 
         @Test
-        @DisplayName("[FAIL] 경험 삭제 - 권한 없는 사용자 삭제 실패")
-        fun deleteExperience_권한_없음_실패() {
+        @DisplayName("[FAIL] 권한 없는 사용자 삭제 실패")
+        fun 권한_없음_실패() {
             // Arrange
             val created = experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
                     title = "My Experience",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer"
+                    background = "배경",
+                    role = "역할"
                 )
             )
 
@@ -630,31 +770,31 @@ class ExperienceServiceTest {
     inner class GetStatsSummary {
         @Test
         @DisplayName("[SUCCESS] 통계 요약 조회 성공")
-        fun getStatsSummary_조회_성공() {
+        fun 조회_성공() {
             // Arrange
             experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
-                    title = "Exp_1_INCOMPLETE",
+                    title = "Exp 1",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
+                    status = ExperienceStatus.INCOMPLETE,
+                    background = "배경",
+                    role = "역할"
                 )
             )
             experienceService.createExperience(
                 testUser.id!!, CreateExperienceRequest(
-                    title = "Exp_2_COMPLETE",
+                    title = "Exp 2 Title",
                     periodStart = "2023-01",
-                    background = "xxx project",
-                    role = "web developer",
-                    skills = "skill1, skill2",
-                    goalSummary = "goalSummary는 30자 이상 작성하는 것을 추천합니다. goalSummary는 30자 이상 작성하는 것을 추천합니다.",
-                    keyAchievements = "keyAchievements는 30자 이상 작성하는 것을 추천합니다. keyAchievements는 30자 이상 작성하는 것을 추천합니다.",
+                    status = ExperienceStatus.COMPLETED,
+                    background = "배경 설명입니다.",
+                    role = "역할 설명입니다.",
+                    skills = "Skill1, Skill2",
+                    goalSummary = "목표 요약 설명입니다. 30자가 넘어야 점수를 받을 수 있습니다. 조금 더 길게 작성합니다.",
+                    keyAchievements = "핵심 성과 설명입니다. 30자가 넘어야 점수를 받을 수 있습니다. 조금 더 길게 작성합니다.",
                     sections = listOf(
                         CreateSectionRequest(
-                            kind = SectionKind.SITUATION,
-                            title = "배경",
-                            content = "프로젝트 배경 설명",
-                            sortOrder = 0
+                            title = "섹션 제목",
+                            content = "섹션 내용입니다. 20자가 넘어야 점수를 받을 수 있습니다."
                         )
                     )
                 )
