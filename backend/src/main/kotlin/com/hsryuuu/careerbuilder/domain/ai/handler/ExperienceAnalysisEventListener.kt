@@ -9,6 +9,7 @@ import com.hsryuuu.careerbuilder.domain.ai.repository.AiExperienceAnalysisReposi
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
 import com.hsryuuu.careerbuilder.domain.ai.service.AiGenerationService
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.Experience
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceStatus
 import com.hsryuuu.careerbuilder.domain.experience.repository.ExperienceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.model.ChatResponse
@@ -43,31 +44,33 @@ class ExperienceAnalysisEventListener(
             log.error("AiRequest not found id: {}", event.aiRequestId)
             return
         }
+        val experience = experienceRepository.findById(event.experienceId).orElse(null)
+        if (experience == null) {
+            log.error("Experience not found id: ${event.experienceId}")
+            return
+        }
+
         try {
             // 1. 상태 변경: PROCESSING
             aiRequest.status = AiRequestStatus.PROCESSING
             aiRequestRepository.saveAndFlush(aiRequest)
-
-            // 2. Experience 데이터 조회
-            val experience = experienceRepository.findById(event.experienceId).orElseThrow {
-                IllegalArgumentException("Experience not found id: ${event.experienceId}")
-            }
-            // 3. AI 호출 (Service 위임 - Exception 처리됨)
+            // 2. AI 호출 (Service 위임 - Exception 처리됨)
             val chatResponse = aiGenerationService.analyzeExperience(experience)
-            // 4. 결과 저장 (Entity 생성 및 저장)
+            // 3. 결과 저장 (Entity 생성 및 저장)
             val aiAnalysis = saveAiAnalysis(
                 aiRequest,
-                experience!!,
+                experience,
                 BeanOutputConverter(ExperienceAnalysisResponse::class.java)
                     .convert(chatResponse.result.output.content)
             )
-            // 5. Ai Request 설공 처리
+            // 4. Ai Request 성공 처리
             completeAiRequest(chatResponse, aiRequest, aiAnalysis.id!!)
-
+            experience.status = ExperienceStatus.AI_ANALYZED
         } catch (e: Exception) {
             log.error("AI Analysis Failed for request: ${aiRequest.id}", e)
             aiRequest.fail(e.message ?: "Unknown error")
         } finally {
+            experienceRepository.save(experience)
             aiRequestRepository.save(aiRequest)
         }
     }
