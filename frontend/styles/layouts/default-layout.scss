@@ -232,7 +232,8 @@
 
   &:hover {
     background: var(--bg-tertiary);
-    color: var(--text-primary);
+    // color: var(--text-primary); // Removed to prevent turning black in light mode
+    opacity: 0.9;
   }
 
   &--active {

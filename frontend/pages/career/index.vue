@@ -71,7 +71,7 @@
         <Card 
           class="stat-card" 
           :class="{ 'ai-cta-card': stats.aiAnalyzed === 0 }"
-          @click="stats.aiAnalyzed === 0 ? handleAiAnalysisRequest() : null"
+          @click="handleAnalyzedCardClick"
         >
           <template v-if="stats.aiAnalyzed > 0">
             <div class="stat-icon" style="background: rgba(139, 92, 246, 0.1)">
@@ -79,7 +79,10 @@
             </div>
             <div class="stat-info">
               <span class="stat-label">AI 분석 완료</span>
-              <h2 class="stat-value">{{ stats.aiAnalyzed }}</h2>
+              <div class="stat-value-group">
+                <h2 class="stat-value">{{ stats.aiAnalyzed }}</h2>
+                <span class="stat-description">분석 완료된 경험을 수정해보세요 →</span>
+              </div>
             </div>
           </template>
           <template v-else>
@@ -92,8 +95,31 @@
             </div>
           </template>
         </Card>
-    
       </div>
+
+      <!-- AI 분석 완료 경험 선택 모달 -->
+      <v-dialog v-model="showSelectionModal" max-width="500px">
+        <v-card class="selection-modal-card">
+          <div class="modal-header">
+            <h3 class="modal-title">수정할 경험 선택</h3>
+            <v-btn icon="mdi-close" variant="text" size="small" @click="showSelectionModal = false" />
+          </div>
+          <div class="modal-body">
+            <div 
+              v-for="exp in analyzedExperiences" 
+              :key="exp.id" 
+              class="selection-item"
+              @click="navigateTo(`/career/${exp.id}/ai`)"
+            >
+              <div class="item-info">
+                <span class="item-title">{{ exp.title }}</span>
+                <span class="item-date">{{ new Date(exp.updatedAt).toLocaleDateString() }} 수정됨</span>
+              </div>
+              <v-icon size="small">mdi-chevron-right</v-icon>
+            </div>
+          </div>
+        </v-card>
+      </v-dialog>
 
       <!-- Part3: 경험 목록 테이블 -->
       <div class="career-list-table-section">
@@ -130,6 +156,7 @@ import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import type { TExperienceTableFilters } from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
 import ExperienceTable from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
 import Card from '@/components/molecules/Card/Card.vue';
+import { ExperienceStatus } from '@/types/experience-types';
 
 definePageMeta({
   layout: 'default',
@@ -154,6 +181,10 @@ const filters = ref<TExperienceTableFilters>({
 
 // 경험 목록 데이터
 const experiences = ref<TExperience[]>([]);
+
+// AI 분석 완료 경험 선택 관련
+const showSelectionModal = ref(false);
+const analyzedExperiences = ref<TExperience[]>([]);
 const isLoading = ref(false);
 
 // API 파라미터 computed
@@ -218,6 +249,30 @@ const handleRegister = () => {
 
 const handleAiAnalysisRequest = () => {
   navigateTo('/career/analysis/exp');
+};
+
+const handleAnalyzedCardClick = async () => {
+  if (stats.value.aiAnalyzed === 0) {
+    handleAiAnalysisRequest();
+    return;
+  }
+
+  const { data, error } = await fetchExperiences({
+    status: ExperienceStatus.AI_ANALYZED,
+    p: 1,
+    size: 100,
+    sortKey: 'UPDATED_AT',
+    sortDir: 'DESC'
+  });
+
+  if (!error && data) {
+    if (data.list.length === 1) {
+      navigateTo(`/career/${data.list[0].id}/ai`);
+    } else if (data.list.length > 1) {
+      analyzedExperiences.value = data.list;
+      showSelectionModal.value = true;
+    }
+  }
 };
 
 const handleFeedback = () => {

@@ -144,8 +144,8 @@ const statusOptions: TSelectItem[] = [
 ];
 
 const sortOptions: TSelectItem[] = [
-  { title: '수정일', value: 'UPDATED_AT' },
-  { title: '프로젝트 기간', value: 'DURATION_START' },
+  { title: '수정일시', value: 'UPDATED_AT' },
+  { title: '경험 시작일', value: 'DURATION_START' },
 ];
 
 const toggleSortDirection = () => {

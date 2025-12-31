@@ -212,11 +212,23 @@
     margin-bottom: 4px;
   }
 
+  .stat-value-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
   .stat-value {
     font-size: 20px;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+  }
+
+  .stat-description {
+    font-size: 10.5px;
+    color: var(--primary-color);
+    font-weight: 600;
   }
 
   &.ai-cta-card {
@@ -242,6 +254,75 @@
       color: var(--text-secondary);
       display: block;
       margin-top: 2px;
+    }
+  }
+}
+
+// AI 분석 완료 경험 선택 모달
+.selection-modal-card {
+  padding: 20px;
+  background: var(--bg-primary) !important;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+  }
+
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .selection-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateX(4px);
+      border-color: var(--primary-color);
+      background: var(--bg-tertiary);
+      
+      .item-title {
+        color: var(--primary-color);
+      }
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .item-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: color 0.2s ease;
+    }
+
+    .item-date {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .v-icon {
+      color: var(--text-tertiary);
     }
   }
 }
