@@ -46,30 +46,41 @@
           </div>
         </div>
         <div class="hero-visual">
-          <!-- 데코레이션용 플로팅 카드 (4개 사각형 배치) -->
-          <div class="floating-card card-1">
-            <v-icon color="#60a5fa" size="small">mdi-brain</v-icon>
-            <span style="font-size: 14px; font-weight: 700; color: white; margin-left: 8px">
-              AI Skill Extraction
-            </span>
-          </div>
-          <div class="floating-card card-2">
-            <v-icon color="#a855f7" size="small">mdi-chart-areaspline</v-icon>
-            <span style="font-size: 14px; font-weight: 700; color: white; margin-left: 8px">
-              Growth Analysis
-            </span>
-          </div>
-          <div class="floating-card card-3">
-            <v-icon color="#10b981" size="small">mdi-map-marker-path</v-icon>
-            <span style="font-size: 14px; font-weight: 700; color: white; margin-left: 8px">
-              Experience Mapping
-            </span>
-          </div>
-          <div class="floating-card card-4">
-            <v-icon color="#f59e0b" size="small">mdi-lightbulb-outline</v-icon>
-            <span style="font-size: 14px; font-weight: 700; color: white; margin-left: 8px">
-              Career Insights
-            </span>
+          <div class="visual-container">
+            <!-- 연결 선 (Network Lines) -->
+            <svg class="visual-connectors" viewBox="0 0 500 400">
+              <line class="line dash" x1="120" y1="80" x2="380" y2="320" />
+              <line class="line dash" x1="380" y1="80" x2="120" y2="320" />
+            </svg>
+
+            <div class="visual-grid">
+              <div class="floating-card card-1">
+                <v-icon color="#22d3ee" size="small">mdi-robot</v-icon>
+                <span class="card-text">AI Skill Extraction</span>
+              </div>
+              <div class="floating-card card-2">
+                <v-icon color="#a78bfa" size="small">mdi-trending-up</v-icon>
+                <span class="card-text">Growth Analysis</span>
+              </div>
+              <div class="floating-card card-3">
+                <v-icon color="#4ade80" size="small">mdi-database-arrow-up</v-icon>
+                <span class="card-text">Collect Experience</span>
+              </div>
+              <div class="floating-card card-4">
+                <v-icon color="#fbbf24" size="small">mdi-lightbulb-on-10</v-icon>
+                <span class="card-text">Career Insights</span>
+              </div>
+            </div>
+
+            <!-- 중앙 AI 코어 효과 -->
+            <div class="ai-core">
+              <div class="core-ring"></div>
+              <Transition name="fade-scale" mode="out-in">
+                <div :key="currentCoreStage" class="core-content">
+                  <v-icon color="white" size="large">{{ coreStages[currentCoreStage].icon }}</v-icon>
+                </div>
+              </Transition>
+            </div>
           </div>
         </div>
       </div>
@@ -195,7 +206,7 @@
 
 <script setup lang="ts">
 // 1. 외부 라이브러리 import
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 
 // 2. 프로젝트 내부 import
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
@@ -211,6 +222,25 @@ definePageMeta({
   layout: 'full-page',
 });
 const authStore = useAuthStore();
+
+// AI 코어 순환 로직
+const coreStages = [
+  { label: '축적', icon: 'mdi-database-outline' },
+  { label: '분석', icon: 'mdi-chart-timeline-variant-shimmer' },
+  { label: 'AI 피드백', icon: 'mdi-auto-fix' },
+];
+const currentCoreStage = ref(0);
+let coreTimer: any = null;
+
+onMounted(() => {
+  coreTimer = setInterval(() => {
+    currentCoreStage.value = (currentCoreStage.value + 1) % coreStages.length;
+  }, 2500); // 2.5초 간격
+});
+
+onUnmounted(() => {
+  if (coreTimer) clearInterval(coreTimer);
+});
 // 11. 함수 선언
 const handleStartClick = () => {
   navigateTo('/welcome/signup');
