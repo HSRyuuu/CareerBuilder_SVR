@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import ExperienceForm from '@/components/page/ExperienceForm.vue';
+import ExperienceForm from '@/components/page/experience/ExperienceForm.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import { ExperienceFormMode } from '@/types/experience-types';

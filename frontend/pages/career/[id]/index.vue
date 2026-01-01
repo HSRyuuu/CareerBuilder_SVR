@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import ExperienceForm from '@/components/page/ExperienceForm.vue';
+import ExperienceForm from '@/components/page/experience/ExperienceForm.vue';
 import { ExperienceFormMode } from '@/types/experience-types';
 import type { TExperienceFormData } from '@/types/experience-types';
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';

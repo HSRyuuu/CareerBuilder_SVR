@@ -26,8 +26,31 @@
           >
             임시 로그아웃
           </Button>
+          <Button
+            v-if="authStore.isAuthenticated"
+            :variant="ButtonVariant.Secondary"
+            :size="CommonSize.Medium"
+            class="header-help-btn"
+            @click="handleOpenServiceHelpDocs"
+          >
+            <v-icon size="16" color="var(--text-secondary)">mdi-help-circle-outline</v-icon>
+            서비스 도움말
+          </Button>
+          <Button
+            v-if="authStore.isAuthenticated"
+            :variant="ButtonVariant.Secondary"
+            :size="CommonSize.Medium"
+            class="header-help-btn"
+            @click="handleOpenAiDocs"
+          >
+            <v-icon size="16" color="var(--text-secondary)">mdi-text-box-search-outline</v-icon>
+            AI 유의사항
+          </Button>
+          
+          <!-- AI 도움말 모달 -->
+          <AiHelpDocumentModal v-model="isAiHelpModalOpen" />
+
           <!-- 플랜 정보 표시 -->
-          <!-- 플랜 정보 표시 (Chip 형태) -->
           <div
             v-if="authStore.isAuthenticated"
             class="header-plan-chip"
@@ -121,12 +144,14 @@ import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import { useMenu } from '@/composables/useMenu';
 import { useAuthStore } from '@/stores/auth';
 import { MENU_URLS } from '~/constants/menus';
+import AiHelpDocumentModal from '@/components/page/ai-help/AiHelpDocumentModal.vue';
 
 const route = useRoute();
 const menu = useMenu();
 const authStore = useAuthStore();
 const colorMode = useColorMode();
 const isSidebarCollapsed = ref(false);
+const isAiHelpModalOpen = ref(false);
 
 const isDark = computed(() => colorMode.value === 'dark');
 
@@ -155,6 +180,14 @@ const handleMockLogin = () => {
     email: 'test@careerbuilder.com',
   });
   navigateTo(MENU_URLS.HOME);
+};
+
+const handleOpenServiceHelpDocs = () => {
+  
+}
+
+const handleOpenAiDocs = () => {
+  isAiHelpModalOpen.value = true;
 };
 
 const handleMockLogout = () => {
