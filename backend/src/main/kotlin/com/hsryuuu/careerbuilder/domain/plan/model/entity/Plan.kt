@@ -36,11 +36,11 @@ class Plan(
     @Column(name = "career_analysis_limit_per_month", nullable = false)
     var careerAnalysisLimitPerMonth: Int = 0, // 커리어 분석 제한 / 월
 
-    @Column(name = "resume_create_model", length = 50)
-    var resumeCreateModel: String, // 이력서 생성 모델 명
+    @Column(name = "resume_model", length = 50)
+    var resumeModel: String, // 이력서 생성 모델 명
 
-    @Column(name = "resume_create_limit_per_month", nullable = false)
-    var resumeCreateLimitPerMonth: Int = 0, // 이력서 생성 제한 /월
+    @Column(name = "resume_limit_per_month", nullable = false)
+    var resumeLimitPerMonth: Int = 0, // 이력서 생성 제한 /월
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

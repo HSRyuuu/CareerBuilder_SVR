@@ -1,0 +1,222 @@
+@use '../variables' as *;
+
+.manage-plan-page {
+  padding: 26px;
+  animation: fadeIn 0.5s ease;
+  min-height: 100vh;
+}
+
+.plan-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  align-items: center;
+}
+
+.plan-toggle {
+  display: flex;
+  background: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: 100px;
+  border: 1px solid var(--border-color);
+  gap: 4px;
+
+  .toggle-btn {
+    padding: 8px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &.active {
+      background: var(--bg-primary);
+      color: var(--primary-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .discount-tag {
+    font-size: 11px;
+    color: #10b981;
+    margin-left: 4px;
+    font-weight: 700;
+  }
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.plan-card {
+  position: relative;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+  }
+
+  &.featured {
+    border: 2px solid var(--primary-color);
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+
+    &:hover {
+      transform: scale(1.02) translateY(-8px);
+    }
+
+    .badge {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #10b981;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+  }
+
+  .plan-header {
+    text-align: center;
+    margin-bottom: 32px;
+
+    .plan-name {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .plan-subtitle {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: 24px;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+
+      .currency {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .amount {
+        font-size: 40px;
+        font-weight: 900;
+        color: var(--text-primary);
+        letter-spacing: -1px;
+      }
+
+      .period {
+        font-size: 14px;
+        color: var(--text-tertiary);
+      }
+    }
+  }
+
+  .plan-action {
+    margin-bottom: 32px;
+    width: 100%;
+  }
+
+  .plan-features {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .feature-group {
+      .group-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-tertiary);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .v-icon {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.4;
+
+        .v-icon {
+          color: var(--primary-color);
+          margin-top: 2px;
+        }
+
+        &.plus-info {
+          font-weight: 700;
+          color: var(--text-primary);
+          margin-top: 8px;
+          margin-bottom: 4px;
+        }
+      }
+    }
+  }
+
+  .plan-model-info {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .model-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      span {
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

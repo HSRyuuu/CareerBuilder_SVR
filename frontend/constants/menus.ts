@@ -16,12 +16,13 @@ export const MENU_URLS = {
   CAREER_REGISTER: '/career/register',
   RESUME: '/resume',
   AI: '/ai',
-  SETTING: '/settings',
   WELCOME: '/welcome',
   LOGIN: '/welcome/login',
   SIGNUP: '/welcome/signup',
   TRY_CAREER: '/welcome/try/career',
   AI_EXPERIENCE: '/ai/experience',
+  SETTING: '/account/settings',
+  MANAGE_PLAN: '/account/manage-plan',
 }
 
 

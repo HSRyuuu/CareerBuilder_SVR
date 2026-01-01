@@ -54,6 +54,21 @@
         </Card>
       </section>
 
+      <!-- 구독 정보 섹션 -->
+      <section class="settings-section">
+        <h3 class="section-title">구독 정보</h3>
+        <Card class="options-card">
+          <div class="setting-item clickable" @click="navigateTo(MENU_URLS.MANAGE_PLAN)">
+            <div class="setting-item-info">
+              <h4 class="setting-item-title">플랜 관리</h4>
+              <p class="setting-item-desc">현재 이용 중인 플랜 정보를 확인하고 업그레이드합니다.</p>
+            </div>
+            <div class="plan-badge">Basic</div>
+            <v-icon color="var(--text-tertiary)">mdi-chevron-right</v-icon>
+          </div>
+        </Card>
+      </section>
+
       <!-- 약관 및 정책 섹션 -->
       <section class="settings-section">
         <h3 class="section-title">약관 및 정책</h3>
@@ -351,6 +366,16 @@ const handleDeleteAccount = () => {
     color: var(--text-secondary);
     line-height: 1.5;
   }
+}
+
+.plan-badge {
+  padding: 4px 12px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 8px;
 }
 
 .setting-divider {

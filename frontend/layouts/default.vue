@@ -26,6 +26,16 @@
           >
             임시 로그아웃
           </Button>
+          <!-- 플랜 정보 표시 -->
+          <!-- 플랜 정보 표시 (Chip 형태) -->
+          <div
+            v-if="authStore.isAuthenticated"
+            class="header-plan-chip"
+            @click="navigateTo(MENU_URLS.MANAGE_PLAN)"
+          >
+            <v-icon size="16" class="u-ai-text-gradient">mdi-lightning-bolt</v-icon>
+            <span class="chip-text u-ai-text-gradient">PRO</span>
+          </div>
           <Button
             :variant="ButtonVariant.Secondary"
             :size="CommonSize.Medium"
