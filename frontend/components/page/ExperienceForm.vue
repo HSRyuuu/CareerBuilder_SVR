@@ -183,11 +183,34 @@
 
             <!-- 사용자 입력 영역 -->
             <div class="user-side">
+              <div v-if="localIsEditMode" class="form-field full-width">
+                <div  class="section-kind-group">
+                  <button
+                    class="section-help-btn"
+                    :class="{ active: showGoalHelp }"
+                    @click="toggleGoalHelp"
+                  >
+                    <v-icon size="small">mdi-help-circle-outline</v-icon>
+                    <span class="help-btn-text">Help</span>
+                  </button>
+                  <DescriptionBox :text="GOAL_INFO.description" />
+                </div>
+                <Transition name="fade">
+                  <div v-if="showGoalHelp && localIsEditMode" class="section-help-detail">
+                    <div class="help-detail-icon">
+                      <v-icon size="18">mdi-lightbulb-on-outline</v-icon>
+                    </div>
+                    <div class="help-detail-content">
+                      {{ GOAL_INFO.help }}
+                    </div>
+                  </div>
+                </Transition>
+              </div>
               <div class="form-field full-width">
                 <TextArea
                   v-model="modelValue.goalSummary"
                   placeholder="달성하고자 했던 목표를 작성하세요"
-                  :rows="10"
+                  :rows="7"
                   :disabled="!localIsEditMode"
                 />
               </div>
@@ -213,11 +236,34 @@
 
             <!-- 사용자 입력 영역 -->
             <div class="user-side">
+              <div v-if="localIsEditMode" class="form-field full-width">
+                <div class="section-kind-group" >
+                  <button
+                    class="section-help-btn"
+                    :class="{ active: showAchievementsHelp }"
+                    @click="toggleAchievementsHelp"
+                  >
+                    <v-icon size="small">mdi-help-circle-outline</v-icon>
+                    <span class="help-btn-text">Help</span>
+                  </button>
+                  <DescriptionBox :text="KEY_ACHIEVEMENTS_INFO.description" />
+                </div>
+                <Transition name="fade">
+                  <div v-if="showAchievementsHelp && localIsEditMode" class="section-help-detail">
+                    <div class="help-detail-icon">
+                      <v-icon size="18">mdi-lightbulb-on-outline</v-icon>
+                    </div>
+                    <div class="help-detail-content">
+                      {{ KEY_ACHIEVEMENTS_INFO.help }}
+                    </div>
+                  </div>
+                </Transition>
+              </div>
               <div class="form-field full-width">
                 <TextArea
                   v-model="modelValue.keyAchievements"
                   placeholder="이 경험을 통해 얻은 성과와 영향을 간략히 설명하세요"
-                  :rows="10"
+                  :rows="7"
                   :disabled="!localIsEditMode"
                 />
               </div>
@@ -390,7 +436,7 @@
                 <TextArea
                   v-model="section.content"
                   placeholder="Help 버튼을 눌러서 작성 가이드를 확인하세요"
-                  :rows="10"
+                  :rows="7"
                   :disabled="!localIsEditMode"
                 />
               </div>
@@ -547,6 +593,8 @@ import {
   CONTRIBUTION_LEVEL_INFO,
   Category,
   ExperienceFormMode,
+  GOAL_INFO,
+  KEY_ACHIEVEMENTS_INFO,
 } from '@/types/experience-types';
 import type { TExperienceFormSection, TExperienceFormData } from '@/types/experience-types';
 import type { TExperienceAIAnalysisResponse } from '@/api/experience/types';
@@ -570,6 +618,18 @@ const emit = defineEmits<{
 const toast = useToast();
 const localIsEditMode = computed(() => [ExperienceFormMode.REGISTER, ExperienceFormMode.EDIT, ExperienceFormMode.EDIT_WITH_AI].includes(mode as ExperienceFormMode));
 const hasAiAnalysis = computed(() => !!aiAnalysis && mode === ExperienceFormMode.EDIT_WITH_AI);
+
+// 목표/핵심 성과 Help 토글 상태
+const showGoalHelp = ref(false);
+const showAchievementsHelp = ref(false);
+
+const toggleGoalHelp = () => {
+  showGoalHelp.value = !showGoalHelp.value;
+};
+
+const toggleAchievementsHelp = () => {
+  showAchievementsHelp.value = !showAchievementsHelp.value;
+};
 
 // AI 섹션 매핑
 const getAiSectionAnalysis = (sectionId?: string) => {

@@ -43,6 +43,8 @@ import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import { createExperience } from '~/api/experience/api';
 import type { TExperienceCreate } from '~/api/experience/types';
 
+import { ExperienceSectionKind } from '@/types/experience-types';
+
 const toast = useToast();
 
 definePageMeta({
@@ -60,7 +62,18 @@ const formData = ref<TExperienceFormData>({
   goalSummary: '',
   keyAchievements: '',
   skills: '',
-  sections: [],
+  sections: [
+    {
+      id: `default_section_${Date.now()}`,
+      kind: ExperienceSectionKind.SITUATION,
+      title: '배경 및 목표',
+      content: '',
+      sortOrder: 0,
+      isEditingTitle: false,
+      tempTitle: '',
+      showHelp: false,
+    },
+  ],
 });
 
 const handleSave = async () => {

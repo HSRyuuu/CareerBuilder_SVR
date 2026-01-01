@@ -26,7 +26,7 @@
               icon="mdi-rocket-launch"
               @click="navigateTo('/career/register')"
             >
-              지금 시작하기
+              지금 등록하기
             </Button>
             <Button
               :round="true"
@@ -34,7 +34,7 @@
               :variant="ButtonVariant.Secondary"
               @click="navigateTo('/career')"
             >
-              경험 둘러보기
+              내 경험 둘러보기
             </Button>
           </div>
         </div>

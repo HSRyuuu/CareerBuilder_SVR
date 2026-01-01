@@ -33,7 +33,7 @@
           <div class="setting-item">
             <div class="setting-item-info">
               <h4 class="setting-item-title">알림 설정</h4>
-              <p class="setting-item-desc">새로운 AI 분석 결과가 나오면 알림을 받습니다.</p>
+              <p class="setting-item-desc">AI 분석 결과가 나오면 알림을 받습니다.</p>
             </div>
             <v-switch
               v-model="isNotify"
