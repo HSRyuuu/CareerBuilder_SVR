@@ -1,0 +1,180 @@
+.try-career-page {
+  min-height: 100vh;
+  background-color: var(--v-theme-surface-variant, #f9fafb);
+  display: flex;
+  flex-direction: column;
+}
+
+.steps-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 0;
+  
+  // PageHeader-like Sticky & Glassmorphism
+  position: sticky;
+  top: 0;
+  z-index: 100; // Increased z-index
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid #e5e7eb; // Keep explicit color or use var if imported
+  transition: all 0.3s ease;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  opacity: 0.5;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.active {
+    opacity: 1;
+    transform: scale(1.1);
+    
+    .step-circle {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    
+    .step-label {
+      color: var(--v-theme-primary, #3b82f6);
+      font-weight: 700;
+    }
+  }
+
+  &.completed {
+    opacity: 1;
+    .step-circle {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .step-label {
+      color: #10b981;
+    }
+  }
+}
+
+.step-circle {
+  width: 28px; // Reduced from 40px
+  height: 28px; // Reduced from 40px
+  border-radius: 50%;
+  border: 2px solid var(--v-theme-outline-variant, #d1d5db);
+  background-color: var(--v-theme-surface, white);
+  color: var(--v-theme-on-surface-variant, #6b7280);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px; // Reduced from 16px
+  transition: all 0.3s ease;
+}
+
+.step-label {
+  font-size: 12px; // Reduced from 14px
+  color: var(--v-theme-on-surface-variant, #6b7280);
+  font-weight: 600;
+}
+
+.step-line {
+  width: 100px;
+  height: 3px;
+  background-color: var(--v-theme-outline-variant, #e5e7eb);
+  margin: 0 16px 28px 16px; 
+  border-radius: 2px;
+  transition: all 0.4s ease;
+
+  &.active {
+    background-color: #10b981;
+  }
+}
+
+/* Custom Hero Header */
+.hero-header {
+  padding: 30px 24px;
+  text-align: center;
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent),
+              radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent);
+  border-bottom: 1px solid var(--v-theme-divider, rgba(0,0,0,0.05));
+  
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    color: #111827; // Changed to black (gray-900)
+    // Removed gradient text clip for solid color
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem;
+    color: var(--v-theme-on-surface-variant);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+.content-wrapper {
+  padding: 40px 24px;
+  flex: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
+  
+  .loading-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    background: var(--v-theme-surface);
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+  }
+}
+
+/* Dark mode adjustments */
+:deep(.v-theme--dark) {
+  .hero-header {
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.1), transparent);
+  }
+  
+  .step-line:not(.active) {
+    background-color: #374151;
+  }
+  
+  .step-circle:not(.active):not(.completed) {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #9ca3af;
+  }
+}
