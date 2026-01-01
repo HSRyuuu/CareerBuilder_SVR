@@ -25,5 +25,5 @@ const { title, subtitle } = defineProps<TPageHeaderProps>();
 </script>
 
 <style scoped lang="scss">
-@import './PageHeader.scss';
+@use './PageHeader.scss';
 </style>

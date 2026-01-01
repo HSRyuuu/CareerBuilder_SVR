@@ -1,4 +1,15 @@
-@use '../variables' as *;
+@use '@/styles/variables' as *;
+
+// ========================
+// 메인 레이아웃
+// ========================
+.experience-form-component {
+  min-height: 100vh;
+  margin: -32px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
 
 .career-register-page {
   animation: fadeIn 0.5s ease;
@@ -37,10 +48,17 @@
 }
 
 .page-layout {
+  padding: 40px 48px;
   display: grid;
   grid-template-columns: 4fr 1fr;
   gap: 24px;
   align-items: start;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 24px;
+    grid-template-columns: 1fr;
+  }
 }
 
 .form-container {
@@ -73,6 +91,30 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+// ========================
+// 동적 블록의 커스텀 헤더
+// ========================
+.card-custom-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.card-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+// ========================
+// 섹션 제목 관련
+// ========================
 // 제목과 편집 버튼을 묶는 그룹
 .section-title-group {
   flex: 1;
@@ -555,10 +597,13 @@
 // 오른쪽 액션 사이드바
 .action-sidebar {
   position: sticky;
-  top: 100px; // PageHeader sticky 영역 아래
+  top: 100px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 250px; // 너비 고정
+  min-width: 200px;
+  max-width: 300px;
 }
 
 .sidebar-section {
@@ -675,6 +720,30 @@
       text-align: left;
     }
   }
+
+  // 읽기 전용 모드 (View 모드)
+  &.sidebar-section-readonly {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    cursor: default;
+
+    &:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-color);
+    }
+
+    // 고정 섹션과 동일한 레이아웃 적용
+    .sidebar-section-info {
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    .sidebar-section-title {
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-align: left;
+    }
+  }
 }
 
 // 드래그 상태 스타일
@@ -719,12 +788,24 @@
   &:active {
     cursor: grabbing;
   }
+
+  // View 모드에서 드래그 비활성화
+  &.drag-disabled {
+    cursor: default;
+    pointer-events: none;
+
+    &:hover {
+      background: transparent;
+    }
+  }
 }
 
 .sidebar-section-info {
   flex: 1;
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-start; // 좌측 정렬 명시
   gap: 8px;
   min-width: 0;
 }
@@ -747,9 +828,12 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
+  text-align: left; // 텍스트 좌측 정렬
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%; // 부모 너비 준수
+  display: block; // block 요소여야 ellipsis 작동 확실
 }
 
 .sidebar-section-delete {

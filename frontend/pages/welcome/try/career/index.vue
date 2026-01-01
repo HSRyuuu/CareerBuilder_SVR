@@ -159,5 +159,5 @@ const goToSignup = () => {
 </script>
 
 <style lang="scss" scoped>
-@import './welcome-try-career.scss';
+@use './welcome-try-career.scss';
 </style>

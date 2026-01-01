@@ -480,13 +480,13 @@
             <!-- 구분선 -->
             <div v-if="modelValue.sections.length > 0" class="sidebar-divider" />
 
-            <!-- 동적 블록 (순서 변경 가능) -->
+            <!-- 동적 블록 목록 (Edit/View 모드 통합) -->
             <VueDraggableNext
-              v-if="localIsEditMode"
               v-model="modelValue.sections"
               tag="div"
               handle=".sidebar-section-drag-handle"
               :animation="200"
+              :disabled="!localIsEditMode"
               ghost-class="sidebar-section-ghost"
               chosen-class="sidebar-section-chosen"
               drag-class="sidebar-section-drag"
@@ -496,9 +496,15 @@
                 v-for="(section, index) in modelValue.sections"
                 :key="section.id"
                 class="sidebar-section-item"
+                :class="{ 'sidebar-section-readonly': !localIsEditMode }"
               >
-                <div class="sidebar-section-drag-handle">
-                  <v-icon size="small" color="#6b7280">mdi-drag-vertical</v-icon>
+                <div
+                  class="sidebar-section-drag-handle"
+                  :class="{ 'drag-disabled': !localIsEditMode }"
+                >
+                  <v-icon size="small" :color="localIsEditMode ? '#6b7280' : 'transparent'">
+                    mdi-drag-vertical
+                  </v-icon>
                 </div>
                 <div class="sidebar-section-info">
                   <span class="sidebar-section-number">{{ index + 1 }}</span>
@@ -506,27 +512,15 @@
                     {{ section.title || `블록 ${index + 1}` }}
                   </span>
                 </div>
-                <button class="sidebar-section-delete" @click="removeSection(index)">
+                <button
+                  v-if="localIsEditMode"
+                  class="sidebar-section-delete"
+                  @click="removeSection(index)"
+                >
                   <v-icon size="small">mdi-delete-outline</v-icon>
                 </button>
               </div>
             </VueDraggableNext>
-
-            <!-- 상세 모드일 때는 드래그/삭제 없이 목차만 표시 -->
-            <template v-else>
-              <div
-                v-for="(section, index) in modelValue.sections"
-                :key="section.id"
-                class="sidebar-section-item sidebar-section-readonly"
-              >
-                <div class="sidebar-section-info">
-                  <span class="sidebar-section-number">{{ index + 1 }}</span>
-                  <span class="sidebar-section-title">
-                    {{ section.title || `블록 ${index + 1}` }}
-                  </span>
-                </div>
-              </div>
-            </template>
           </div>
         </div>
       </aside>
@@ -696,48 +690,6 @@ const cancelSectionTitleEdit = (index: number) => {
 };
 </script>
 
-<style lang="scss" scoped>
-.experience-form-component {
-  min-height: 100vh;
-  margin: -32px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.page-layout {
-  padding: 40px 48px;
-  display: grid;
-  grid-template-columns: 4fr 1fr;
-  gap: 24px;
-  align-items: start;
-  flex: 1;
-
-  @media (max-width: 768px) {
-    padding: 24px;
-    grid-template-columns: 1fr;
-  }
-}
-
-// 동적 블록의 커스텀 헤더
-.card-custom-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-}
-
-.card-icon-wrapper {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  flex-shrink: 0;
-}
-</style>
 <style lang="scss">
-@use '@/styles/pages/career-register-page.scss';
+@use './ExperienceForm.scss';
 </style>
