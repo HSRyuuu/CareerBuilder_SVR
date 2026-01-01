@@ -21,7 +21,7 @@
           <Button
             v-if="authStore.isAuthenticated"
             :variant="ButtonVariant.Danger"
-            :size="CommonSize.Medium"
+            :size="CommonSize.Small"
             @click="handleMockLogout"
           >
             임시 로그아웃
@@ -29,7 +29,7 @@
           <Button
             v-if="authStore.isAuthenticated"
             :variant="ButtonVariant.Secondary"
-            :size="CommonSize.Medium"
+            :size="CommonSize.Small"
             class="header-help-btn"
             @click="handleOpenServiceHelpDocs"
           >
@@ -39,7 +39,7 @@
           <Button
             v-if="authStore.isAuthenticated"
             :variant="ButtonVariant.Secondary"
-            :size="CommonSize.Medium"
+            :size="CommonSize.Small"
             class="header-help-btn"
             @click="handleOpenAiDocs"
           >
@@ -49,6 +49,9 @@
           
           <!-- AI 도움말 모달 -->
           <AiHelpDocumentModal v-model="isAiHelpModalOpen" />
+          
+          <!-- 서비스 도움말 모달 -->
+          <ServiceHelpDocumentModal v-model="isServiceHelpModalOpen" />
 
           <!-- 플랜 정보 표시 -->
           <div
@@ -145,6 +148,7 @@ import { useMenu } from '@/composables/useMenu';
 import { useAuthStore } from '@/stores/auth';
 import { MENU_URLS } from '~/constants/menus';
 import AiHelpDocumentModal from '@/components/page/ai-help/AiHelpDocumentModal.vue';
+import ServiceHelpDocumentModal from '@/components/page/ai-help/ServiceHelpDocumentModal.vue';
 
 const route = useRoute();
 const menu = useMenu();
@@ -152,6 +156,7 @@ const authStore = useAuthStore();
 const colorMode = useColorMode();
 const isSidebarCollapsed = ref(false);
 const isAiHelpModalOpen = ref(false);
+const isServiceHelpModalOpen = ref(false);
 
 const isDark = computed(() => colorMode.value === 'dark');
 
@@ -183,8 +188,8 @@ const handleMockLogin = () => {
 };
 
 const handleOpenServiceHelpDocs = () => {
-  
-}
+  isServiceHelpModalOpen.value = true;
+};
 
 const handleOpenAiDocs = () => {
   isAiHelpModalOpen.value = true;
