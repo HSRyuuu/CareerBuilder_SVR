@@ -14,7 +14,10 @@ interface AppUserRepository : JpaRepository<AppUser, UUID> {
     fun existsByEmail(email: String): Boolean
     fun findByUsername(username: String): AppUser?
     fun findByEmail(email: String): AppUser?
-    
+
+    fun findByEmailContains(email: String): List<AppUser>
+    fun findByUsernameContains(username: String): List<AppUser>
+
     @Modifying
     @Transactional
     @Query("delete from AppUser where email like concat('%', :email, '%')")

@@ -11,4 +11,5 @@ interface SubscriptionRepository : JpaRepository<Subscription, UUID> {
 
     @EntityGraph(attributePaths = ["plan"])
     fun findByUserId(userId: UUID): Subscription?
+
 }

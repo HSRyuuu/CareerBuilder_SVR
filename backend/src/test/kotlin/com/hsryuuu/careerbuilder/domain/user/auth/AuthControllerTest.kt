@@ -1,5 +1,7 @@
 package com.hsryuuu.careerbuilder.domain.user.auth
 
+import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionHistoryRepository
+import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionRepository
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.dto.UserSignUpRequest
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
 import com.hsryuuu.careerbuilder.generator.TestDataGenerator
@@ -28,6 +30,12 @@ class AuthControllerTest {
     private lateinit var appUserRepository: AppUserRepository
 
     @Autowired
+    private lateinit var subscriptionRepository: SubscriptionRepository
+
+    @Autowired
+    private lateinit var subscriptionHistoryRepository: SubscriptionHistoryRepository
+
+    @Autowired
     private lateinit var client: TestRestTemplate
 
     @Autowired
@@ -35,8 +43,22 @@ class AuthControllerTest {
 
     @AfterEach
     fun deleteUser() {
-        appUserRepository.deleteByUsernameLike(TestDataGenerator.TEST_USERNAME_PREFIX)
-        appUserRepository.deleteByEmailLike(TestDataGenerator.TEST_EMAIL_SUFFIX)
+        for (user in appUserRepository.findByUsernameContains(TestDataGenerator.TEST_USERNAME_PREFIX)) {
+            val subscription = subscriptionRepository.findByUserId(user.id!!)
+            print(subscription)
+            val subscriptionHistories = subscriptionHistoryRepository.findBySubscriptionId(subscription!!.id!!)
+            print(subscriptionHistories)
+            subscriptionHistoryRepository.deleteAll(subscriptionHistories)
+            subscriptionRepository.delete(subscription)
+            appUserRepository.delete(user)
+        }
+        for (user in appUserRepository.findByEmailContains(TestDataGenerator.TEST_EMAIL_SUFFIX)) {
+            val subscription = subscriptionRepository.findByUserId(user.id!!)
+            val subscriptionHistories = subscriptionHistoryRepository.findBySubscriptionId(subscription!!.id!!)
+            subscriptionHistoryRepository.deleteAll(subscriptionHistories)
+            subscriptionRepository.delete(subscription)
+            appUserRepository.delete(user)
+        }
     }
 
     @Nested
