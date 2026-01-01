@@ -168,10 +168,10 @@ class Experience(
         if (!this.role.isNullOrBlank()) score += 10
         if (!this.skills.isNullOrBlank()) score += 10
 
-        if (!this.goalSummary.isNullOrBlank() && this.goalSummary!!.length > 30) {
+        if (!this.goalSummary.isNullOrBlank() && this.goalSummary!!.length > 20) {
             score += 10
         }
-        if (!this.keyAchievements.isNullOrBlank() && this.keyAchievements!!.length > 30) {
+        if (!this.keyAchievements.isNullOrBlank() && this.keyAchievements!!.length > 20) {
             score += 10
         }
 

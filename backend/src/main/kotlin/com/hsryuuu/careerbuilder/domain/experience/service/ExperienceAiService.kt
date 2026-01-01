@@ -8,12 +8,17 @@ import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.ReferenceType
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.Experience
+import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceStatus
 import com.hsryuuu.careerbuilder.domain.experience.repository.ExperienceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+
+import com.hsryuuu.careerbuilder.domain.ai.model.dto.AiRequestDto
 
 @Service
 class ExperienceAiService(
@@ -24,8 +29,11 @@ class ExperienceAiService(
     private val log = LoggerFactory.getLogger(javaClass)
 
     @Transactional
-    fun requestAnalysis(userId: UUID, experienceId: UUID) {
-        validateAuth(experienceId, userId)
+    fun requestAnalysis(userId: UUID, experienceId: UUID): AiRequestDto {
+        val experience = experienceRepository.findByIdOrNull(experienceId)
+            ?: throw GlobalException(ErrorCode.EXPERIENCE_NOT_FOUND)
+
+        validateAiAnalysisAvailable(experience, userId)
 
         val aiRequest = AiRequest(
             userId = userId,
@@ -45,11 +53,20 @@ class ExperienceAiService(
                 userId = userId
             )
         )
+
+        return AiRequestDto.from(savedRequest)
     }
 
-    private fun validateAuth(experienceId: UUID, userId: UUID) {
-        if (!experienceRepository.existsByIdAndUserId(experienceId, userId)) {
-            throw GlobalException(ErrorCode.EXPERIENCE_NOT_FOUND) // 권한없음일수도 있음
-        }
+    private fun validateAiAnalysisAvailable(
+        experience: Experience,
+        userId: UUID
+    ) {
+        if (experience.user.id != userId)
+            throw GlobalException(ErrorCode.FORBIDDEN)
+        if (experience.status == ExperienceStatus.INCOMPLETE)
+            throw GlobalException(ErrorCode.EXPERIENCE_INCOMPLETE)
+        if (experience.status == ExperienceStatus.AI_ANALYZED)
+            throw GlobalException(ErrorCode.AI_EXPERIENCE_ANALYSIS_ALREADY_EXISTS)
     }
+
 }

@@ -33,7 +33,9 @@ enum class ErrorCode(
     EXPERIENCE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "제목은 필수값입니다.(5자 이상)"),
     EXPERIENCE_BACKGROUND_REQUIRED(HttpStatus.BAD_REQUEST, "배경/소속/단체 를 입력해주세요."),
     EXPERIENCE_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "주요 역할을 입력해주세요."),
+    EXPERIENCE_INCOMPLETE(HttpStatus.BAD_REQUEST, "경험 작성에 보완이 필요합니다. 필수값을 완성하고, 목표와 핵심 성과를 20자 이상 입력해주세요. "),
 
     // AI
-    AI_EXPERIENCE_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "AI 경험 분석 결과가 존재하지 않습니다.")
+    AI_EXPERIENCE_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "AI 경험 분석 결과가 존재하지 않습니다."),
+    AI_EXPERIENCE_ANALYSIS_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "AI 경험 분석 결과를 아직 확인하지 않았습니다."),
 }
