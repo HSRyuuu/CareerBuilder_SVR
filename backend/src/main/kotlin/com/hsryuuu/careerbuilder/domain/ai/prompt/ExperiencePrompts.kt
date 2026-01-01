@@ -45,7 +45,7 @@ object ExperiencePrompts {
                 - 각 섹션에 대해 STAR, PAR, CAR 방식을 적용하여 논리적으로 재작성하고, 그 상세 분해를 `breakdown`에 채워주세요.
             5. **키워드**: 이 경험에서 추출할 수 있는 핵심 직무 키워드 및 기술 스택을 `recommendedKeywords`에 담아주세요.
             6. **점수 산정**: 다음 4가지 지표를 기준으로 경험의 완성도를 100점 만점으로 평가해서 'totalScore' 에 담아주세요.
-                - 세부 점수는 'scoreMetrics'에 담아주세요. 
+                - 세부 점수는 각각 100점 만점으로 평가해서 'scoreMetrics'에 담아주세요. 
                 - 구체성(Specificity): 상황과 역할이 모호하지 않고 상세하게 서술되었는가?
                 - 성과 중심(Result-Oriented): 단순 나열이 아닌 정량적/정성적 성과가 명확히 드러나는가?
                 - 논리적 연결(Logical Flow): 배경-수행-성과 간의 인과관계가 자연스러운가?

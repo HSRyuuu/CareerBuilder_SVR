@@ -165,6 +165,24 @@
           </div>
         </Card>
 
+          <!-- 스킬 블록 -->
+        <Card
+          title="스킬"
+          icon="mdi-code-tags"
+          icon-color="linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
+        >
+          <div class="form-grid">
+            <div class="form-field full-width">
+              <Input
+                v-model="modelValue.skills"
+                placeholder="관련 스킬을 쉼표로 구분하여 입력하세요 (예: Vue.js, TypeScript, Node.js)"
+                :size="CommonSize.Medium"
+                :disabled="!localIsEditMode"
+              />
+            </div>
+          </div>
+        </Card>
+
         <!-- 목표 블록 -->
         <Card
           title="목표"
@@ -193,7 +211,7 @@
                     <v-icon size="small">mdi-help-circle-outline</v-icon>
                     <span class="help-btn-text">Help</span>
                   </button>
-                  <DescriptionBox :text="GOAL_INFO.description" />
+                  <DescriptionBox v-if="!hasAiAnalysis" :text="GOAL_INFO.description" />
                 </div>
                 <Transition name="fade">
                   <div v-if="showGoalHelp && localIsEditMode" class="section-help-detail">
@@ -246,7 +264,7 @@
                     <v-icon size="small">mdi-help-circle-outline</v-icon>
                     <span class="help-btn-text">Help</span>
                   </button>
-                  <DescriptionBox :text="KEY_ACHIEVEMENTS_INFO.description" />
+                  <DescriptionBox v-if="!hasAiAnalysis" :text="KEY_ACHIEVEMENTS_INFO.description" />
                 </div>
                 <Transition name="fade">
                   <div v-if="showAchievementsHelp && localIsEditMode" class="section-help-detail">
@@ -267,24 +285,6 @@
                   :disabled="!localIsEditMode"
                 />
               </div>
-            </div>
-          </div>
-        </Card>
-
-        <!-- 스킬 블록 -->
-        <Card
-          title="스킬"
-          icon="mdi-code-tags"
-          icon-color="linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
-        >
-          <div class="form-grid">
-            <div class="form-field full-width">
-              <Input
-                v-model="modelValue.skills"
-                placeholder="관련 스킬을 쉼표로 구분하여 입력하세요 (예: Vue.js, TypeScript, Node.js)"
-                :size="CommonSize.Medium"
-                :disabled="!localIsEditMode"
-              />
             </div>
           </div>
         </Card>
@@ -418,7 +418,7 @@
                     <v-icon size="small">mdi-help-circle-outline</v-icon>
                     <span class="help-btn-text">Help</span>
                   </button>
-                  <DescriptionBox :text="getSectionDescription(section.kind)" />
+                  <DescriptionBox v-if="!hasAiAnalysis" :text="getSectionDescription(section.kind)" />
                 </div>
                 <Transition name="fade">
                   <div v-if="section.showHelp && localIsEditMode" class="section-help-detail">

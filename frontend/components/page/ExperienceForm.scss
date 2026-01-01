@@ -292,9 +292,10 @@
   gap: 10px;
   flex-wrap: wrap;
 
-  > :last-child {
+  // 설명 박스가 있을 때만 유연하게 늘어나도록 수정
+  .description-box {
     flex: 1;
-    min-width: 200px; // 최소 너비 확보
+    min-width: 200px;
   }
 }
 
@@ -304,8 +305,8 @@
   align-items: flex-start;
   gap: 12px;
 
-  // 설명 박스가 남은 공간을 모두 차지하도록 설정
-  > :last-child {
+  // 설명 박스가 있을 때만 유연하게 늘어나도록 수정
+  .description-box {
     flex: 1;
   }
 }
