@@ -51,7 +51,7 @@ class LLMRequestExecutor(
     private fun getExperienceAnalysisPrompt(
         experience: Experience,
         converter: BeanOutputConverter<ExperienceAnalysisResponse>
-    ): String? {
+    ): String {
         var additionalSectionInfo = "추가 섹션 없음"
         if (!experience.sections.isEmpty()) {
             additionalSectionInfo =

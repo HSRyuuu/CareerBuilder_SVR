@@ -45,8 +45,6 @@ class AuthController(
 
     @GetMapping("/logout")
     fun logout(httpServletRequest: HttpServletRequest): LogoutResponse {
-        // logout
-        authService.logout(httpServletRequest)
-        return LogoutResponse(true)
+        return authService.logout(httpServletRequest)
     }
 }

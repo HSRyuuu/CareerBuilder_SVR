@@ -15,7 +15,7 @@ class JwtTokenProvider {
     private var secretKey: String = "defaultSecretKey12345678901234567890"
 
     @Value("\${jwt.expiration:86400000}") // 기본값: 1일
-    private val validityInMilliseconds: Long = 86400000
+    val validityInMilliseconds: Long = 86400000
 
     fun createToken(userInfo: UserInfo): String {
         val claims: Claims = Jwts.claims().setSubject(userInfo.username)

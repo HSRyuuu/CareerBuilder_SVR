@@ -3,6 +3,8 @@ package com.hsryuuu.careerbuilder.application.security
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -12,11 +14,15 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthenticationFilter(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val userDetailsService: CustomUserDetailsService
+    private val userDetailsService: CustomUserDetailsService,
+    private val redisTemplate: StringRedisTemplate
 ) : OncePerRequestFilter() {
     companion object {
         const val BEARER_PREFIX = "Bearer "
     }
+
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -33,6 +39,12 @@ class JwtAuthenticationFilter(
 
         // "Bearer " 접두사 이후의 토큰 부분 추출
         val jwt = authHeader.substring(BEARER_PREFIX.length)
+
+        // 로그아웃 확인 (블랙리스트 방식)
+        if (isLogoutToken(jwt)) {
+            filterChain.doFilter(request, response)
+            return;
+        }
 
         try {
             // 토큰에서 사용자 이름 추출
@@ -65,5 +77,16 @@ class JwtAuthenticationFilter(
 
         // 다음 필터로 요청 전달
         filterChain.doFilter(request, response)
+    }
+
+    private fun isLogoutToken(jwt: String): Boolean {
+        try {
+            val isBlacklisted = redisTemplate.hasKey("blacklist:$jwt")
+
+            return isBlacklisted ?: false
+        } catch (ex: Exception) {
+            log.error("JWTAuthenticationFilter Redis Error", ex)
+            return false;
+        }
     }
 }

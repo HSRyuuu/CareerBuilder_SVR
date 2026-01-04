@@ -17,13 +17,17 @@ import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LoginRequest
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LoginResponse
+import com.hsryuuu.careerbuilder.domain.user.auth.model.LogoutResponse
 import jakarta.servlet.http.HttpServletRequest
+import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.http.HttpHeaders
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Service
 class AuthService(
@@ -33,8 +37,10 @@ class AuthService(
     private val subscriptionHistoryRepository: SubscriptionHistoryRepository,
     private val passwordEncoder: PasswordEncoder,
     private val jwtTokenProvider: JwtTokenProvider,
+    private val redisTemplate: StringRedisTemplate,
     private val authManager: AuthManager
 ) {
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     fun existsByUsername(username: String): Boolean {
         return userRepository.existsByUsername(username)
@@ -105,10 +111,24 @@ class AuthService(
         return LoginResponse(jwtTokenProvider.createToken(userInfo), userInfo)
     }
 
-    fun logout(httpServletRequest: HttpServletRequest) {
-        val accessToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)
-        val userInfo = authManager.getCurrentUser()
-        // TODO: accessToken 블랙리스트
+    fun logout(httpServletRequest: HttpServletRequest): LogoutResponse {
+        val authHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)
+        var accessToken: String? = null
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            accessToken = authHeader.substring(7)
+        }
+        try {
+            redisTemplate.opsForValue().set(
+                "blacklist:$accessToken",
+                "logout",
+                jwtTokenProvider.validityInMilliseconds,
+                TimeUnit.MILLISECONDS
+            )
+            return LogoutResponse(true)
+        } catch (e: Exception) {
+            log.error("AuthService Logout - Redis Error", e)
+        }
+        return LogoutResponse(false)
     }
 
 
