@@ -54,7 +54,7 @@ class SecurityConfig(
         val configuration = CorsConfiguration()
         configuration.allowedOrigins =
             listOf("http://localhost:3000", "https://career-builder-six.vercel.app") // 모든 origin 허용 또는 특정 도메인 지정
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("Authorization", "Content-Type")
         configuration.allowCredentials = true
 
