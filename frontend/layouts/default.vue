@@ -53,15 +53,7 @@
           <!-- 서비스 도움말 모달 -->
           <ServiceHelpDocumentModal v-model="isServiceHelpModalOpen" />
 
-          <div
-            v-if="authStore.isAuthenticated"
-            class="u-plan-chip"
-            :class="planType.toLowerCase()"
-            @click="navigateTo(MENU_URLS.MANAGE_PLAN)"
-          >
-            <v-icon size="16">mdi-lightning-bolt</v-icon>
-            <span class="chip-text">{{ planName }}</span>
-          </div>
+          <PlanButton v-if="authStore.isAuthenticated" />
           <Button
             :variant="ButtonVariant.Secondary"
             :size="CommonSize.Medium"
@@ -150,6 +142,8 @@ import { useUserInfo } from '@/composables/useUserInfo';
 import { MENU_URLS } from '~/constants/menus';
 import AiHelpDocumentModal from '@/components/page/ai-help/AiHelpDocumentModal.vue';
 import ServiceHelpDocumentModal from '@/components/page/ai-help/ServiceHelpDocumentModal.vue';
+import UserPlanModal from '@/components/organisms/UserPlanModal/UserPlanModal.vue';
+import PlanButton from '@/components/atoms/PlanButton/PlanButton.vue';
 
 const route = useRoute();
 const menu = useMenu();

@@ -1,0 +1,51 @@
+.user-plan-modal {
+  .modal-card {
+    padding: 0;
+    overflow: hidden;
+    border: none;
+  }
+
+  .modal-header {
+    padding: 24px 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .title-area {
+      .main-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 4px;
+
+        h3 {
+          font-size: 18px;
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+      }
+
+      .sub-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+        padding-left: 34px; // icon(24px) + gap(10px)
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 0 24px 24px;
+    
+    :deep(.user-usage-card) {
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      box-shadow: none;
+    }
+  }
+
+  .modal-footer {
+    padding: 16px 24px 24px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+  }
+}

@@ -94,11 +94,11 @@ const {
   showResume = false,
 } = defineProps<TUserUsageCardProps>();
 
-const { user, usage, planType, planName, isLoading, refreshUsage } = useUserInfo();
+const { user, usage, planType, planName, isLoading, fetchAll } = useUserInfo();
 
 onMounted(async () => {
-  // 사용량 정보는 마운트 시점에 다시 조회 (그때그때)
-  await refreshUsage();
+  // 사용량 및 플랜 정보는 마운트 시점에 다시 조회 (그때그때)
+  await fetchAll();
 });
 
 /**

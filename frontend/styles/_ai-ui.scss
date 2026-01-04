@@ -118,13 +118,18 @@ $ai-shadow-hover: 0 6px 18px rgba(30, 64, 175, 0.35);
   }
 
   &.pro {
-    @extend .u-ai-text-gradient;
     background: rgba(139, 92, 246, 0.1);
     border-color: rgba(139, 92, 246, 0.2);
     
+    .chip-text {
+      @extend .u-ai-text-gradient;
+      -webkit-text-fill-color: transparent;
+    }
+    
     .v-icon {
       @extend .u-ai-text-gradient;
-      -webkit-text-fill-color: initial; // Allow gradient icon if supported or just color
+      -webkit-text-fill-color: initial; 
+      color: #8b5cf6; // Fallback
     }
   }
 
@@ -134,8 +139,18 @@ $ai-shadow-hover: 0 6px 18px rgba(30, 64, 175, 0.35);
     border-color: #4338ca;
     box-shadow: 0 4px 12px rgba(49, 46, 129, 0.3);
 
+    .chip-text {
+      color: white;
+    }
+
     &:hover {
       box-shadow: 0 6px 18px rgba(49, 46, 129, 0.4);
     }
+  }
+
+  .chip-text {
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
   }
 }

@@ -10,6 +10,13 @@ export const PlanType = {
 
 export type TPlanType = (typeof PlanType)[keyof typeof PlanType];
 
+export const PlanRank = {
+  [PlanType.BASIC]: 0,
+  [PlanType.LITE]: 1,
+  [PlanType.PRO]: 2,
+  [PlanType.MAX]: 3,
+} as const;
+
 /**
  * AI 프로세스 유형 (사용량 제한 항목)
  */

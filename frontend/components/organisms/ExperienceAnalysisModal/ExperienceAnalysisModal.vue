@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import type { TExperience } from '~/api/experience/types';
 import { useUserInfo } from '~/composables/useUserInfo';
 import UserUsageCard from '@/components/organisms/UserUsageCard/UserUsageCard.vue';
@@ -95,7 +95,14 @@ const emit = defineEmits<{
   'request': [experience: TExperience, options: any];
 }>();
 
-const { usage, planType, refreshUsage } = useUserInfo();
+const { usage, planType, planName, fetchAll } = useUserInfo();
+
+// 모달이 열릴 때마다 최신 정보 가져오기
+watch(isVisible, (val) => {
+  if (val) {
+    fetchAll();
+  }
+});
 
 import { PlanType, AiProcessType } from '~/types/ai-plan-types';
 

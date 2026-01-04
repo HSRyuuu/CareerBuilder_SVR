@@ -32,22 +32,13 @@
 
           <div class="plan-action">
             <Button
-              v-if="plan.isCurrent"
-              :variant="ButtonVariant.Secondary"
+              :variant="getButtonVariant(plan)"
               :size="CommonSize.Large"
               :block="true"
-              :disabled="true"
-            >
-              현재 이용 중
-            </Button>
-            <Button
-              v-else
-              :variant="plan.isFeatured ? ButtonVariant.Primary : ButtonVariant.Outlined"
-              :size="CommonSize.Large"
-              :block="true"
+              :disabled="isCurrentPlan(plan.key)"
               @click="handleUpgrade(plan)"
             >
-              {{ plan.price === 0 ? '시작하기' : '업그레이드' }}
+              {{ getButtonText(plan.key) }}
             </Button>
           </div>
 
@@ -95,23 +86,47 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
+import { useUserInfo } from '~/composables/useUserInfo';
+import { PlanType, PlanRank, type TPlanType } from '~/types/ai-plan-types';
 
 definePageMeta({
   layout: 'default',
 });
 
 const toast = useToast();
+const { planType: currentPlanType } = useUserInfo();
+
+const isCurrentPlan = (planKey: string) => {
+  return currentPlanType.value === planKey;
+};
+
+const getButtonVariant = (plan: any) => {
+  if (isCurrentPlan(plan.key)) return ButtonVariant.Secondary;
+  return plan.isFeatured ? ButtonVariant.Primary : ButtonVariant.Outlined;
+};
+
+const getButtonText = (planKey: string) => {
+  if (isCurrentPlan(planKey)) return '현재 이용 중';
+  
+  if (planKey === PlanType.BASIC) return '무료로 이용하기';
+  
+  const currentRank = PlanRank[currentPlanType.value as TPlanType] ?? 0;
+  const targetRank = PlanRank[planKey as TPlanType] ?? 0;
+  
+  if (targetRank < currentRank) return '구독 변경';
+  return '업그레이드';
+};
 
 const plans = [
   {
-    key: 'BASIC',
+    key: PlanType.BASIC,
     name: 'Basic',
     subtitle: '시작하는 분들을 위한 기본 플랜',
     price: 0,
-    isCurrent: true,
     isFeatured: false,
     limitFeatures: [
       '하루 3회 AI 경험 분석',
@@ -123,11 +138,10 @@ const plans = [
     aiHighlights: ['기본 AI 엔진 탑재', '표준 분석 모델 제공', ''],
   },
   {
-    key: 'LITE',
+    key: PlanType.LITE,
     name: 'Lite',
     subtitle: '모든 기능을 체험해보세요',
     price: 1900,
-    isCurrent: false,
     isFeatured: false,
     limitFeatures: [
       '하루 10회 AI 경험 분석',
@@ -140,12 +154,10 @@ const plans = [
     
   },
   {
-    key: 'PRO',
+    key: PlanType.PRO,
     name: 'Pro',
-    subscribeButton: '시작하기',
     subtitle: '강력한 AI 코칭을 경험해보세요',
     price: 5900,
-    isCurrent: false,
     isFeatured: true,
     limitFeatures: [
       '하루 50회 AI 경험 분석',
@@ -157,11 +169,10 @@ const plans = [
     aiHighlights: ['복잡한 추론 작업에 탁월한 모델 탑재', '정교한 문장 교정 엔진', '커리어, 이력서 심층 분석'],
   },
   {
-    key: 'MAX',
+    key: PlanType.MAX,
     name: 'Max',
     subtitle: '커리어 성장의 모든 성과를 기록하세요',
     price: 9900,
-    isCurrent: false,
     isFeatured: false,
     limitFeatures: [
       '무제한 AI 경험 분석',

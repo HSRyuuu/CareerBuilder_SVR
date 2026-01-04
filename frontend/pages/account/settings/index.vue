@@ -58,12 +58,12 @@
       <section class="settings-section">
         <h3 class="section-title">구독 정보</h3>
         <Card class="options-card">
-          <div class="setting-item clickable" @click="navigateTo(MENU_URLS.MANAGE_PLAN)">
+          <div class="setting-item clickable" @click="planButtonRef?.openModal()">
             <div class="setting-item-info">
               <h4 class="setting-item-title">플랜 관리</h4>
               <p class="setting-item-desc">현재 이용 중인 플랜 정보를 확인하고 업그레이드합니다.</p>
             </div>
-            <div class="plan-badge">Basic</div>
+            <PlanButton ref="planButtonRef" style="margin-right: 8px;" />
             <v-icon color="var(--text-tertiary)">mdi-chevron-right</v-icon>
           </div>
         </Card>
@@ -191,6 +191,7 @@ import { TERMS_OF_SERVICE, PRIVACY_POLICY } from '@/constants/legal-documents';
 
 // 3. API/Composables import
 import { useAuthStore } from '@/stores/auth';
+import { useUserInfo } from '@/composables/useUserInfo';
 import { logout } from '@/api/auth/api';
 
 // 5. 로컬 컴포넌트 import
@@ -198,6 +199,7 @@ import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
 import Card from '@/components/molecules/Card/Card.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import DocumentModal from '@/components/organisms/DocumentModal/DocumentModal.vue';
+import PlanButton from '@/components/atoms/PlanButton/PlanButton.vue';
 import { MENU_URLS } from '~/constants/menus';
 
 // 9. Ref/Reactive 선언
@@ -206,12 +208,14 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
+const { planType, planName, clearUserInfo } = useUserInfo();
 const toast = useToast();
 const colorMode = useColorMode();
 
 const isNotify = ref(false);
 const showTermsModal = ref(false);
 const showPrivacyModal = ref(false);
+const planButtonRef = ref<InstanceType<typeof PlanButton> | null>(null);
 
 const isDark = computed({
   get: () => colorMode.value === 'dark',
@@ -239,6 +243,7 @@ const handleLogout = async () => {
   try {
     await logout();
     authStore.clearAuth();
+    clearUserInfo();
     colorMode.preference = 'light';
     toast.success('로그아웃 되었습니다.');
     navigateTo(MENU_URLS.WELCOME);
@@ -246,6 +251,7 @@ const handleLogout = async () => {
     console.error('Logout error:', error);
     // 에러가 나더라도 클라이언트 상태는 지워주는 것이 좋음
     authStore.clearAuth();
+    clearUserInfo();
     colorMode.preference = 'light';
     navigateTo(MENU_URLS.WELCOME);
   }

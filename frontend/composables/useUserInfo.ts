@@ -1,18 +1,19 @@
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { fetchMe, fetchMyUsage } from '~/api/user/api';
 import type { TUser, TUserUsage } from '~/api/user/types';
 import { PlanType } from '~/types/ai-plan-types';
 
-// 공유 상태를 사용하여 여러 컴포넌트에서 동일한 데이터를 참조할 수 있게 함
-const user = ref<TUser | null>(null);
-const usage = ref<TUserUsage | null>(null);
-const isLoading = ref(false);
-
 /**
  * 사용자 정보 및 사용량 관련 Composable
+ * Nuxt의 useState를 사용하여 SSR 환경에서도 안전하게 상태 공유
  */
 export const useUserInfo = () => {
-  
+  // 공유 상태 정의 (공통 키 'user_info' 사용)
+  const user = useState<TUser | null>('user_profile', () => null);
+  const usage = useState<TUserUsage | null>('user_usage', () => null);
+  const isLoading = useState<boolean>('user_info_loading', () => false);
+
+  // Computed 속성 (함수 내부에서 정의하여 매번 새로운 반응형 객체 반환)
   const planType = computed(() => user.value?.subscription.plan.planType || PlanType.BASIC);
   const planName = computed(() => user.value?.subscription.plan.name || 'BASIC');
 
@@ -20,6 +21,8 @@ export const useUserInfo = () => {
    * 사용자 정보 및 사용량 통합 조회
    */
   const fetchAll = async () => {
+    if (isLoading.value) return;
+    
     isLoading.value = true;
     try {
       const [userRes, usageRes] = await Promise.all([
@@ -34,7 +37,7 @@ export const useUserInfo = () => {
   };
 
   /**
-   * 사용량 정보만 별도 갱신 (그때그때 필요할 때)
+   * 사용량 정보만 별도 갱신
    */
   const refreshUsage = async () => {
     const { data } = await fetchMyUsage();
@@ -44,7 +47,7 @@ export const useUserInfo = () => {
   };
 
   /**
-   * 정보 초기화 (로그아웃 등)
+   * 정보 초기화
    */
   const clearUserInfo = () => {
     user.value = null;
