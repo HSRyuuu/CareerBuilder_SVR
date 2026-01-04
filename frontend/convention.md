@@ -144,21 +144,6 @@ const handleSave = async () => {
     }
   }
 
-  // validate
-  try {
-    await validateCommonData.validate(commonData, { abortEarly: false });
-    await validateCollectSpec.validate(collectSpec, { abortEarly: false });
-  } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      let message = '';
-      error.inner.forEach((error) => {
-        message += error.message + '\n';
-      });
-      useSnackbar().error(message);
-    }
-    return;
-  }
-
   // 데이터 리소스 생성 API body
   const body: TDataResourceDetail = {
     sourceId: sourceId,
@@ -179,19 +164,6 @@ const handleSave = async () => {
   useSnackbar().success('저장되었습니다.');
   await navigateTo(PATH_DATA_RESOURCE);
 };
-
-// 10. Validation 스키마
-const validateCommonData = yup.object().shape({
-  type: yup.string().required('데이터 타입을 선택해주세요.'),
-  title: yup.string().required('데이터명을 입력해주세요.'),
-  keyword: yup.string().required('키워드를 입력해주세요.'),
-  organizationId: yup.string().required('제공기관을 선택해주세요.'),
-});
-
-const validateCollectSpec = yup.object().shape({
-  startDate: yup.string().required('시작 일자를 입력해주세요.'),
-  periodUnit: yup.string().required('수집 주기 단위를 선택해주세요.'),
-});
 </script>
 ```
 
@@ -395,7 +367,7 @@ export const updateExperience = (id: string, body: TExperienceUpdate) => {
 
 // PUT - 수정
 export const updateDataResource = (id: string, body: TDataResourceCommon): Promise<void> => {
-  return useSpringApi({
+  return useApi({
     url: `/api/data/resources/${id}`,
     method: Method.Put,
     body,
@@ -412,7 +384,7 @@ export const deleteExperience = (id: string) => {
 
 // Blob 다운로드
 export const downloadDistribution = (distributionId: string): Promise<Blob> => {
-  return useSpringApi({
+  return useApi({
     url: `/api/data/distributions/${distributionId}/download`,
     method: Method.Get,
     fetchOptions: {
@@ -1136,14 +1108,10 @@ export enum Color {
 - [ ] Vue 파일 작성 순서를 따랐는가?
 - [ ] Props는 destructuring + 기본값으로 선언했는가?
 - [ ] Emits는 타입 안전하게 선언했는가?
-- [ ] API 파일 3개 (api.ts, types.ts, keys.ts)를 생성했는가?
+- [ ] API 파일 2개 (api.ts, types.ts)를 생성했는가?
 - [ ] Type 이름은 `T` prefix를 사용했는가?
-- [ ] Composable 함수는 `use` prefix를 사용했는가?
 - [ ] 컴포넌트는 Atomic Design 패턴을 따랐는가?
 - [ ] 파일명은 PascalCase를 사용했는가?
 - [ ] 변수/함수명은 camelCase를 사용했는가?
 - [ ] 상수는 SCREAMING_SNAKE_CASE를 사용했는가?
 
----
-
-**마지막 업데이트**: 2025-01-12

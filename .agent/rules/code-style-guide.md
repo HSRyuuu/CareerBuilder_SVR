@@ -9,8 +9,9 @@ trigger: always_on
 ## 📁 프로젝트 구조
 
 ```
-CareerBuilder_SVR/
+CareerBuilder/
 ├── frontend/           # Nuxt.js + Vue 3 + TypeScript + Vuetify
+│   ├── api/           # api 및 type 선언
 │   ├── components/    # Atomic Design 패턴
 │   ├── pages/         # Nuxt 페이지
 │   ├── composables/   # Vue Composables
@@ -38,7 +39,7 @@ CareerBuilder_SVR/
 
 이 파일에는 다음 내용이 포함되어 있습니다:
 - Vue 파일 구조 및 작성 순서
-- API 호출 구조 (api.ts, types.ts, keys.ts)
+- API 호출 구조 (api.ts, types.ts)
 - 컴포넌트 구조 (Atomic Design)
 - 타입 정의 규칙
 - 네이밍 컨벤션
