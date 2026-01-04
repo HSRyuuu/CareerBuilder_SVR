@@ -5,11 +5,10 @@ import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.application.security.JwtTokenProvider
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.Plan
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.PlanType
+import com.hsryuuu.careerbuilder.domain.plan.model.entity.Subscription
 import com.hsryuuu.careerbuilder.domain.plan.repository.PlanRepository
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionHistoryRepository
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionRepository
-import com.hsryuuu.careerbuilder.application.security.UserInfo
-import com.hsryuuu.careerbuilder.domain.plan.model.entity.Subscription
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.dto.UserSignUpRequest
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
@@ -20,10 +19,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.*
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -62,9 +58,6 @@ class AuthServiceTest {
     private lateinit var jwtTokenProvider: JwtTokenProvider
 
     @MockBean
-    private lateinit var authManager: com.hsryuuu.careerbuilder.application.security.AuthManager
-
-    @MockBean
     private lateinit var redisTemplate: StringRedisTemplate
 
     private lateinit var testUser: AppUser
@@ -77,7 +70,7 @@ class AuthServiceTest {
             email = "test@example.com",
             password = "encodedPassword"
         )
-        given(jwtTokenProvider.validityInMilliseconds).willReturn(3600000L)
+        whenever(jwtTokenProvider.validityInMilliseconds).thenReturn(3600000L)
     }
 
     @Test
@@ -97,12 +90,12 @@ class AuthServiceTest {
             resumeLimitPerMonth = 3
         )
 
-        given(userRepository.existsByEmail(request.email)).willReturn(false)
-        given(userRepository.existsByUsername(request.username)).willReturn(false)
-        given(passwordEncoder.encode(request.password)).willReturn("encodedPassword")
-        given(userRepository.save(any())).willReturn(testUser)
-        given(planRepository.findByPlanType(PlanType.BASIC)).willReturn(plan)
-        given(subscriptionRepository.save(any())).willReturn(
+        whenever(userRepository.existsByEmail(request.email)).thenReturn(false)
+        whenever(userRepository.existsByUsername(request.username)).thenReturn(false)
+        whenever(passwordEncoder.encode(request.password)).thenReturn("encodedPassword")
+        whenever(userRepository.save(any<AppUser>())).thenReturn(testUser)
+        whenever(planRepository.findByPlanType(PlanType.BASIC)).thenReturn(plan)
+        whenever(subscriptionRepository.save(any<Subscription>())).thenReturn(
             Subscription(
                 id = UUID.randomUUID(),
                 user = testUser,
@@ -115,8 +108,8 @@ class AuthServiceTest {
 
         // then
         assertThat(userId).isEqualTo(testUser.id)
-        verify(userRepository).save(any())
-        verify(subscriptionRepository).save(any())
+        verify(userRepository).save(any<AppUser>())
+        verify(subscriptionRepository).save(any<Subscription>())
     }
 
     @Test
@@ -124,7 +117,7 @@ class AuthServiceTest {
     fun signup_DuplicateEmail() {
         // given
         val request = UserSignUpRequest("testuser", "test@example.com", "password")
-        given(userRepository.existsByEmail(request.email)).willReturn(true)
+        whenever(userRepository.existsByEmail(request.email)).thenReturn(true)
 
         // when & then
         assertThatThrownBy { authService.signup(request) }
@@ -137,10 +130,10 @@ class AuthServiceTest {
     fun login_Success() {
         // given
         val request = LoginRequest("testuser", "password")
-        
-        given(userRepository.findByUsername(request.username)).willReturn(testUser)
-        given(passwordEncoder.matches(request.password, testUser.password)).willReturn(true)
-        given(jwtTokenProvider.createToken(any(UserInfo::class.java))).willReturn("testToken")
+
+        whenever(userRepository.findByUsername(request.username)).thenReturn(testUser)
+        whenever(passwordEncoder.matches(request.password, testUser.password)).thenReturn(true)
+        whenever(jwtTokenProvider.createToken(any())).thenReturn("testToken")
 
         // when
         val response = authService.login(request)
@@ -155,8 +148,8 @@ class AuthServiceTest {
     fun login_InvalidPassword() {
         // given
         val request = LoginRequest("testuser", "wrongPassword")
-        given(userRepository.findByUsername(request.username)).willReturn(testUser)
-        given(passwordEncoder.matches(request.password, testUser.password)).willReturn(false)
+        whenever(userRepository.findByUsername(request.username)).thenReturn(testUser)
+        whenever(passwordEncoder.matches(request.password, testUser.password)).thenReturn(false)
 
         // when & then
         assertThatThrownBy { authService.login(request) }
@@ -168,13 +161,13 @@ class AuthServiceTest {
     @DisplayName("로그아웃 시 토큰이 블랙리스트에 등록된다")
     fun logout_Success() {
         // given
-        val request = mock(HttpServletRequest::class.java)
+        val request = mock<HttpServletRequest>()
         val token = "testToken"
-        given(request.getHeader(HttpHeaders.AUTHORIZATION)).willReturn("Bearer $token")
-        given(jwtTokenProvider.validityInMilliseconds).willReturn(3600000L)
-        
-        val valueOperations = mock(ValueOperations::class.java) as ValueOperations<String, String>
-        given(redisTemplate.opsForValue()).willReturn(valueOperations)
+        whenever(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer $token")
+        whenever(jwtTokenProvider.validityInMilliseconds).thenReturn(3600000L)
+
+        val valueOperations = mock<ValueOperations<String, String>>()
+        whenever(redisTemplate.opsForValue()).thenReturn(valueOperations)
 
         // when
         authService.logout(request)

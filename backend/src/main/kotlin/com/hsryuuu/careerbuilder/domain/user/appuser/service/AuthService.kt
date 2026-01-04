@@ -19,7 +19,6 @@ import com.hsryuuu.careerbuilder.domain.user.auth.model.LoginResponse
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LogoutResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.http.HttpHeaders
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -67,16 +66,9 @@ class AuthService(
             password = encodedPassword,
             email = request.email
         )
-
-
-        try {
-            val savedUser = userRepository.save(appUser)
-            // 기본 플랜 생성
-            savePlanSubscription(savedUser)
-            return savedUser.id!!
-        } catch (e: DataIntegrityViolationException) {
-            throw GlobalException(ErrorCode.DUPLICATE_VALUE)
-        }
+        val savedUser = userRepository.save(appUser)
+        savePlanSubscription(savedUser)
+        return savedUser.id!!
     }
 
     private fun savePlanSubscription(user: AppUser) {
