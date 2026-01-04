@@ -10,9 +10,10 @@
         </div>
 
         <div class="auth-content">
-          <h1 class="auth-title">다시 오신 것을 환영합니다!</h1>
-          <p class="auth-subtitle">계정에 로그인하여 커리어를 관리하세요.</p>
+          <h1 class="auth-title">환영합니다 &#128075;</h1>
+          <p class="auth-desc">계정에 로그인하여 커리어 빌더를 이용해보세요.</p>
         </div>
+        <br>
 
         <form class="auth-form" @submit.prevent="handleLogin">
           <div class="form-field">
