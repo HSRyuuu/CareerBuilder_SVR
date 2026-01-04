@@ -21,11 +21,12 @@ enum class ErrorCode(
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "요청 값이 올바르지 않습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 올바르지 않습니다."),
 
-    // MEMBER
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    // APP_USER
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 
-    // PLAN
+    // PLAN & SUBSCRIPTION
     PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "플랜을 찾을 수 없습니다."),
+    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "구독 정보를 찾을 수 없습니다."),
 
     // Experience
     EXPERIENCE_NOT_FOUND(HttpStatus.NOT_FOUND, "경험 항목을 찾을 수 없습니다."),
@@ -40,4 +41,5 @@ enum class ErrorCode(
     // AI
     AI_EXPERIENCE_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "AI 경험 분석 결과가 존재하지 않습니다."),
     AI_EXPERIENCE_ANALYSIS_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "AI 경험 분석 결과를 아직 확인하지 않았습니다."),
+    EXCEED_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "일일 사용 횟수를 초과했습니다."),
 }
