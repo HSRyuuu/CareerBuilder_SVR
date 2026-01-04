@@ -78,10 +78,6 @@ api/{domain}/
 - 수정(PUT): `update{Resource}`
 - 삭제(DELETE): `delete{Resource}`
 
-**Composable 규칙:**
-- GET 요청: `useAsyncData` 사용 (SSR 지원)
-- POST/PUT/DELETE: `useClientFetch` 사용 (Client-side only)
-
 ### 3. 컴포넌트 구조 (Atomic Design)
 
 ```

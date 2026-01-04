@@ -32,3 +32,29 @@ data class SignupResponse(
     val email: String
 )
 
+data class UserDetailResponse(
+    val id: UUID,
+    val email: String,
+    val username: String,
+    val subscription: SubscriptionDto?
+)
+
+data class SubscriptionDto(
+    val status: String,
+    val startedAt: java.time.LocalDateTime,
+    val expiredAt: java.time.LocalDateTime?,
+    val plan: UserPlanDto
+)
+
+data class UserPlanDto(
+    val name: String,
+    val planType: com.hsryuuu.careerbuilder.domain.plan.model.entity.PlanType,
+    val price: Long,
+    val experienceAnalysisModel: String,
+    val experienceAnalysisLimitPerDay: Int,
+    val careerAnalysisModel: String,
+    val careerAnalysisLimitPerMonth: Int,
+    val resumeModel: String,
+    val resumeLimitPerMonth: Int
+)
+
