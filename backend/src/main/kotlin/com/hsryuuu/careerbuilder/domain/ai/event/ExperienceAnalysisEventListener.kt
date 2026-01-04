@@ -6,8 +6,8 @@ import com.hsryuuu.careerbuilder.domain.ai.external.LLMRequestExecutor
 import com.hsryuuu.careerbuilder.domain.ai.model.ExperienceAnalysisResponse
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiExperienceAnalysis
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiRequest
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
 import com.hsryuuu.careerbuilder.domain.ai.quota.UsageLimitManager
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiExperienceAnalysisRepository
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
@@ -74,7 +74,7 @@ class ExperienceAnalysisEventListener(
             // 5. Experience - AI 분석 상태 변경
             experience.status = ExperienceStatus.AI_ANALYZED
             // 6. 사용 횟수 증가 (Redis)
-            usageLimitManager.incrementUsage(event.userId, AiRequestType.EXPERIENCE_ANALYSIS)
+            usageLimitManager.incrementUsage(event.userId, AiProcessType.EXPERIENCE_ANALYSIS)
 
         } catch (e: Exception) {
             log.error("AI Analysis Failed for request: ${aiRequest.id}", e)

@@ -2,8 +2,8 @@ package com.hsryuuu.careerbuilder.domain.ai.quota
 
 import com.hsryuuu.careerbuilder.common.dto.type.CommonPeriod
 import com.hsryuuu.careerbuilder.common.utils.UsageLimitKeyGenerator
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
@@ -22,16 +22,16 @@ class UsageLimitManager(
     private val log = LoggerFactory.getLogger(javaClass)
 
     private val typeConfigMap = mapOf(
-        AiRequestType.EXPERIENCE_ANALYSIS to CommonPeriod.DAY,
-        AiRequestType.CAREER to CommonPeriod.MONTH,
-        AiRequestType.RESUME to CommonPeriod.MONTH,
-        AiRequestType.INTERVIEW_GEN to CommonPeriod.MONTH,
+        AiProcessType.EXPERIENCE_ANALYSIS to CommonPeriod.DAY,
+        AiProcessType.CAREER to CommonPeriod.MONTH,
+        AiProcessType.RESUME to CommonPeriod.MONTH,
+        AiProcessType.INTERVIEW_GEN to CommonPeriod.MONTH,
     )
 
     /**
      * 유저 사용 횟수 조회 (redis or DB 조회)
      */
-    fun getUsageCount(userId: UUID, type: AiRequestType, dateStart: LocalDate = LocalDate.now()): Int {
+    fun getUsageCount(userId: UUID, type: AiProcessType, dateStart: LocalDate = LocalDate.now()): Int {
         val period = typeConfigMap[type]
         val key = UsageLimitKeyGenerator.generate(userId, type, dateStart, period!!)
 
@@ -72,7 +72,7 @@ class UsageLimitManager(
     /**
      * 유저 사용 횟수 증가 (redis)
      */
-    fun incrementUsage(userId: UUID, type: AiRequestType, dateStart: LocalDate = LocalDate.now()) {
+    fun incrementUsage(userId: UUID, type: AiProcessType, dateStart: LocalDate = LocalDate.now()) {
         val period = typeConfigMap[type]
         val key = UsageLimitKeyGenerator.generate(userId, type, dateStart, period!!)
 

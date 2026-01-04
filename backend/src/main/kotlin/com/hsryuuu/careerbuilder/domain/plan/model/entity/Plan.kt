@@ -1,5 +1,6 @@
 package com.hsryuuu.careerbuilder.domain.plan.model.entity
 
+import com.hsryuuu.careerbuilder.domain.plan.model.type.PlanType
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -51,4 +52,3 @@ class Plan(
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 )
 
-enum class PlanType { BASIC, LITE, PRO, MAX }

@@ -6,7 +6,7 @@ import com.hsryuuu.careerbuilder.domain.ai.model.ScoreMetrics
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiExperienceAnalysis
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiExperienceSectionAnalysis
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiRequest
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiExperienceAnalysisRepository
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.CreateExperienceRequest
@@ -381,7 +381,7 @@ class ExperienceServiceTest {
             val aiRequest = aiRequestRepository.save(
                 AiRequest(
                     userId = testUser.id!!,
-                    requestType = AiRequestType.EXPERIENCE_ANALYSIS
+                    requestType = AiProcessType.EXPERIENCE_ANALYSIS
                 )
             )
 
@@ -457,7 +457,7 @@ class ExperienceServiceTest {
             val aiRequest = aiRequestRepository.save(
                 AiRequest(
                     userId = testUser.id!!,
-                    requestType = AiRequestType.EXPERIENCE_ANALYSIS
+                    requestType = AiProcessType.EXPERIENCE_ANALYSIS
                 )
             )
 

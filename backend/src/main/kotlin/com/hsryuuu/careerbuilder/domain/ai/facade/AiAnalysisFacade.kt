@@ -1,7 +1,7 @@
 package com.hsryuuu.careerbuilder.domain.ai.facade
 
 import com.hsryuuu.careerbuilder.domain.ai.model.dto.AiRequestDto
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.quota.UsageQuotaManager
 import com.hsryuuu.careerbuilder.domain.experience.service.ExperienceAnalysisService
 import org.springframework.stereotype.Component
@@ -17,7 +17,7 @@ class AiAnalysisFacade(
      */
     fun requestExperienceAnalysis(userId: UUID, experienceId: UUID): AiRequestDto {
         // 1. 사용 횟수 제한 체크 (Redis 및 DB Fallback 조회)
-        usageQuotaManager.checkQuota(userId, AiRequestType.EXPERIENCE_ANALYSIS)
+        usageQuotaManager.checkQuota(userId, AiProcessType.EXPERIENCE_ANALYSIS)
         // 2.실제 분석 요청 저장 및 이벤트 발행 로직 실행
         return experienceAnalysisService.requestAnalysis(userId, experienceId)
     }

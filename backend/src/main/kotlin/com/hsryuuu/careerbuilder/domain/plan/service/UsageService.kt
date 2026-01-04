@@ -3,7 +3,7 @@ package com.hsryuuu.careerbuilder.domain.plan.service
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.common.dto.type.CommonPeriod
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.quota.UsageLimitManager
 import com.hsryuuu.careerbuilder.domain.plan.model.dto.AiUsageDetail
 import com.hsryuuu.careerbuilder.domain.plan.model.dto.SubscriptionUsageDto
@@ -24,17 +24,17 @@ class UsageService(
         val plan = subscription.plan
 
         val summary = mapOf(
-            AiRequestType.EXPERIENCE_ANALYSIS to AiUsageDetail(
+            AiProcessType.EXPERIENCE_ANALYSIS to AiUsageDetail(
                 limit = plan.experienceAnalysisLimitPerDay,
-                current = usageLimitManager.getUsageCount(userId, AiRequestType.EXPERIENCE_ANALYSIS),
+                current = usageLimitManager.getUsageCount(userId, AiProcessType.EXPERIENCE_ANALYSIS),
                 period = CommonPeriod.DAY
             ),
-            AiRequestType.CAREER to AiUsageDetail(
+            AiProcessType.CAREER to AiUsageDetail(
                 limit = plan.careerAnalysisLimitPerMonth,
                 current = 0,
                 period = CommonPeriod.MONTH
             ),
-            AiRequestType.RESUME to AiUsageDetail(
+            AiProcessType.RESUME to AiUsageDetail(
                 limit = plan.resumeLimitPerMonth,
                 current = 0,
                 period = CommonPeriod.MONTH

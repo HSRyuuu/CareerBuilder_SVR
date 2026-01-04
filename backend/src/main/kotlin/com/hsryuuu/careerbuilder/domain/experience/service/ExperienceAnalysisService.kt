@@ -5,8 +5,8 @@ import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.domain.ai.event.ExperienceAnalysisEvent
 import com.hsryuuu.careerbuilder.domain.ai.model.dto.AiRequestDto
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiRequest
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.ReferenceType
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.Experience
@@ -36,7 +36,7 @@ class ExperienceAnalysisService(
 
         val aiRequest = AiRequest(
             userId = userId,
-            requestType = AiRequestType.EXPERIENCE_ANALYSIS,
+            requestType = AiProcessType.EXPERIENCE_ANALYSIS,
             status = AiRequestStatus.PENDING,
             referenceType = ReferenceType.EXPERIENCES,
             referenceId = experienceId

@@ -1,7 +1,7 @@
 package com.hsryuuu.careerbuilder.domain.ai.model.entity
 
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.ReferenceType
 import jakarta.persistence.*
 import org.springframework.ai.chat.model.ChatResponse
@@ -24,7 +24,7 @@ class AiRequest(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    val requestType: AiRequestType,
+    val requestType: AiProcessType,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

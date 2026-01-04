@@ -1,10 +1,10 @@
 package com.hsryuuu.careerbuilder.domain.plan.model.dto
 
 import com.hsryuuu.careerbuilder.common.dto.type.CommonPeriod
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 
 data class SubscriptionUsageDto(
-    val usageSummary: Map<AiRequestType, AiUsageDetail>
+    val usageSummary: Map<AiProcessType, AiUsageDetail>
 )
 
 data class AiUsageDetail(

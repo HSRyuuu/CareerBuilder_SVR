@@ -4,10 +4,10 @@ import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.application.security.JwtTokenProvider
 import com.hsryuuu.careerbuilder.application.security.UserInfo
-import com.hsryuuu.careerbuilder.domain.plan.model.entity.PlanType
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.Subscription
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.SubscriptionHistory
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.SubscriptionStatus
+import com.hsryuuu.careerbuilder.domain.plan.model.type.PlanType
 import com.hsryuuu.careerbuilder.domain.plan.repository.PlanRepository
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionHistoryRepository
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionRepository

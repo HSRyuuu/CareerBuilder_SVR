@@ -48,7 +48,7 @@ data class SubscriptionDto(
 
 data class UserPlanDto(
     val name: String,
-    val planType: com.hsryuuu.careerbuilder.domain.plan.model.entity.PlanType,
+    val planType: com.hsryuuu.careerbuilder.domain.plan.model.type.PlanType,
     val price: Long,
     val experienceAnalysisModel: String,
     val experienceAnalysisLimitPerDay: Int,

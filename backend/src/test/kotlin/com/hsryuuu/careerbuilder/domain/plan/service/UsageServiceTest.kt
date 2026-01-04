@@ -3,11 +3,11 @@ package com.hsryuuu.careerbuilder.domain.plan.service
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.common.dto.type.CommonPeriod
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.quota.UsageLimitManager
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.Plan
-import com.hsryuuu.careerbuilder.domain.plan.model.entity.PlanType
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.Subscription
+import com.hsryuuu.careerbuilder.domain.plan.model.type.PlanType
 import com.hsryuuu.careerbuilder.domain.plan.repository.PlanRepository
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionRepository
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
@@ -82,24 +82,24 @@ class UsageServiceTest {
             )
         )
         val experienceUsage = 3
-        given(usageLimitManager.getUsageCount(testUser.id!!, AiRequestType.EXPERIENCE_ANALYSIS))
+        given(usageLimitManager.getUsageCount(testUser.id!!, AiProcessType.EXPERIENCE_ANALYSIS))
             .willReturn(experienceUsage)
 
         // when
         val result = usageService.getUserSubscriptionUsage(testUser.id!!)
 
         // then
-        val experienceDetail = result.usageSummary[AiRequestType.EXPERIENCE_ANALYSIS]!!
+        val experienceDetail = result.usageSummary[AiProcessType.EXPERIENCE_ANALYSIS]!!
         assertThat(experienceDetail.limit).isEqualTo(testPlan.experienceAnalysisLimitPerDay)
         assertThat(experienceDetail.current).isEqualTo(experienceUsage)
         assertThat(experienceDetail.period).isEqualTo(CommonPeriod.DAY)
 
-        val careerDetail = result.usageSummary[AiRequestType.CAREER]!!
+        val careerDetail = result.usageSummary[AiProcessType.CAREER]!!
         assertThat(careerDetail.limit).isEqualTo(testPlan.careerAnalysisLimitPerMonth)
         assertThat(careerDetail.current).isEqualTo(0L)
         assertThat(careerDetail.period).isEqualTo(CommonPeriod.MONTH)
 
-        val resumeDetail = result.usageSummary[AiRequestType.RESUME]!!
+        val resumeDetail = result.usageSummary[AiProcessType.RESUME]!!
         assertThat(resumeDetail.limit).isEqualTo(testPlan.resumeLimitPerMonth)
         assertThat(resumeDetail.current).isEqualTo(0L)
         assertThat(resumeDetail.period).isEqualTo(CommonPeriod.MONTH)

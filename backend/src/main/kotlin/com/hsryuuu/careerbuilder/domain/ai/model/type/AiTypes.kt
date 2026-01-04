@@ -1,6 +1,6 @@
 package com.hsryuuu.careerbuilder.domain.ai.model.type
 
-enum class AiRequestType {
+enum class AiProcessType {
     EXPERIENCE_ANALYSIS, // 경험 분석
     RESUME,     // 이력서 코칭
     CAREER,     // 커리어 분석

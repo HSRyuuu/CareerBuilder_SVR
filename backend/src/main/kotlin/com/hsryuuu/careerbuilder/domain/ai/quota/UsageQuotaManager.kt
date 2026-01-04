@@ -2,7 +2,7 @@ package com.hsryuuu.careerbuilder.domain.ai.quota
 
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionRepository
 import org.springframework.stereotype.Service
 import java.util.*
@@ -16,7 +16,7 @@ class UsageQuotaManager(
     /**
      * 사용자 이용량 제한 체크
      */
-    fun checkQuota(userId: UUID, type: AiRequestType) {
+    fun checkQuota(userId: UUID, type: AiProcessType) {
         val subscription = subscriptionRepository.findByUserId(userId)
             ?: throw GlobalException(ErrorCode.PLAN_NOT_FOUND)
 

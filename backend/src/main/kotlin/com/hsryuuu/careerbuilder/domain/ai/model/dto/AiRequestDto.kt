@@ -1,16 +1,16 @@
 package com.hsryuuu.careerbuilder.domain.ai.model.dto
 
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiRequest
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
-import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.ReferenceType
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 data class AiRequestDto(
     val id: UUID,
     val userId: UUID,
-    val requestType: AiRequestType,
+    val requestType: AiProcessType,
     val status: AiRequestStatus,
     val referenceId: UUID?,
     val referenceType: ReferenceType?,
