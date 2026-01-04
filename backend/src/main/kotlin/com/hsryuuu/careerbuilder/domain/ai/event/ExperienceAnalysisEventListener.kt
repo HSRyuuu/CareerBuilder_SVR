@@ -1,12 +1,13 @@
-package com.hsryuuu.careerbuilder.domain.ai.handler
+package com.hsryuuu.careerbuilder.domain.ai.event
 
-import com.hsryuuu.careerbuilder.application.exception.ErrorCode.PLAN_NOT_FOUND
+import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
-import com.hsryuuu.careerbuilder.domain.ai.event.ExperienceAnalysisEvent
 import com.hsryuuu.careerbuilder.domain.ai.model.ExperienceAnalysisResponse
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiExperienceAnalysis
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiRequest
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
+import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
+import com.hsryuuu.careerbuilder.domain.ai.quota.UsageLimitManager
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiExperienceAnalysisRepository
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
 import com.hsryuuu.careerbuilder.domain.ai.service.AiGenerationService
@@ -26,13 +27,13 @@ import org.springframework.transaction.event.TransactionalEventListener
 import java.util.*
 
 @Component
-
 class ExperienceAnalysisEventListener(
     private val aiRequestRepository: AiRequestRepository,
     private val experienceRepository: ExperienceRepository,
     private val aiExperienceAnalysisRepository: AiExperienceAnalysisRepository,
     private val subscriptionRepository: SubscriptionRepository,
     private val aiGenerationService: AiGenerationService,
+    private val usageLimitManager: UsageLimitManager
 ) {
 
 
@@ -55,7 +56,7 @@ class ExperienceAnalysisEventListener(
         }
 
         val subscription =
-            subscriptionRepository.findByUserId(experience.user.id!!) ?: throw GlobalException(PLAN_NOT_FOUND)
+            subscriptionRepository.findByUserId(experience.user.id!!) ?: throw GlobalException(ErrorCode.PLAN_NOT_FOUND)
 
         try {
             // 1. 상태 변경: PROCESSING
@@ -74,6 +75,10 @@ class ExperienceAnalysisEventListener(
             // 4. Ai Request 성공 처리
             completeAiRequest(chatResponse, aiRequest, aiAnalysis.id!!)
             experience.status = ExperienceStatus.AI_ANALYZED
+
+            // 5. 사용 횟수 증가 (Redis)
+            usageLimitManager.incrementUsage(event.userId, AiRequestType.EXPERIENCE_ANALYSIS)
+
         } catch (e: Exception) {
             log.error("AI Analysis Failed for request: ${aiRequest.id}", e)
             aiRequest.fail(e.message ?: "Unknown error")
@@ -116,7 +121,7 @@ class ExperienceAnalysisEventListener(
         experience: Experience,
         response: ExperienceAnalysisResponse?
     ): AiExperienceAnalysis {
-        val analysisEntity = AiExperienceAnalysis.create(
+        val analysisEntity = AiExperienceAnalysis.Companion.create(
             requestId = aiRequest.id,
             experienceId = experience.id!!,
             response = response

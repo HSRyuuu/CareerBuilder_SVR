@@ -3,6 +3,7 @@ package com.hsryuuu.careerbuilder.domain.experience.service
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.domain.ai.event.ExperienceAnalysisEvent
+import com.hsryuuu.careerbuilder.domain.ai.model.dto.AiRequestDto
 import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiRequest
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
@@ -18,13 +19,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-import com.hsryuuu.careerbuilder.domain.ai.model.dto.AiRequestDto
-
 @Service
-class ExperienceAiService(
+class ExperienceAnalysisService(
     private val experienceRepository: ExperienceRepository,
     private val aiRequestRepository: AiRequestRepository,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 

@@ -43,6 +43,7 @@ object ExperiencePrompts {
                 - `suggestedKind` 지정: ${SectionKind.allNamesAndDisplays}
                 - **내용이 이미 논리적이라면 구조를 파괴하지 말고 문장 어휘만 세련되게 교정하세요.**
                 - 각 섹션에 대해 STAR, PAR, CAR 방식을 적용하여 논리적으로 재작성하고, 그 상세 분해를 `breakdown`에 채워주세요.
+                - 각 섹션의 'sectionId'는 제공한 원본 데이터의 UUID를 절대 수정하지 말고 그대로(Exactly the same) 반환하세요."
             5. **키워드**: 이 경험에서 추출할 수 있는 핵심 직무 키워드 및 기술 스택을 `recommendedKeywords`에 담아주세요.
             6. **점수 산정**: 다음 4가지 지표를 기준으로 경험의 완성도를 100점 만점으로 평가해서 'totalScore' 에 담아주세요.
                 - 세부 점수는 각각 100점 만점으로 평가해서 'scoreMetrics'에 담아주세요. 

@@ -41,5 +41,5 @@ enum class ErrorCode(
     // AI
     AI_EXPERIENCE_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "AI 경험 분석 결과가 존재하지 않습니다."),
     AI_EXPERIENCE_ANALYSIS_ALREADY_EXISTS(HttpStatus.NOT_FOUND, "AI 경험 분석 결과를 아직 확인하지 않았습니다."),
-    EXCEED_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "일일 사용 횟수를 초과했습니다."),
+    EXCEED_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "사용 횟수 제한을 초과했습니다."),
 }

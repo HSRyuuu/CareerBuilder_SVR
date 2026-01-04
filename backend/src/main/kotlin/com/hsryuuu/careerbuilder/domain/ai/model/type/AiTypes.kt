@@ -2,11 +2,12 @@ package com.hsryuuu.careerbuilder.domain.ai.model.type
 
 enum class AiRequestType {
     EXPERIENCE_ANALYSIS, // 경험 분석
-    RESUME_COACH,        // 이력서 코칭
+    RESUME,     // 이력서 코칭
+    CAREER,     // 커리어 분석
     INTERVIEW_GEN        // 면접 질문 생성
 }
 
-enum class ReferenceType{
+enum class ReferenceType {
     EXPERIENCES, // 경험 tableName: experiences
 }
 

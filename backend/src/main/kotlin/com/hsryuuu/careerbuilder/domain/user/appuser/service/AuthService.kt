@@ -97,7 +97,7 @@ class AuthService(
     @Transactional(readOnly = true)
     fun login(request: LoginRequest): LoginResponse {
         val user = userRepository.findByUsername(request.username)
-            ?: throw GlobalException(ErrorCode.MEMBER_NOT_FOUND)
+            ?: throw GlobalException(ErrorCode.USER_NOT_FOUND)
         if (!passwordEncoder.matches(request.password, user.password)) {
             throw GlobalException(ErrorCode.INVALID_PASSWORD)
         }

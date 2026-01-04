@@ -3,6 +3,7 @@ package com.hsryuuu.careerbuilder.domain.experience.service
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.domain.ai.event.ExperienceAnalysisEvent
+import com.hsryuuu.careerbuilder.domain.ai.event.ExperienceAnalysisEventListener
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.ContributionLevel
@@ -12,7 +13,6 @@ import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
 import com.hsryuuu.careerbuilder.domain.experience.repository.ExperienceRepository
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
-import com.hsryuuu.careerbuilder.domain.ai.handler.ExperienceAnalysisEventListener
 import com.hsryuuu.careerbuilder.generator.TestDataGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -32,10 +32,10 @@ import java.util.*
 @RecordApplicationEvents
 @Transactional
 @DisplayName("ExperienceAiService 테스트")
-class ExperienceAiServiceTest {
+class ExperienceAnalysisServiceTest {
 
     @Autowired
-    private lateinit var experienceAiService: ExperienceAiService
+    private lateinit var experienceAnalysisService: ExperienceAnalysisService
 
     @Autowired
     private lateinit var experienceRepository: ExperienceRepository
@@ -63,6 +63,7 @@ class ExperienceAiServiceTest {
                 password = TestDataGenerator.generateTestPassword()
             )
         )
+
     }
 
     @Nested
@@ -87,7 +88,7 @@ class ExperienceAiServiceTest {
             )
 
             // Act
-            val requestDto = experienceAiService.requestAnalysis(testUser.id!!, experience.id!!)
+            val requestDto = experienceAnalysisService.requestAnalysis(testUser.id!!, experience.id!!)
 
             // Assert
             // 1. AiRequest 반환 확인
@@ -100,7 +101,7 @@ class ExperienceAiServiceTest {
             val eventCount = events.stream(ExperienceAnalysisEvent::class.java)
                 .filter { it.userId == testUser.id && it.experienceId == experience.id && it.aiRequestId == requestDto.id }
                 .count()
-            
+
             assertThat(eventCount).isEqualTo(1)
         }
 
@@ -112,7 +113,7 @@ class ExperienceAiServiceTest {
 
             // Act & Assert
             assertThatThrownBy {
-                experienceAiService.requestAnalysis(testUser.id!!, invalidId)
+                experienceAnalysisService.requestAnalysis(testUser.id!!, invalidId)
             }
                 .isInstanceOf(GlobalException::class.java)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_NOT_FOUND)
@@ -142,7 +143,7 @@ class ExperienceAiServiceTest {
 
             // Act & Assert
             assertThatThrownBy {
-                experienceAiService.requestAnalysis(testUser.id!!, experience.id!!)
+                experienceAnalysisService.requestAnalysis(testUser.id!!, experience.id!!)
             }
                 .isInstanceOf(GlobalException::class.java)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.FORBIDDEN)
@@ -165,7 +166,7 @@ class ExperienceAiServiceTest {
 
             // Act & Assert
             assertThatThrownBy {
-                experienceAiService.requestAnalysis(testUser.id!!, experience.id!!)
+                experienceAnalysisService.requestAnalysis(testUser.id!!, experience.id!!)
             }
                 .isInstanceOf(GlobalException::class.java)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXPERIENCE_INCOMPLETE)
@@ -188,7 +189,7 @@ class ExperienceAiServiceTest {
 
             // Act & Assert
             assertThatThrownBy {
-                experienceAiService.requestAnalysis(testUser.id!!, experience.id!!)
+                experienceAnalysisService.requestAnalysis(testUser.id!!, experience.id!!)
             }
                 .isInstanceOf(GlobalException::class.java)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.AI_EXPERIENCE_ANALYSIS_ALREADY_EXISTS)

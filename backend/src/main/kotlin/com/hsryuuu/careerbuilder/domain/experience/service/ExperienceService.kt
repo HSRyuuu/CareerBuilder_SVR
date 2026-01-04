@@ -148,7 +148,7 @@ class ExperienceService(
     @Transactional(readOnly = true)
     fun getStatsSummary(userId: UUID): ExperienceStatsSummary {
         val user = userRepository.findByIdOrNull(userId)
-            ?: throw GlobalException(ErrorCode.MEMBER_NOT_FOUND)
+            ?: throw GlobalException(ErrorCode.USER_NOT_FOUND)
 
         return experienceRepository.getStatsSummary(user)
     }

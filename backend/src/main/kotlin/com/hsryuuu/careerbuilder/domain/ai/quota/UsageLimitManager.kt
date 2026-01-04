@@ -1,4 +1,4 @@
-package com.hsryuuu.careerbuilder.domain.ai.validator
+package com.hsryuuu.careerbuilder.domain.ai.quota
 
 import com.hsryuuu.careerbuilder.common.dto.type.CommonPeriod
 import com.hsryuuu.careerbuilder.common.utils.UsageLimitKeyGenerator
@@ -15,7 +15,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Component
-class AiUsageLimitManager(
+class UsageLimitManager(
     private val redisTemplate: StringRedisTemplate,
     private val aiRequestRepository: AiRequestRepository
 ) {
