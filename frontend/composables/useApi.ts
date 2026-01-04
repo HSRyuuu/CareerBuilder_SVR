@@ -8,6 +8,7 @@
  * - Toast 알림 (선택적)
  */
 import { useAuthStore } from '@/stores/auth';
+import { useUserInfo } from '@/composables/useUserInfo';
 import type {
   TApiResponse,
   TApiRequestOptions,
@@ -243,6 +244,7 @@ export const useApi = async <T, TBody = unknown>(
       // 토큰 갱신 실패 - 로그아웃 처리
       isRefreshing = false;
       authStore.clearAuth();
+      useUserInfo().clearUserInfo();
 
       // 로그인 페이지로 이동
       navigateTo(MENU_URLS.LOGIN);

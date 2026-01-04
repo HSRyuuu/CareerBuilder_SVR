@@ -53,14 +53,14 @@
           <!-- 서비스 도움말 모달 -->
           <ServiceHelpDocumentModal v-model="isServiceHelpModalOpen" />
 
-          <!-- 플랜 정보 표시 -->
           <div
             v-if="authStore.isAuthenticated"
-            class="header-plan-chip"
+            class="u-plan-chip"
+            :class="planType.toLowerCase()"
             @click="navigateTo(MENU_URLS.MANAGE_PLAN)"
           >
-            <v-icon size="16" class="u-ai-text-gradient">mdi-lightning-bolt</v-icon>
-            <span class="chip-text u-ai-text-gradient">PRO</span>
+            <v-icon size="16">mdi-lightning-bolt</v-icon>
+            <span class="chip-text">{{ planName }}</span>
           </div>
           <Button
             :variant="ButtonVariant.Secondary"
@@ -146,6 +146,7 @@ import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import { useMenu } from '@/composables/useMenu';
 import { useAuthStore } from '@/stores/auth';
+import { useUserInfo } from '@/composables/useUserInfo';
 import { MENU_URLS } from '~/constants/menus';
 import AiHelpDocumentModal from '@/components/page/ai-help/AiHelpDocumentModal.vue';
 import ServiceHelpDocumentModal from '@/components/page/ai-help/ServiceHelpDocumentModal.vue';
@@ -153,6 +154,7 @@ import ServiceHelpDocumentModal from '@/components/page/ai-help/ServiceHelpDocum
 const route = useRoute();
 const menu = useMenu();
 const authStore = useAuthStore();
+const { user, planType, planName, fetchAll, clearUserInfo } = useUserInfo();
 const colorMode = useColorMode();
 const isSidebarCollapsed = ref(false);
 const isAiHelpModalOpen = ref(false);
@@ -163,6 +165,13 @@ const isDark = computed(() => colorMode.value === 'dark');
 const toggleTheme = () => {
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
 };
+
+// 인증 상태 변화 감지 및 프로필 로드
+onMounted(async () => {
+  if (authStore.isAuthenticated) {
+    await fetchAll();
+  }
+});
 
 // 페이지 이동 시 메뉴 상태 동기화
 watch(
@@ -197,6 +206,7 @@ const handleOpenAiDocs = () => {
 
 const handleMockLogout = () => {
   authStore.clearAuth();
+  clearUserInfo();
   navigateTo(MENU_URLS.WELCOME);
 };
 </script>

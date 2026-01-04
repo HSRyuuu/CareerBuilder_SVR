@@ -67,62 +67,6 @@
   }
 }
 
-.usage-status-card {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.15);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 24px;
-
-  .status-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-
-    .status-badge {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-
-      &.free {
-        background: #e2e8f0;
-        color: #64748b;
-      }
-      &.premium {
-        background: #8b5cf6;
-        color: white;
-      }
-    }
-
-    .usage-count {
-      font-size: 12px;
-      color: var(--text-secondary);
-      span {
-        font-weight: 800;
-        color: #8b5cf6;
-      }
-    }
-  }
-
-  .usage-progress {
-    margin-bottom: 12px;
-  }
-
-  .upgrade-info {
-    font-size: 11px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    span {
-      font-weight: 700;
-      color: #8b5cf6;
-    }
-  }
-}
 
 .analysis-options {
   display: flex;

@@ -18,57 +18,35 @@
       </div>
 
       <v-card-text class="modal-body">
-        <div class="experience-info">
-          <div class="info-label">대상 경험</div>
-          <div class="info-value">{{ experience?.title }}</div>
-        </div>
+      <div v-if="experience" class="experience-info">
+        <div class="info-label">대상 경험</div>
+        <div class="info-value">{{ experience.title }}</div>
+      </div>
 
-        <!-- 멤버십/제한 정보 섹션 (더미) -->
-        <div class="usage-status-card">
-          <div class="status-header">
-            <div class="status-badge" :class="membershipGrade.toLowerCase()">
-              {{ membershipGrade }} 멤버십
-            </div>
-            <div class="usage-count">
-              이번 달 잔여 <span>{{ remainingCount }}</span> / {{ totalLimit }}회
-            </div>
+      <!-- 멤버십/사용량 정보 -->
+      <UserUsageCard show-experience />
+
+      <div class="analysis-options">
+        <div class="option-item">
+          <div class="checkbox-area">
+            <v-checkbox-btn v-model="options.deepAnalysis" color="#8b5cf6" density="compact" hide-details />
           </div>
-          
-          <v-progress-linear
-            :model-value="(remainingCount / totalLimit) * 100"
-            color="#8b5cf6"
-            height="6"
-            rounded
-            class="usage-progress"
-          />
-
-          <div v-if="membershipGrade === 'FREE'" class="upgrade-info">
-            <v-icon size="small" color="#8b5cf6">mdi-information-outline</v-icon>
-            고급 분석을 위해 <span>PREMIUM</span>으로 업그레이드 해보세요!
+          <div class="option-text">
+            <div class="option-title">심층 역량 키워드 추출</div>
+            <div class="option-desc">경험 속 숨겨진 역량을 정밀하게 분석합니다.</div>
           </div>
         </div>
-
-        <div class="analysis-options">
-          <div class="option-item">
-            <div class="checkbox-area">
-              <v-checkbox-btn v-model="options.deepAnalysis" color="#8b5cf6" density="compact" hide-details />
-            </div>
-            <div class="option-text">
-              <div class="option-title">심층 역량 키워드 추출</div>
-              <div class="option-desc">경험 속 숨겨진 역량을 정밀하게 분석합니다.</div>
-            </div>
+        <div class="option-item" :class="{ 'disabled': membershipGrade === PlanType.BASIC }">
+          <div class="checkbox-area">
+            <v-checkbox-btn v-model="options.suggestImprovedContent" color="#8b5cf6" :disabled="membershipGrade === PlanType.BASIC" density="compact" hide-details />
           </div>
-          <div class="option-item" :class="{ 'disabled': membershipGrade === 'FREE' }">
-            <div class="checkbox-area">
-              <v-checkbox-btn v-model="options.suggestImprovedContent" color="#8b5cf6" :disabled="membershipGrade === 'FREE'" density="compact" hide-details />
-            </div>
-            <div class="option-text">
-              <div class="option-title">AI 문장 자동 교정 <span class="premium-tag" v-if="membershipGrade === 'FREE'">PREMIUM</span></div>
-              <div class="option-desc">더 전문적인 표현으로 문장을 자동 재구성합니다.</div>
-            </div>
+          <div class="option-text">
+            <div class="option-title">AI 문장 자동 교정 <span class="premium-tag" v-if="membershipGrade === PlanType.BASIC">PREMIUM</span></div>
+            <div class="option-desc">더 전문적인 표현으로 문장을 자동 재구성합니다.</div>
           </div>
         </div>
-      </v-card-text>
+      </div>
+    </v-card-text>
 
       <v-card-actions class="modal-actions">
         <Button
@@ -86,7 +64,7 @@
           :size="CommonSize.Medium"
           :round="true"
           block
-          :disabled="remainingCount <= 0"
+          :disabled="isLimitExceeded"
           class="confirm-btn"
           @click="handleRequest"
         >
@@ -98,8 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import type { TExperience } from '~/api/experience/types';
+import { useUserInfo } from '~/composables/useUserInfo';
+import UserUsageCard from '@/components/organisms/UserUsageCard/UserUsageCard.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 
@@ -115,10 +95,17 @@ const emit = defineEmits<{
   'request': [experience: TExperience, options: any];
 }>();
 
-// 더미 데이터: 멤버십 정보
-const membershipGrade = ref('FREE'); // or 'PREMIUM'
-const remainingCount = ref(3);
-const totalLimit = ref(5);
+const { usage, planType, refreshUsage } = useUserInfo();
+
+import { PlanType, AiProcessType } from '~/types/ai-plan-types';
+
+const membershipGrade = computed(() => planType.value);
+
+const isLimitExceeded = computed(() => {
+  const expUsage = usage.value?.usageSummary[AiProcessType.EXPERIENCE_ANALYSIS];
+  if (!expUsage) return false;
+  return expUsage.current >= expUsage.limit;
+});
 
 const options = reactive({
   deepAnalysis: true,

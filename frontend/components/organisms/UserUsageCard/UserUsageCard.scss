@@ -1,0 +1,100 @@
+.user-usage-card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+
+  .membership-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .membership-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+
+      &.free {
+        background: #e2e8f0;
+        color: #64748b;
+      }
+      &.lite {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      &.pro {
+        background: #dbeafe;
+        color: #2563eb;
+      }
+      &.premium {
+        background: #8b5cf6;
+        color: white;
+      }
+    }
+
+    .membership-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+  }
+
+  .usage-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .usage-item {
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .item-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .usage-count {
+        font-size: 11px;
+        color: var(--text-secondary);
+        span {
+          font-weight: 800;
+          color: #8b5cf6;
+        }
+      }
+    }
+
+    .usage-progress {
+      margin-bottom: 4px;
+    }
+  }
+
+  .upgrade-info {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(139, 92, 246, 0.1);
+
+    span {
+      font-weight: 700;
+      color: #8b5cf6;
+    }
+  }
+
+  &.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
