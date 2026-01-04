@@ -2,7 +2,6 @@ package com.hsryuuu.careerbuilder.domain.user.appuser.service
 
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
-import com.hsryuuu.careerbuilder.application.security.AuthManager
 import com.hsryuuu.careerbuilder.application.security.JwtTokenProvider
 import com.hsryuuu.careerbuilder.application.security.UserInfo
 import com.hsryuuu.careerbuilder.domain.plan.model.entity.PlanType
@@ -38,7 +37,6 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val jwtTokenProvider: JwtTokenProvider,
     private val redisTemplate: StringRedisTemplate,
-    private val authManager: AuthManager
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 

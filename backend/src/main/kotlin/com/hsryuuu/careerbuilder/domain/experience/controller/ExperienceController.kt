@@ -1,6 +1,6 @@
 package com.hsryuuu.careerbuilder.domain.experience.controller
 
-import com.hsryuuu.careerbuilder.application.security.AuthManager
+import com.hsryuuu.careerbuilder.application.annotation.CurrentUserId
 import com.hsryuuu.careerbuilder.common.dto.CommonPageResponse
 import com.hsryuuu.careerbuilder.common.dto.type.SortDirection
 import com.hsryuuu.careerbuilder.domain.experience.model.dto.*
@@ -18,17 +18,16 @@ import java.util.*
 @RequestMapping("/api/experiences")
 @RestController
 class ExperienceController(
-    private val experienceService: ExperienceService,
-    private val authManager: AuthManager
+    private val experienceService: ExperienceService
 ) {
 
     @Operation(summary = "경험 생성", description = "새로운 경험을 생성합니다.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createExperience(
-        @Valid @RequestBody request: CreateExperienceRequest
+        @Valid @RequestBody request: CreateExperienceRequest,
+        @CurrentUserId userId: UUID
     ): ExperienceResponse {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
         return experienceService.createExperience(userId, request)
     }
 
@@ -41,9 +40,9 @@ class ExperienceController(
         @RequestParam(required = false, name = "p", defaultValue = "1") page: Int,
         @RequestParam(required = false, name = "size", defaultValue = "10") pageSize: Int,
         @RequestParam(required = false, name = "sortKey", defaultValue = "UPDATED_AT") sort: ExperienceSortKey,
-        @RequestParam(required = false, name = "sortDir", defaultValue = "DESC") sortDirection: SortDirection?
+        @RequestParam(required = false, name = "sortDir", defaultValue = "DESC") sortDirection: SortDirection?,
+        @CurrentUserId userId: UUID
     ): CommonPageResponse<ExperienceResponse> {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
         return experienceService.searchExperience(
             userId,
             searchKeyword,
@@ -58,24 +57,24 @@ class ExperienceController(
     @Operation(summary = "경험 조회", description = "특정 경험을 조회합니다.")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getExperience(@PathVariable id: UUID): ExperienceResponse {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
+    fun getExperience(@PathVariable id: UUID, @CurrentUserId userId: UUID): ExperienceResponse {
         return experienceService.getExperience(id, userId)
     }
 
     @Operation(summary = "경험 및 AI 분석 결과 조회", description = "특정 경험과 AI 분석 결과를 조회합니다.")
     @GetMapping("/{id}/ai")
     @ResponseStatus(HttpStatus.OK)
-    fun getExperienceWithAIAnalysisResult(@PathVariable id: UUID): ExperienceWithAnalysisResponse {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
+    fun getExperienceWithAIAnalysisResult(
+        @PathVariable id: UUID,
+        @CurrentUserId userId: UUID
+    ): ExperienceWithAnalysisResponse {
         return experienceService.getExperienceWithAIAnalysisResult(id, userId)
     }
 
     @Operation(summary = "경험 및 AI 분석 결과 존재 여부", description = "AI 분석 결과가 존재하는지 확인합니다.")
     @GetMapping("/{id}/ai/exists")
     @ResponseStatus(HttpStatus.OK)
-    fun getAIAnalysisResultExists(@PathVariable id: UUID): Boolean {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
+    fun getAIAnalysisResultExists(@PathVariable id: UUID, @CurrentUserId userId: UUID): Boolean {
         return experienceService.aiAnalysisResultExists(id, userId)
     }
 
@@ -84,25 +83,23 @@ class ExperienceController(
     @ResponseStatus(HttpStatus.OK)
     fun updateExperience(
         @PathVariable id: UUID,
-        @Valid @RequestBody request: UpdateExperienceRequest
+        @Valid @RequestBody request: UpdateExperienceRequest,
+        @CurrentUserId userId: UUID
     ): ExperienceResponse {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
         return experienceService.updateExperience(id, userId, request)
     }
 
     @Operation(summary = "경험 삭제", description = "경험을 삭제합니다.")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteExperience(@PathVariable id: UUID) {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
+    fun deleteExperience(@PathVariable id: UUID, @CurrentUserId userId: UUID) {
         experienceService.deleteExperience(id, userId)
     }
 
     @Operation(summary = "상태별 경험 통계", description = "상태별 경험 통계를 조회합니다.")
     @GetMapping("/stats/summary")
     @ResponseStatus(HttpStatus.OK)
-    fun getExperienceStatsSummary(): ExperienceStatsSummary {
-        val userId = authManager.getCurrentUserIdOrElseThrow()
+    fun getExperienceStatsSummary(@CurrentUserId userId: UUID): ExperienceStatsSummary {
         return experienceService.getStatsSummary(userId)
     }
 

@@ -1,5 +1,6 @@
 package com.hsryuuu.careerbuilder.application.config
 
+import com.hsryuuu.careerbuilder.application.annotation.CurrentUserId
 import com.hsryuuu.careerbuilder.application.security.JwtTokenProvider
 import com.hsryuuu.careerbuilder.application.security.UserInfo
 import com.hsryuuu.careerbuilder.application.security.UserRole
@@ -8,12 +9,17 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
+import org.springdoc.core.utils.SpringDocUtils
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.*
 
 @Configuration
 class SwaggerConfig {
+
+    init {
+        SpringDocUtils.getConfig().addAnnotationsToIgnore(CurrentUserId::class.java)
+    }
 
     @Bean
     fun realtimeStockTrackerOpenApi(): OpenAPI {
