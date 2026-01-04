@@ -4,13 +4,12 @@ import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.ReferenceType
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.UpdateTimestamp
+import org.springframework.ai.chat.model.ChatResponse
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @EntityListeners(AuditingEntityListener::class)
 @Entity
@@ -61,22 +60,18 @@ class AiRequest(
     @Column(nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
-    // 상태 업데이트를 위한 편의 메서드
-    fun complete(
-        aiProviderId: String,
-        modelName: String,
-        promptTokens: Int,
-        completionTokens: Int,
-        totalTokens: Int,
-        rawResponse: String
-    ) {
-        this.status = AiRequestStatus.SUCCESS
-        this.aiProviderId = aiProviderId
-        this.modelName = modelName
-        this.promptTokens = promptTokens
-        this.completionTokens = completionTokens
-        this.totalTokens = totalTokens
-        this.rawResponse = rawResponse
+
+    fun updateByAiChatResponse(aiAnalysisId: UUID, chatResponse: ChatResponse) {
+        val unknown = "unknown";
+        val usage = chatResponse.metadata.usage
+        this.aiProviderId = chatResponse.metadata.id ?: unknown
+        this.modelName = chatResponse.metadata.model ?: unknown
+        this.promptTokens = usage.promptTokens.toInt()
+        this.completionTokens = usage.generationTokens.toInt()
+        this.totalTokens = usage.totalTokens.toInt()
+        this.rawResponse = "Saved to DB (ID: ${aiAnalysisId})"
+
+
     }
 
     fun fail(errorMessage: String) {

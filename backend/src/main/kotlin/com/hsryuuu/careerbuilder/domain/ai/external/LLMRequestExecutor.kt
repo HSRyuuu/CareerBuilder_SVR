@@ -1,4 +1,4 @@
-package com.hsryuuu.careerbuilder.domain.ai.service
+package com.hsryuuu.careerbuilder.domain.ai.external
 
 import com.hsryuuu.careerbuilder.application.factory.AiModelFactory
 import com.hsryuuu.careerbuilder.domain.ai.model.ExperienceAnalysisResponse
@@ -12,17 +12,46 @@ import org.springframework.ai.converter.BeanOutputConverter
 import org.springframework.stereotype.Service
 
 @Service
-class AiGenerationService(
+class LLMRequestExecutor(
     private val chatClient: ChatClient,
     private val aiModelFactory: AiModelFactory
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    fun analyzeExperience(experience: Experience, modelName: String): ChatResponse {
+    /**
+     * LLM 경험 분석 요청
+     * @param experience 분석 대상 경험
+     * @param modelName AI Model code (name)
+     * @param outputConverter ai 요청에 대한 요구 응답 값
+     */
+    fun analyzeExperience(
+        experience: Experience,
+        modelName: String,
+        outputConverter: BeanOutputConverter<ExperienceAnalysisResponse>
+    ): ChatResponse {
         log.info("[START] AI 경험분석 요청 | experienceId: ${experience.id}, title: ${experience.title}")
+        // 프롬프트 생성
+        val prompt = getExperienceAnalysisPrompt(experience, outputConverter)
+        // 모델 옵션 선택
+        val modelOption = aiModelFactory.getModelOption(modelName)
+        // AI 분석 요청
+        val chatResponse = chatClient.prompt()
+            .user { userSpec -> userSpec.text(prompt) }
+            .options(modelOption)
+            .call()
+            .chatResponse()
 
-        // AI 응답 타입 정의
-        val converter = BeanOutputConverter(ExperienceAnalysisResponse::class.java)
+        if (chatResponse == null) {
+            throw RuntimeException("AI Response is null")
+        }
+        log.info("AI 경험분석 응답 완료")
+        return chatResponse
+    }
+
+    private fun getExperienceAnalysisPrompt(
+        experience: Experience,
+        converter: BeanOutputConverter<ExperienceAnalysisResponse>
+    ): String? {
         var additionalSectionInfo = "추가 섹션 없음"
         if (!experience.sections.isEmpty()) {
             additionalSectionInfo =
@@ -42,22 +71,6 @@ class AiGenerationService(
         )
 
         val template = PromptTemplate(ExperiencePrompts.EXPERIENCE_ANALYSIS_PROMPT)
-        val prompt = template.render(variables)
-        val modelOption = aiModelFactory.getModelOption(modelName)
-
-        // AI 분석 요청
-        val chatResponse = chatClient.prompt()
-            .user { userSpec -> userSpec.text(prompt) }
-            .options(modelOption)
-            .call()
-            .chatResponse()
-
-        if (chatResponse == null) {
-            throw RuntimeException("AI Response is null")
-        }
-
-        log.info("AI 경험분석 응답 완료")
-
-        return chatResponse
+        return template.render(variables)
     }
 }

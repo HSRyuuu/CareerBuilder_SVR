@@ -1,4 +1,4 @@
-package com.hsryuuu.careerbuilder.domain.experience.service
+package com.hsryuuu.careerbuilder.domain.ai.service
 
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
@@ -11,11 +11,11 @@ import com.hsryuuu.careerbuilder.domain.experience.model.entity.Experience
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceStatus
 import com.hsryuuu.careerbuilder.domain.experience.model.entity.WorkCategory
 import com.hsryuuu.careerbuilder.domain.experience.repository.ExperienceRepository
+import com.hsryuuu.careerbuilder.domain.experience.service.ExperienceAnalysisService
 import com.hsryuuu.careerbuilder.domain.user.appuser.model.entity.AppUser
 import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepository
 import com.hsryuuu.careerbuilder.generator.TestDataGenerator
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -92,17 +92,17 @@ class ExperienceAnalysisServiceTest {
 
             // Assert
             // 1. AiRequest 반환 확인
-            assertThat(requestDto).isNotNull
-            assertThat(requestDto.userId).isEqualTo(testUser.id)
-            assertThat(requestDto.referenceId).isEqualTo(experience.id)
-            assertThat(requestDto.status).isEqualTo(AiRequestStatus.PENDING)
+            Assertions.assertThat(requestDto).isNotNull
+            Assertions.assertThat(requestDto.userId).isEqualTo(testUser.id)
+            Assertions.assertThat(requestDto.referenceId).isEqualTo(experience.id)
+            Assertions.assertThat(requestDto.status).isEqualTo(AiRequestStatus.PENDING)
 
             // 2. 이벤트 발행 확인 (ApplicationEvents)
             val eventCount = events.stream(ExperienceAnalysisEvent::class.java)
                 .filter { it.userId == testUser.id && it.experienceId == experience.id && it.aiRequestId == requestDto.id }
                 .count()
 
-            assertThat(eventCount).isEqualTo(1)
+            Assertions.assertThat(eventCount).isEqualTo(1)
         }
 
         @Test
@@ -112,7 +112,7 @@ class ExperienceAnalysisServiceTest {
             val invalidId = UUID.randomUUID()
 
             // Act & Assert
-            assertThatThrownBy {
+            Assertions.assertThatThrownBy {
                 experienceAnalysisService.requestAnalysis(testUser.id!!, invalidId)
             }
                 .isInstanceOf(GlobalException::class.java)
@@ -142,7 +142,7 @@ class ExperienceAnalysisServiceTest {
             )
 
             // Act & Assert
-            assertThatThrownBy {
+            Assertions.assertThatThrownBy {
                 experienceAnalysisService.requestAnalysis(testUser.id!!, experience.id!!)
             }
                 .isInstanceOf(GlobalException::class.java)
@@ -165,7 +165,7 @@ class ExperienceAnalysisServiceTest {
             )
 
             // Act & Assert
-            assertThatThrownBy {
+            Assertions.assertThatThrownBy {
                 experienceAnalysisService.requestAnalysis(testUser.id!!, experience.id!!)
             }
                 .isInstanceOf(GlobalException::class.java)
@@ -188,7 +188,7 @@ class ExperienceAnalysisServiceTest {
             )
 
             // Act & Assert
-            assertThatThrownBy {
+            Assertions.assertThatThrownBy {
                 experienceAnalysisService.requestAnalysis(testUser.id!!, experience.id!!)
             }
                 .isInstanceOf(GlobalException::class.java)
