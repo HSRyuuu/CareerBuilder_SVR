@@ -10,9 +10,12 @@ import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
 import com.hsryuuu.careerbuilder.domain.ai.quota.UsageLimitManager
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
 import com.hsryuuu.careerbuilder.domain.experience.repository.ExperienceRepository
+import com.hsryuuu.careerbuilder.domain.notification.event.NotificationEvent
+import com.hsryuuu.careerbuilder.domain.notification.model.enums.NotificationType
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionRepository
 import org.slf4j.LoggerFactory
 import org.springframework.ai.converter.BeanOutputConverter
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -29,7 +32,8 @@ class ExperienceAnalysisEventListener(
     private val subscriptionRepository: SubscriptionRepository,
     private val llmRequestExecutor: LLMRequestExecutor,
     private val usageLimitManager: UsageLimitManager,
-    private val aiAnalysisService: AiAnalysisService
+    private val aiAnalysisService: AiAnalysisService,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
 
 
@@ -50,9 +54,8 @@ class ExperienceAnalysisEventListener(
                 aiAnalysisService.saveAiRequest(aiRequest)
             }
 
-        // AI 요청 시작
+        // AI 분석요청 작업시작
         aiAnalysisService.saveAiRequest(aiRequest.apply { status = AiRequestStatus.PROCESSING })
-
         try {
             // 1. 응답 타입 지정
             val converter = BeanOutputConverter(ExperienceAnalysisResponse::class.java)
@@ -70,10 +73,16 @@ class ExperienceAnalysisEventListener(
             log.info("[END] AI 응답 결과에 따른 엔티티 저장 완료. RequestID: {}", aiRequest.id)
             // 4. 사용 횟수 증가 (Redis)
             usageLimitManager.incrementUsage(event.userId, AiProcessType.EXPERIENCE_ANALYSIS)
+            // 5. 성공 알림
+            publishNotificationEvent(event.userId, experience.id!!, NotificationType.AI_EXPERIENCE_ANALYSIS_SUCCESS)
+
         } catch (e: Exception) {
             log.error("AI Analysis Failed for request: ${aiRequest.id}", e)
+            // AI Request 실패 처리
             aiRequest.fail(e.message ?: "Unknown error")
             aiAnalysisService.saveAiRequest(aiRequest)
+            // 실패 알림
+            publishNotificationEvent(event.userId, experience.id!!, NotificationType.AI_EXPERIENCE_ANALYSIS_FAIL)
         }
     }
 
@@ -81,6 +90,16 @@ class ExperienceAnalysisEventListener(
         val subscription =
             subscriptionRepository.findByUserId(userId) ?: throw GlobalException(ErrorCode.PLAN_NOT_FOUND)
         return subscription.plan.experienceAnalysisModel
+    }
+
+    private fun publishNotificationEvent(userId: UUID, experienceId: UUID, type: NotificationType) {
+        eventPublisher.publishEvent(
+            NotificationEvent(
+                userId = userId,
+                type = type,
+                targetId = experienceId.toString()
+            )
+        )
     }
 
 }
