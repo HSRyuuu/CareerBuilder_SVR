@@ -26,26 +26,6 @@
           >
             임시 로그아웃
           </Button>
-          <Button
-            v-if="authStore.isAuthenticated"
-            :variant="ButtonVariant.Secondary"
-            :size="CommonSize.Small"
-            class="header-help-btn"
-            @click="handleOpenServiceHelpDocs"
-          >
-            <v-icon size="16" color="var(--text-secondary)">mdi-help-circle-outline</v-icon>
-            서비스 도움말
-          </Button>
-          <Button
-            v-if="authStore.isAuthenticated"
-            :variant="ButtonVariant.Secondary"
-            :size="CommonSize.Small"
-            class="header-help-btn"
-            @click="handleOpenAiDocs"
-          >
-            <v-icon size="16" color="var(--text-secondary)">mdi-text-box-search-outline</v-icon>
-            AI 유의사항
-          </Button>
           
           <!-- AI 도움말 모달 -->
           <AiHelpDocumentModal v-model="isAiHelpModalOpen" />
@@ -120,6 +100,36 @@
           </transition>
         </NuxtLink>
       </nav>
+
+      <!-- 사이드바 푸터 -->
+      <div v-if="authStore.isAuthenticated" class="layout-sidebar-footer">
+        <div 
+          class="layout-sidebar-nav-item" 
+          @click="handleOpenServiceHelpDocs"
+        >
+          <div class="layout-sidebar-nav-item-icon">
+            <v-icon size="20">mdi-help-circle-outline</v-icon>
+          </div>
+          <transition name="fade">
+            <span v-if="!isSidebarCollapsed" class="layout-sidebar-nav-item-label">
+              서비스 도움말
+            </span>
+          </transition>
+        </div>
+        <div 
+          class="layout-sidebar-nav-item" 
+          @click="handleOpenAiDocs"
+        >
+          <div class="layout-sidebar-nav-item-icon">
+            <v-icon size="20">mdi-text-box-search-outline</v-icon>
+          </div>
+          <transition name="fade">
+            <span v-if="!isSidebarCollapsed" class="layout-sidebar-nav-item-label">
+              AI 유의사항
+            </span>
+          </transition>
+        </div>
+      </div>
     </aside>
 
     <!-- 메인 콘텐츠 -->

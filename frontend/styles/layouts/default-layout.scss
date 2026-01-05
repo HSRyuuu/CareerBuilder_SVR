@@ -88,11 +88,13 @@
   width: 208px; // 260px * 0.8
   background: var(--bg-primary);
   border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
   padding: 12px 10px; // Scaled
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 900;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden; // Changed to hidden to prevent scrollbar on flex container
 
   &--collapsed {
     width: 60px; // 72px * 0.8
@@ -214,6 +216,19 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
+  overflow-y: auto; // Allow nav to scroll while footer stays pinned
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
+  }
 }
 
 .layout-sidebar-nav-item {
@@ -263,6 +278,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 사이드바 푸터 */
+.layout-sidebar-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* 메인 콘텐츠 */
