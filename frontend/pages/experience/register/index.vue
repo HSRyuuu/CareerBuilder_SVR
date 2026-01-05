@@ -119,7 +119,7 @@ const handleSave = async () => {
   toast.success('저장되었습니다!');
 
   // 목록 페이지로 이동
-  await navigateTo(MENU_URLS.CAREER);
+  await navigateTo(MENU_URLS.EXPERIENCE);
 };
 
 const handleCancel = () => {

@@ -51,6 +51,7 @@ import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import { fetchExperience, updateExperience, fetchExperienceAIAnalysis } from '~/api/experience/api';
 import type { TExperienceUpdate, TExperienceAIAnalysisResponse } from '~/api/experience/types';
+import { MENU_URLS } from '~/constants/menus';
 
 const route = useRoute();
 const toast = useToast();
@@ -91,7 +92,7 @@ const loadInitialData = async () => {
 
   if (expRes.error) {
     toast.error('경험 정보를 불러오는데 실패했습니다.');
-    navigateTo(`/career/${experienceId.value}`);
+    navigateTo(`${MENU_URLS.EXPERIENCE}/${experienceId.value}`);
     return;
   }
 
@@ -157,11 +158,11 @@ const handleSave = async () => {
   }
 
   toast.success('저장되었습니다!');
-  navigateTo(`/career/${experienceId.value}`);
+  navigateTo(`${MENU_URLS.EXPERIENCE}/${experienceId.value}`);
 };
 
 const handleCancel = () => {
-  navigateTo(`/career/${experienceId.value}`);
+  navigateTo(`${MENU_URLS.EXPERIENCE}/${experienceId.value}`);
 };
 
 onMounted(() => {

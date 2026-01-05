@@ -1,5 +1,5 @@
 <template>
-  <div class="career-list-page">
+  <div class="experience-list-page">
     <PageHeader
       title="경험"
       subtitle="경험을 정리하고, AI로 경험을 분석하여 커리어를 축적하세요."
@@ -75,7 +75,7 @@
               v-for="exp in analyzedExperiences" 
               :key="exp.id" 
               class="selection-item"
-              @click="navigateTo(`/career/${exp.id}/ai`)"
+              @click="navigateTo(`${MENU_URLS.EXPERIENCE}/${exp.id}/ai`)"
             >
               <div class="item-info">
                 <span class="item-title">{{ exp.title }}</span>
@@ -88,9 +88,9 @@
       </v-dialog>
 
       <!-- Part3: 경험 목록 테이블 -->
-      <div class="career-list-table-section">
-        <div class="career-list-table-header">
-          <h2 class="career-list-section-title">내 경험 목록</h2>
+      <div class="experience-list-table-section">
+        <div class="experience-list-table-header">
+          <h2 class="experience-list-section-title">내 경험 목록</h2>
           <Button
             :round="true"
             :size="CommonSize.Medium"
@@ -212,7 +212,7 @@ watch(
 );
 
 const handleRegister = () => {
-  navigateTo(MENU_URLS.CAREER_REGISTER);
+  navigateTo(MENU_URLS.EXPERIENCE_REGISTER);
 };
 
 const handleAiAnalysisRequest = () => {
@@ -235,7 +235,7 @@ const handleAnalyzedCardClick = async () => {
 
   if (!error && data) {
     if (data.list.length === 1) {
-      navigateTo(`/career/${data.list[0].id}/ai`);
+      navigateTo(`${MENU_URLS.EXPERIENCE}/${data.list[0].id}/ai`);
     } else if (data.list.length > 1) {
       analyzedExperiences.value = data.list;
       showSelectionModal.value = true;
@@ -253,10 +253,10 @@ const handleResumeCreate = () => {
 
 // 테이블 관련 함수
 const handleRowClick = (row: TExperience) => {
-  navigateTo(`/career/${row.id}`);
+  navigateTo(`${MENU_URLS.EXPERIENCE}/${row.id}`);
 };
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/pages/career-list-page.scss';
+@use '@/styles/pages/experience-list-page.scss';
 </style>

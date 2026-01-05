@@ -12,14 +12,14 @@ export const Menu = {
 
 export const MENU_URLS = {
   HOME: '/home',
-  CAREER: '/career',
-  CAREER_REGISTER: '/career/register',
+  EXPERIENCE: '/experience',
+  EXPERIENCE_REGISTER: '/experience/register',
   RESUME: '/resume',
   AI: '/ai',
   WELCOME: '/welcome',
   LOGIN: '/welcome/login',
   SIGNUP: '/welcome/signup',
-  TRY_CAREER: '/welcome/try/career',
+  TRY_CAREER: '/welcome/try/experience',
   AI_EXPERIENCE: '/ai/experience',
   SETTING: '/account/settings',
   MANAGE_PLAN: '/account/manage-plan',
@@ -40,7 +40,7 @@ export type TMenuItem = {
 export const MENU_ITEMS: TMenuItem[] = [
   { key: Menu.Home, path: MENU_URLS.HOME, label: '홈', icon: 'mdi-home' },
     { key: Menu.AI, path: MENU_URLS.AI, label: 'AI 코칭', icon: 'mdi-brain' },
-  { key: Menu.Career, path: MENU_URLS.CAREER, label: '경험', icon: 'mdi-text-box-multiple' },
+  { key: Menu.Career, path: MENU_URLS.EXPERIENCE, label: '경험', icon: 'mdi-text-box-multiple' },
   { key: Menu.Resume, path: MENU_URLS.RESUME, label: '이력서', icon: 'mdi-account-details' },
 ];
 

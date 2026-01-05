@@ -62,7 +62,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
     headerName: '시작일',
     flex: 1,
     align: 'center',
-    cellClass: 'career-list-table-date',
+    cellClass: 'experience-list-table-date',
     valueFormatter: (value) => formatDate(value),
   },
   {
@@ -70,7 +70,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
     headerName: '종료일',
     flex: 1,
     align: 'center',
-    cellClass: 'career-list-table-date',
+    cellClass: 'experience-list-table-date',
     valueFormatter: (value) => formatDate(value),
   },
   {
@@ -78,7 +78,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
     headerName: '제목',
     flex: 3,
     align: 'left',
-    cellClass: 'career-list-table-title',
+    cellClass: 'experience-list-table-title',
     valueFormatter: (value) => truncateTitle(value || ''),
   },
   {
@@ -86,7 +86,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
     headerName: '업무 유형',
     flex: 1,
     align: 'center',
-    cellClass: 'career-list-table-work-type',
+    cellClass: 'experience-list-table-work-type',
     valueFormatter: (value) => getcategoryDisplay(value),
   },
   {
@@ -101,7 +101,7 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
     headerName: '최종 수정일시',
     flex: 1.5,
     align: 'center',
-    cellClass: 'career-list-table-date',
+    cellClass: 'experience-list-table-date',
     valueFormatter: (value) => formatDateTime(value),
   },
 ];

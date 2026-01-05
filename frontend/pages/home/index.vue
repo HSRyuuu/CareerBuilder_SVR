@@ -24,7 +24,7 @@
               :variant="ButtonVariant.Primary"
               class="pulse-btn"
               icon="mdi-rocket-launch"
-              @click="navigateTo(MENU_URLS.CAREER_REGISTER)"
+              @click="navigateTo(MENU_URLS.EXPERIENCE_REGISTER)"
             >
               지금 등록하기
             </Button>
@@ -32,7 +32,7 @@
               :round="true"
               :size="CommonSize.Medium"
               :variant="ButtonVariant.Secondary"
-              @click="navigateTo(MENU_URLS.CAREER)"
+              @click="navigateTo(MENU_URLS.EXPERIENCE)"
             >
               내 경험 둘러보기
             </Button>
@@ -85,14 +85,14 @@
         <div class="recent-activities">
           <div class="section-header">
             <h3 class="section-title">최근 등록한 경험</h3>
-            <NuxtLink class="view-all" to="/career">전체보기</NuxtLink>
+            <NuxtLink class="view-all" :to="MENU_URLS.EXPERIENCE">전체보기</NuxtLink>
           </div>
           <div v-if="recentExperiences.length > 0" class="activities-list">
             <div
               v-for="item in recentExperiences"
               :key="item.id"
               class="activity-item"
-              @click="navigateTo(`/career/${item.id}`)"
+              @click="navigateTo(`${MENU_URLS.EXPERIENCE}/${item.id}`)"
             >
               <div class="activity-date">{{ formatDate(item.updatedAt) }}</div>
               <div class="activity-content">
@@ -108,7 +108,7 @@
             <Button
               :size="CommonSize.Small"
               :variant="ButtonVariant.Ghost"
-              @click="navigateTo(MENU_URLS.CAREER_REGISTER)"
+              @click="navigateTo(MENU_URLS.EXPERIENCE_REGISTER)"
             >
               첫번째 경험을 등록하고 AI 분석을 받아보세요 →
             </Button>

@@ -27,7 +27,7 @@
 
 ### 1. 이력서 생성 (Resume Creation)
 - **상태**: ❌ 미구현
-- **증거**: `frontend/pages/career/index.vue` 내 `handleResumeCreate` 함수에서 `'이력서 생성 기능 준비중입니다.'` 토스트 메시지 출력.
+- **증거**: `frontend/pages/experience/index.vue` 내 `handleResumeCreate` 함수에서 `'이력서 생성 기능 준비중입니다.'` 토스트 메시지 출력.
 - **계획**: 축적된 경험 데이터를 바탕으로 PDF 또는 웹 뷰 형태의 이력서 자동 생성 기능 필요.
 
 ### 2. 전체 커리어 피드백 (Career Feedback)

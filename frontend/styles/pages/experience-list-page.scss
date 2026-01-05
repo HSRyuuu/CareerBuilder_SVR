@@ -1,6 +1,6 @@
 @use '../variables' as *;
 
-.career-list-page {
+.experience-list-page {
   animation: fadeIn 0.5s ease;
   padding: 26px; // Apply padding to all sides
 }
@@ -192,28 +192,28 @@
 }
 
 // Part3: 테이블 섹션
-.career-list-table-section {
+.experience-list-table-section {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 13px; // 16 -> 13
   padding: 26px; // 32 -> 26
 }
 
-.career-list-table-header {
+.experience-list-table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px; // 20 -> 16
 }
 
-.career-list-section-title {
+.experience-list-section-title {
   font-size: 19px; // 24 -> 19
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.4px;
 }
 
-.career-list-filter-bar {
+.experience-list-filter-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -222,24 +222,24 @@
   flex-wrap: wrap;
 }
 
-.career-list-filter-item {
+.experience-list-filter-item {
   display: flex;
   align-items: center;
   gap: 10px; // 12 -> 10
 }
 
-.career-list-filter-label {
+.experience-list-filter-label {
   font-size: 11px; // 14 -> 11
   font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
 }
 
-.career-list-status-select {
+.experience-list-status-select {
   min-width: 112px; // 140 -> 112
 }
 
-.career-list-sort-wrapper {
+.experience-list-sort-wrapper {
   display: flex;
   align-items: center;
   gap: 10px; // 12 -> 10
@@ -247,17 +247,17 @@
   margin-bottom: 0px; // Reset margin for filter-bar inclusion
 }
 
-.career-list-sort-label {
+.experience-list-sort-label {
   font-size: 11px; // 14 -> 11
   font-weight: 600;
   color: var(--text-secondary);
 }
 
-.career-list-sort-select-component {
+.experience-list-sort-select-component {
   min-width: 112px; // 140 -> 112
 }
 
-.career-list-sort-direction-button {
+.experience-list-sort-direction-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -288,21 +288,21 @@
 
 // 테이블 행 스타일 (Table 컴포넌트의 slot 내용)
 
-.career-list-table-title {
+.experience-list-table-title {
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.career-list-table-date {
+.experience-list-table-date {
   color: var(--text-tertiary);
   font-size: 10px; // 13 -> 10
 }
 
-.career-list-table-work-type {
+.experience-list-table-work-type {
   color: var(--text-secondary);
 }
 
-.career-list-status-chip {
+.experience-list-status-chip {
   display: inline-flex;
   align-items: center;
   padding: 5px 10px; // 6 12 -> 5 10

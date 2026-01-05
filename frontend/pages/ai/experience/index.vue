@@ -77,6 +77,7 @@ import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
 import Button from '@/components/atoms/Button/Button.vue';
 import { FormSize, FormVariant, ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
 import type { TExperienceTableFilters } from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
+import { MENU_URLS } from '~/constants/menus';
 
 const toast = useToast();
 
@@ -135,7 +136,7 @@ watch(filters, () => {
 }, { deep: true });
 
 const handleRowClick = (row: TExperience) => {
-  navigateTo(`/career/${row.id}`);
+  navigateTo(`${MENU_URLS.EXPERIENCE}/${row.id}`);
 };
 
 const handleSelect = (row: TExperience) => {

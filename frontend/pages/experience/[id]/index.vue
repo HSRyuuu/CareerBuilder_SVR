@@ -235,7 +235,7 @@ const handleCancel = async () => {
 };
 
 const handleNavigateToAiEdit = () => {
-  navigateTo(`/career/${experienceId.value}/ai`);
+  navigateTo(`/experience/${experienceId.value}/ai`);
 };
 
 const checkAiAnalysisExists = async () => {
@@ -259,7 +259,7 @@ const handleAnalysisRequest = async (experience: TExperience, options: any) => {
 };
 
 const handleBack = () => {
-  navigateTo(MENU_URLS.CAREER);
+  navigateTo(MENU_URLS.EXPERIENCE);
 };
 
 onMounted(() => {
