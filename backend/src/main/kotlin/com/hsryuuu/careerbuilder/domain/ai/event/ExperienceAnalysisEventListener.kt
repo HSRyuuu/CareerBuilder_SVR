@@ -2,17 +2,13 @@ package com.hsryuuu.careerbuilder.domain.ai.event
 
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
+import com.hsryuuu.careerbuilder.domain.ai.AiAnalysisService
 import com.hsryuuu.careerbuilder.domain.ai.external.LLMRequestExecutor
 import com.hsryuuu.careerbuilder.domain.ai.model.ExperienceAnalysisResponse
-import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiExperienceAnalysis
-import com.hsryuuu.careerbuilder.domain.ai.model.entity.AiRequest
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiProcessType
 import com.hsryuuu.careerbuilder.domain.ai.model.type.AiRequestStatus
 import com.hsryuuu.careerbuilder.domain.ai.quota.UsageLimitManager
-import com.hsryuuu.careerbuilder.domain.ai.repository.AiExperienceAnalysisRepository
 import com.hsryuuu.careerbuilder.domain.ai.repository.AiRequestRepository
-import com.hsryuuu.careerbuilder.domain.experience.model.entity.Experience
-import com.hsryuuu.careerbuilder.domain.experience.model.entity.ExperienceStatus
 import com.hsryuuu.careerbuilder.domain.experience.repository.ExperienceRepository
 import com.hsryuuu.careerbuilder.domain.plan.repository.SubscriptionRepository
 import org.slf4j.LoggerFactory
@@ -30,10 +26,10 @@ import java.util.*
 class ExperienceAnalysisEventListener(
     private val aiRequestRepository: AiRequestRepository,
     private val experienceRepository: ExperienceRepository,
-    private val aiExperienceAnalysisRepository: AiExperienceAnalysisRepository,
     private val subscriptionRepository: SubscriptionRepository,
     private val llmRequestExecutor: LLMRequestExecutor,
-    private val usageLimitManager: UsageLimitManager
+    private val usageLimitManager: UsageLimitManager,
+    private val aiAnalysisService: AiAnalysisService
 ) {
 
 
@@ -50,11 +46,13 @@ class ExperienceAnalysisEventListener(
         val experience = experienceRepository.findByIdOrNull(event.experienceId)
             ?: return Unit.also {
                 log.error("Experience not found id: ${event.experienceId}")
-                updateAiRequest(aiRequest, AiRequestStatus.FAILURE)
+                aiRequest.fail("Experience not found id: ${event.experienceId}")
+                aiAnalysisService.saveAiRequest(aiRequest)
             }
 
         // AI 요청 시작
-        updateAiRequest(aiRequest, AiRequestStatus.PROCESSING)
+        aiAnalysisService.saveAiRequest(aiRequest.apply { status = AiRequestStatus.PROCESSING })
+
         try {
             // 1. 응답 타입 지정
             val converter = BeanOutputConverter(ExperienceAnalysisResponse::class.java)
@@ -62,52 +60,27 @@ class ExperienceAnalysisEventListener(
             val chatResponse =
                 llmRequestExecutor.analyzeExperience(experience, getAiModelName(event.userId), converter)
             // 3. 결과 저장 (Entity 생성 및 저장)
-            val aiAnalysis = saveAiAnalysis(
+            aiAnalysisService.applyAiRequestSuccess(
                 aiRequest,
                 experience,
-                converter.convert(chatResponse.result.output.content)
+                chatResponse,
+                converter
             )
-            // 4. Ai Request 성공 처리
-            aiRequest.updateByAiChatResponse(aiAnalysis.id!!, chatResponse)
-            log.info("[END] AI Analysis Completed. RequestID: {}", aiRequest.id)
 
-            // 5. Experience - AI 분석 상태 변경
-            experience.status = ExperienceStatus.AI_ANALYZED
-            // 6. 사용 횟수 증가 (Redis)
+            log.info("[END] AI 응답 결과에 따른 엔티티 저장 완료. RequestID: {}", aiRequest.id)
+            // 4. 사용 횟수 증가 (Redis)
             usageLimitManager.incrementUsage(event.userId, AiProcessType.EXPERIENCE_ANALYSIS)
-
         } catch (e: Exception) {
             log.error("AI Analysis Failed for request: ${aiRequest.id}", e)
             aiRequest.fail(e.message ?: "Unknown error")
-        } finally {
-            experienceRepository.save(experience)
-            aiRequestRepository.save(aiRequest)
+            aiAnalysisService.saveAiRequest(aiRequest)
         }
-    }
-
-    private fun updateAiRequest(aiRequest: AiRequest, status: AiRequestStatus) {
-        aiRequest.status = status
-        aiRequestRepository.saveAndFlush(aiRequest)
     }
 
     private fun getAiModelName(userId: UUID): String {
         val subscription =
             subscriptionRepository.findByUserId(userId) ?: throw GlobalException(ErrorCode.PLAN_NOT_FOUND)
         return subscription.plan.experienceAnalysisModel
-    }
-
-    private fun saveAiAnalysis(
-        aiRequest: AiRequest,
-        experience: Experience,
-        response: ExperienceAnalysisResponse?
-    ): AiExperienceAnalysis {
-        val analysisEntity = AiExperienceAnalysis.create(
-            requestId = aiRequest.id,
-            experienceId = experience.id!!,
-            response = response
-        )
-        aiExperienceAnalysisRepository.save(analysisEntity)
-        return analysisEntity
     }
 
 }

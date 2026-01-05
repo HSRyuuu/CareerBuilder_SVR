@@ -35,16 +35,19 @@ class LLMRequestExecutor(
         // 모델 옵션 선택
         val modelOption = aiModelFactory.getModelOption(modelName)
         // AI 분석 요청
+        log.info("[START] LLM 호출 | model: $modelName")
         val chatResponse = chatClient.prompt()
             .user { userSpec -> userSpec.text(prompt) }
             .options(modelOption)
             .call()
             .chatResponse()
+        log.info("[END] LLM 응답 수신")
+
 
         if (chatResponse == null) {
             throw RuntimeException("AI Response is null")
         }
-        log.info("AI 경험분석 응답 완료")
+        log.info("[END] AI 경험분석 응답 완료")
         return chatResponse
     }
 

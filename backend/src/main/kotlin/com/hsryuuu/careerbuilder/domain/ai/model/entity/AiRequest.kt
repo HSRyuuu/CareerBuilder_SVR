@@ -70,8 +70,6 @@ class AiRequest(
         this.completionTokens = usage.generationTokens.toInt()
         this.totalTokens = usage.totalTokens.toInt()
         this.rawResponse = "Saved to DB (ID: ${aiAnalysisId})"
-
-
     }
 
     fun fail(errorMessage: String) {
