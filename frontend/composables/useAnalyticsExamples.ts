@@ -16,18 +16,30 @@ export const useAchievementTracking = () => {
     /**
      * 성과 작성 폼 열기 이벤트
      */
-    const trackFormOpened = (source: 'dashboard' | 'career_page' | 'onboarding') => {
+    const trackFormOpened = (source: 'dashboard' | 'career_page' | 'onboarding' | 'home_cta' | 'navbar' | 'direct') => {
         track('achievement_form_opened', { source });
     };
 
     /**
-     * 성과 생성 이벤트
+     * 성과 생성 이벤트 (NSM 핵심 이벤트)
      */
-    const trackCreated = (type: string, hasAiSummary: boolean, wordCount: number) => {
+    const trackCreated = (params: {
+        wordCount: number;
+        sectionCount: number;
+        hasGoal: boolean;
+        hasImpact: boolean;
+        creationTimeSec: number;
+        isFirst: boolean;
+        achievementId?: string;
+    }) => {
         track('achievement_created', {
-            type,
-            has_ai_summary: hasAiSummary,
-            word_count: wordCount,
+            achievement_id: params.achievementId,
+            word_count: params.wordCount,
+            section_count: params.sectionCount,
+            has_goal: params.hasGoal,
+            has_impact: params.hasImpact,
+            creation_time_sec: params.creationTimeSec,
+            is_first: params.isFirst,
         });
     };
 

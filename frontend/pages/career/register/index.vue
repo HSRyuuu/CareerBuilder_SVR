@@ -417,7 +417,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { VueDraggableNext } from 'vue-draggable-next';
 import Button from '@/components/atoms/Button/Button.vue';
 import Input from '@/components/atoms/Input/Input.vue';
@@ -434,8 +434,22 @@ import {
   WORK_TYPE_INFO,
   CONTRIBUTION_LEVEL_INFO,
 } from '@/types/achievement-types';
+import { useAnalytics } from '@/composables/useAnalytics';
 
 const toast = useToast();
+const { track } = useAnalytics();
+
+// 폼 시작 시간 기록 (작성 소요 시간 측정용)
+const formStartTime = ref<number>(Date.now());
+// 첫 번째 성과 여부 (실제로는 API/상태에서 확인 필요)
+const isFirstAchievement = ref<boolean>(true);
+
+onMounted(() => {
+  formStartTime.value = Date.now();
+  
+  // 직접 접근 시 career_register_started 이벤트 (레이아웃에서 이미 추적할 수 있으므로 선택적)
+  // track('career_register_started', { source: 'direct' });
+});
 
 definePageMeta({
   layout: 'default',
@@ -601,9 +615,34 @@ const handleSave = () => {
     return;
   }
 
+  // 작성 소요 시간 계산
+  const creationTimeSec = Math.floor((Date.now() - formStartTime.value) / 1000);
+  
+  // 총 글자 수 계산
+  const wordCount = [
+    formData.value.title,
+    formData.value.goalSummary,
+    formData.value.impactSummary,
+    formData.value.skills,
+    ...formData.value.sections.map(s => s.content),
+  ].join('').length;
+
+  // NSM 핵심 이벤트: 성과 생성
+  track('achievement_created', {
+    word_count: wordCount,
+    section_count: formData.value.sections.length,
+    has_goal: Boolean(formData.value.goalSummary.trim()),
+    has_impact: Boolean(formData.value.impactSummary.trim()),
+    creation_time_sec: creationTimeSec,
+    is_first: isFirstAchievement.value,
+  });
+
   console.log('저장할 데이터:', formData.value);
   // TODO: API 호출하여 저장
   toast.success('저장되었습니다!');
+  
+  // 첫 성과 플래그 업데이트 (실제로는 API 응답 후 처리)
+  isFirstAchievement.value = false;
 };
 
 const handleCancel = () => {

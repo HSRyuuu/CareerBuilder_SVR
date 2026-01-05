@@ -20,7 +20,7 @@ export enum EventCategory {
 // ============================================
 // Analytics Provider 타입
 // ============================================
-export type AnalyticsProvider = 'posthog' | 'mixpanel';
+export type AnalyticsProvider = 'posthog' | 'mixpanel' | 'ga4';
 
 // ============================================
 // 공통 이벤트 속성
@@ -73,12 +73,23 @@ export type UserEvents = {
 // 성과(Achievement) 관련 이벤트
 export type AchievementEvents = {
     achievement_form_opened: {
-        source: 'dashboard' | 'career_page' | 'onboarding';
+        source: 'dashboard' | 'career_page' | 'onboarding' | 'home_cta' | 'navbar' | 'direct';
     };
+    // 퍼널 분석용: 폼 단계별 완료
+    achievement_form_step_completed: {
+        step: number;
+        step_name: 'basic_info' | 'work_info' | 'goal' | 'impact' | 'skills';
+        time_spent_sec?: number;
+    };
+    // NSM 핵심 이벤트: 성과 생성
     achievement_created: {
-        type: string;
-        has_ai_summary: boolean;
+        achievement_id?: string;
         word_count: number;
+        section_count: number;
+        has_goal: boolean;
+        has_impact: boolean;
+        creation_time_sec: number;
+        is_first: boolean; // Activation 측정용
     };
     achievement_updated: {
         achievement_id: string;
@@ -149,7 +160,9 @@ export type OnboardingEvents = {
 
 // 경력 관련 이벤트
 export type CareerEvents = {
-    career_register_started: Record<string, never>;
+    career_register_started: {
+        source: 'home_cta' | 'navbar' | 'direct' | 'onboarding';
+    };
     career_register_completed: {
         career_count: number;
         total_years: number;
@@ -163,6 +176,15 @@ export type CareerEvents = {
     };
 };
 
+// CTA 클릭 이벤트
+export type CTAEvents = {
+    cta_clicked: {
+        cta_name: string;
+        cta_location: 'home_hero' | 'navbar' | 'sidebar' | 'card' | 'footer';
+        destination?: string;
+    };
+};
+
 // ============================================
 // 통합 이벤트 타입
 // ============================================
@@ -171,7 +193,8 @@ export type AnalyticsEvents = PageEvents &
     AchievementEvents &
     AiEvents &
     OnboardingEvents &
-    CareerEvents;
+    CareerEvents &
+    CTAEvents;
 
 // 이벤트 이름 유니온 타입
 export type EventName = keyof AnalyticsEvents;
@@ -196,7 +219,8 @@ export const EVENT_METADATA: Record<EventName, { category: EventCategory; descri
 
     // Achievement
     achievement_form_opened: { category: EventCategory.ACHIEVEMENT, description: '성과 작성 폼 열기' },
-    achievement_created: { category: EventCategory.ACHIEVEMENT, description: '성과 생성' },
+    achievement_form_step_completed: { category: EventCategory.ACHIEVEMENT, description: '성과 작성 단계 완료' },
+    achievement_created: { category: EventCategory.ACHIEVEMENT, description: '성과 생성 (NSM 핵심)' },
     achievement_updated: { category: EventCategory.ACHIEVEMENT, description: '성과 수정' },
     achievement_deleted: { category: EventCategory.ACHIEVEMENT, description: '성과 삭제' },
     achievement_viewed: { category: EventCategory.ACHIEVEMENT, description: '성과 조회' },
@@ -220,4 +244,7 @@ export const EVENT_METADATA: Record<EventName, { category: EventCategory; descri
     career_register_completed: { category: EventCategory.CAREER, description: '경력 등록 완료' },
     resume_generated: { category: EventCategory.CAREER, description: '이력서 생성' },
     resume_downloaded: { category: EventCategory.CAREER, description: '이력서 다운로드' },
+
+    // CTA
+    cta_clicked: { category: EventCategory.PAGE, description: 'CTA 버튼 클릭' },
 };

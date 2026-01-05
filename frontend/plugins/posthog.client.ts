@@ -14,12 +14,10 @@ export default defineNuxtPlugin(() => {
 
     // API Key가 없으면 초기화하지 않음
     if (!posthogKey) {
-        console.warn('[PostHog] API key not configured. Skipping initialization.');
-        return {
-            provide: {
-                posthog: null,
-            },
-        };
+        if (import.meta.dev) {
+            console.warn('[PostHog] API key not configured. Skipping initialization.');
+        }
+        return;
     }
 
     // PostHog 초기화
@@ -36,9 +34,9 @@ export default defineNuxtPlugin(() => {
         // 디버그 모드
         debug: config.public.analyticsDebug === 'true',
         // 한국어 로케일
-        loaded: (ph) => {
+        loaded: (_ph) => {
             // 개발 환경에서는 로그 출력
-            if (process.env.NODE_ENV === 'development') {
+            if (import.meta.dev) {
                 console.log('[PostHog] Initialized successfully');
             }
         },
@@ -48,10 +46,4 @@ export default defineNuxtPlugin(() => {
     if (typeof window !== 'undefined') {
         window.posthog = posthog;
     }
-
-    return {
-        provide: {
-            posthog,
-        },
-    };
 });

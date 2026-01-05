@@ -16,7 +16,7 @@
         </div>
         <h3 class="home-card-title">빠른 시작</h3>
         <p class="home-card-description">이력서를 등록하고 AI 기반 분석을 받아보세요</p>
-        <NuxtLink to="/career/register" class="home-card-action-link"> 시작하기 → </NuxtLink>
+        <NuxtLink to="/career/register" class="home-card-action-link" @click="handleStartClick"> 시작하기 → </NuxtLink>
       </div>
 
       <div class="home-info-card">
@@ -80,10 +80,28 @@
 <script setup lang="ts">
 import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
+import { useAnalytics } from '@/composables/useAnalytics';
+
+const { track } = useAnalytics();
 
 definePageMeta({
   layout: 'default',
 });
+
+// CTA 클릭 이벤트 핸들러
+const handleStartClick = () => {
+  // CTA 클릭 이벤트
+  track('cta_clicked', {
+    cta_name: 'start_register',
+    cta_location: 'home_hero',
+    destination: '/career/register',
+  });
+  
+  // 성과 등록 시작 이벤트
+  track('career_register_started', {
+    source: 'home_cta',
+  });
+};
 </script>
 
 <style lang="scss" scoped>

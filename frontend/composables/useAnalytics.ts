@@ -36,6 +36,9 @@ export type AnalyticsConfig = {
     mixpanel?: {
         token: string;
     };
+    ga4?: {
+        measurementId: string;
+    };
     debug?: boolean;
 };
 
@@ -133,6 +136,64 @@ class MixpanelProvider implements IAnalyticsProvider {
 }
 
 // ============================================
+// GA4 Provider
+// ============================================
+class GA4Provider implements IAnalyticsProvider {
+    name: AnalyticsProvider = 'ga4';
+    private debug: boolean = false;
+    private measurementId: string = '';
+
+    init(config: AnalyticsConfig): void {
+        if (!config.ga4?.measurementId) return;
+        this.debug = config.debug || false;
+        this.measurementId = config.ga4.measurementId;
+
+        // GA4 plugin에서 이미 초기화됨
+        if (this.debug) {
+            console.log('[GA4] Provider initialized with ID:', this.measurementId);
+        }
+    }
+
+    track<T extends EventName>(event: T, properties: EventProperties<T>): void {
+        if (typeof window === 'undefined' || !window.gtag) return;
+
+        if (this.debug) {
+            console.log('[GA4] Track:', event, properties);
+        }
+
+        // GA4 이벤트 전송
+        window.gtag('event', event, properties as Record<string, unknown>);
+    }
+
+    identify(userId: string, traits?: Record<string, unknown>): void {
+        if (typeof window === 'undefined' || !window.gtag) return;
+
+        if (this.debug) {
+            console.log('[GA4] Identify:', userId, traits);
+        }
+
+        // GA4 사용자 ID 설정
+        window.gtag('config', this.measurementId, {
+            user_id: userId,
+            ...traits,
+        });
+    }
+
+    reset(): void {
+        // GA4는 사용자 리셋 기능이 제한적
+        if (this.debug) {
+            console.log('[GA4] Reset called (limited support in GA4)');
+        }
+    }
+
+    setUserProperties(properties: Record<string, unknown>): void {
+        if (typeof window === 'undefined' || !window.gtag) return;
+
+        window.gtag('set', 'user_properties', properties);
+    }
+}
+
+// ============================================
 // Analytics Manager
 // ============================================
 class AnalyticsManager {
@@ -157,6 +218,13 @@ class AnalyticsManager {
             const mixpanel = new MixpanelProvider();
             mixpanel.init(config);
             this.providers.push(mixpanel);
+        }
+
+        // GA4 초기화
+        if (config.ga4?.measurementId) {
+            const ga4 = new GA4Provider();
+            ga4.init(config);
+            this.providers.push(ga4);
         }
 
         this.initialized = true;
@@ -235,6 +303,11 @@ export const useAnalytics = () => {
             mixpanel: config.public.mixpanelToken
                 ? {
                     token: config.public.mixpanelToken as string,
+                }
+                : undefined,
+            ga4: config.public.ga4MeasurementId
+                ? {
+                    measurementId: config.public.ga4MeasurementId as string,
                 }
                 : undefined,
             debug: config.public.analyticsDebug === 'true',

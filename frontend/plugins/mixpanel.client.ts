@@ -13,12 +13,10 @@ export default defineNuxtPlugin(() => {
 
     // Token이 없으면 초기화하지 않음
     if (!mixpanelToken) {
-        console.warn('[Mixpanel] Token not configured. Skipping initialization.');
-        return {
-            provide: {
-                mixpanel: null,
-            },
-        };
+        if (import.meta.dev) {
+            console.warn('[Mixpanel] Token not configured. Skipping initialization.');
+        }
+        return;
     }
 
     // Mixpanel 초기화
@@ -38,7 +36,7 @@ export default defineNuxtPlugin(() => {
     });
 
     // 개발 환경 로그
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.dev) {
         console.log('[Mixpanel] Initialized successfully');
     }
 
@@ -46,10 +44,4 @@ export default defineNuxtPlugin(() => {
     if (typeof window !== 'undefined') {
         window.mixpanel = mixpanel;
     }
-
-    return {
-        provide: {
-            mixpanel,
-        },
-    };
 });

@@ -74,13 +74,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Button from '@/components/atoms/Button/Button.vue';
 import { ButtonVariant, CommonSize } from '@/constants/enums/style-enum';
+import { useAnalytics } from '@/composables/useAnalytics';
 
 const route = useRoute();
 const isSidebarCollapsed = ref(false);
+
+// Analytics 초기화 및 페이지뷰 추적
+const { initAnalytics, track } = useAnalytics();
+
+onMounted(() => {
+  // Analytics 초기화
+  initAnalytics();
+  
+  // 초기 페이지뷰 트래킹
+  trackPageView();
+});
+
+// 라우트 변경 시 페이지뷰 자동 추적
+watch(() => route.path, () => {
+  trackPageView();
+});
+
+const trackPageView = () => {
+  const pageName = getPageName(route.path);
+  track('page_view', {
+    page_name: pageName,
+    page_path: route.path,
+    referrer: typeof document !== 'undefined' ? document.referrer : undefined,
+  });
+};
+
+const getPageName = (path: string): string => {
+  const pathMap: Record<string, string> = {
+    '/home': 'home',
+    '/career/register': 'career_register',
+  };
+  return pathMap[path] || path.replace(/\//g, '_').slice(1) || 'home';
+};
 
 interface MenuItem {
   path: string;

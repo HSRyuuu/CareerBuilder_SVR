@@ -24,6 +24,9 @@ export default defineNuxtConfig({
       // Mixpanel Analytics (대안)
       mixpanelToken: process.env.NUXT_PUBLIC_MIXPANEL_TOKEN || '',
 
+      // Google Analytics 4
+      ga4MeasurementId: process.env.NUXT_PUBLIC_GA4_MEASUREMENT_ID || '',
+
       // 분석 디버그 모드
       analyticsDebug: process.env.NUXT_PUBLIC_ANALYTICS_DEBUG || 'false',
 
