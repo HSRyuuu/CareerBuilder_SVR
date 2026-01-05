@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
-@Tag(name = "Experience AI", description = "경험 AI 분석 API")
+@Tag(name = "유저 API", description = "사용자 관련")
 @RestController
 @RequestMapping("/api/users/me")
 class UserController(

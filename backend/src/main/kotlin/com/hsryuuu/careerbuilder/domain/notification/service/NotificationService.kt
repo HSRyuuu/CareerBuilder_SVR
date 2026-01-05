@@ -3,7 +3,6 @@ package com.hsryuuu.careerbuilder.domain.notification.service
 import com.hsryuuu.careerbuilder.application.exception.ErrorCode
 import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.common.dto.CommonPageResponse
-import com.hsryuuu.careerbuilder.domain.notification.model.dto.CreateNotificationRequest
 import com.hsryuuu.careerbuilder.domain.notification.model.dto.NotificationResponse
 import com.hsryuuu.careerbuilder.domain.notification.repository.NotificationRepository
 import org.springframework.data.domain.PageRequest
@@ -13,17 +12,11 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-@Transactional(readOnly = true)
 class NotificationService(
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
 ) {
 
-    @Transactional
-    fun create(request: CreateNotificationRequest): UUID {
-        val notification = request.toEntity()
-        return notificationRepository.save(notification).id!!
-    }
-
+    @Transactional(readOnly = true)
     fun find(
         userId: UUID,
         isRead: Boolean?,

@@ -2,26 +2,20 @@ package com.hsryuuu.careerbuilder.domain.notification.controller
 
 import com.hsryuuu.careerbuilder.application.annotation.CurrentUserId
 import com.hsryuuu.careerbuilder.common.dto.CommonPageResponse
-import com.hsryuuu.careerbuilder.domain.notification.model.dto.CreateNotificationRequest
 import com.hsryuuu.careerbuilder.domain.notification.model.dto.NotificationResponse
 import com.hsryuuu.careerbuilder.domain.notification.service.NotificationService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
+@Tag(name = "알림 API", description = "알림 관련 API")
 @RestController
 @RequestMapping("/api/notifications")
 class NotificationController(
     private val notificationService: NotificationService
 ) {
-
-    @Operation(summary = "알림 생성")
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    fun createNotification(@RequestBody request: CreateNotificationRequest) {
-        notificationService.create(request)
-    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -34,7 +28,8 @@ class NotificationController(
         return notificationService.find(userId, isRead, page - 1, pageSize)
     }
 
-    @PatchMapping("/{id}/read")
+    @Operation(summary = "알림 읽음 처리")
+    @PutMapping("/{id}/read")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun readNotification(
         @CurrentUserId userId: UUID,
