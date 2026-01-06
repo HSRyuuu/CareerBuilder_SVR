@@ -51,7 +51,7 @@ const getBaseUrl = (): string => {
  */
 const buildUrlWithParams = (
   url: string,
-  params?: Record<string, string | number | boolean | undefined>
+  params?: Record<string, string | number | boolean | null | undefined>
 ): string => {
   if (!params) return url;
 

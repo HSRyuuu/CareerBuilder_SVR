@@ -56,59 +56,7 @@
           <PlanButton v-if="authStore.isAuthenticated" />
           
           <!-- 알림 영역 -->
-          <v-menu
-            v-model="isNotificationOpen"
-            :close-on-content-click="false"
-            location="bottom end"
-            offset="10"
-          >
-            <template #activator="{ props }">
-              <Button
-                v-bind="props"
-                :variant="ButtonVariant.Secondary"
-                :size="CommonSize.Medium"
-                icon-only
-                icon="mdi-bell-outline"
-                class="notification-btn"
-              />
-            </template>
-
-            <v-card width="320" class="notification-dropdown">
-              <v-card-title class="d-flex justify-space-between align-center py-3 px-4">
-                <span class="text-subtitle-1 font-weight-bold">알림</span>
-                <v-btn variant="text" size="small" color="primary" @click="clearAllNotifications">전체 읽음</v-btn>
-              </v-card-title>
-              <v-divider />
-              <v-list class="pa-0" max-height="400">
-                <template v-if="notifications.length > 0">
-                  <v-list-item
-                    v-for="(n, i) in notifications"
-                    :key="i"
-                    :subtitle="n.time"
-                    class="py-3 border-b"
-                    @click="handleNotificationClick(n)"
-                  >
-                    <template #prepend>
-                      <v-avatar :color="n.color" size="32" class="mr-3">
-                        <v-icon color="white" size="18">{{ n.icon }}</v-icon>
-                      </v-avatar>
-                    </template>
-                    <v-list-item-title class="text-body-2 font-weight-medium text-wrap">
-                      {{ n.message }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </template>
-                <div v-else class="pa-8 text-center text-medium-emphasis">
-                  <v-icon size="48" class="mb-2 opacity-20">mdi-bell-off-outline</v-icon>
-                  <div class="text-body-2">새로운 알림이 없습니다.</div>
-                </div>
-              </v-list>
-              <v-divider />
-              <v-card-actions class="pa-2">
-                <v-btn block variant="text" size="small" @click="navigateTo(MENU_URLS.HOME)">모든 알림 보기</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-menu>
+          <NotificationPopup v-if="authStore.isAuthenticated" />
 
           <slot name="header-controls" />
         </div>
@@ -211,6 +159,7 @@ import AiHelpDocumentModal from '@/components/page/ai-help/AiHelpDocumentModal.v
 import ServiceHelpDocumentModal from '@/components/page/ai-help/ServiceHelpDocumentModal.vue';
 import UserPlanModal from '@/components/organisms/UserPlanModal/UserPlanModal.vue';
 import PlanButton from '@/components/atoms/PlanButton/PlanButton.vue';
+import NotificationPopup from '@/components/organisms/NotificationPopup/NotificationPopup.vue';
 
 const route = useRoute();
 const menu = useMenu();
@@ -220,28 +169,6 @@ const colorMode = useColorMode();
 const isSidebarCollapsed = ref(false);
 const isAiHelpModalOpen = ref(false);
 const isServiceHelpModalOpen = ref(false);
-const isNotificationOpen = ref(false);
-
-const notifications = ref([
-  {
-    message: '새로운 분석 완료! 귀하의 경험이 성공적으로 분석되었습니다.',
-    time: '2분 전',
-    icon: 'mdi-auto-fix',
-    color: 'primary',
-  },
-  {
-    message: '회원가입을 환영합니다! CareerBuilder와 함께 성장해보세요.',
-    time: '1시간 전',
-    icon: 'mdi-party-popper',
-    color: 'success',
-  },
-  {
-    message: '구독 플랜이 곧 만료됩니다. 연장하여 혜택을 계속 누리세요.',
-    time: '24시간 전',
-    icon: 'mdi-alert-circle-outline',
-    color: 'warning',
-  },
-]);
 
 const isDark = computed(() => colorMode.value === 'dark');
 
@@ -287,18 +214,6 @@ const handleOpenAiDocs = () => {
   isAiHelpModalOpen.value = true;
 };
 
-const handleOpenNotifications = () => {
-  isNotificationOpen.value = !isNotificationOpen.value;
-};
-
-const handleNotificationClick = (notification: any) => {
-  console.log('Notification clicked:', notification);
-  isNotificationOpen.value = false;
-};
-
-const clearAllNotifications = () => {
-  notifications.value = [];
-};
 
 const handleMockLogout = () => {
   authStore.clearAuth();

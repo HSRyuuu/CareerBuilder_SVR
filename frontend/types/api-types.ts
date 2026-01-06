@@ -44,7 +44,7 @@ export type TApiRequestOptions<TBody = unknown> = {
   url: string;
   method: THttpMethod;
   body?: TBody;
-  params?: Record<string, string | number | boolean | undefined>;
+  params?: Record<string, string | number | boolean | null | undefined>;
   headers?: Record<string, string>;
   showErrorToast?: boolean; // 에러 발생 시 Toast 표시 여부 (기본: true)
 };
