@@ -7,6 +7,26 @@
           <img src="/cb-logo.png" alt="CareerBuilder" class="layout-logo-img" />
           <span class="layout-logo-text">CareerBuilder</span>
         </div>
+        <Button
+          :variant="ButtonVariant.Secondary"
+          :size="CommonSize.Small"
+          class="layout-sidebar-toggle-btn"
+          @click="toggleSidebar"
+        >
+          <img 
+            src="/icons/side-bar.png" 
+            alt="Toggle Sidebar" 
+            :class="['sidebar-toggle-icon', { 'sidebar-toggle-icon--collapsed': isSidebarCollapsed }]"
+          />
+        </Button>
+        <Button 
+          :variant="ButtonVariant.Secondary"
+          :size="CommonSize.Medium"
+          icon-only
+          :icon="isDark ? 'mdi-weather-night' : 'mdi-weather-sunny'"
+          class="theme-toggle-header-btn"
+          @click="toggleTheme"
+        />
       </div>
       <div class="layout-header-right">
         <div class="header-actions">
@@ -34,14 +54,62 @@
           <ServiceHelpDocumentModal v-model="isServiceHelpModalOpen" />
 
           <PlanButton v-if="authStore.isAuthenticated" />
-          <Button
-            :variant="ButtonVariant.Secondary"
-            :size="CommonSize.Medium"
-            icon-only
-            :icon="isDark ? 'mdi-weather-night' : 'mdi-weather-sunny'"
-            class="theme-toggle-btn"
-            @click="toggleTheme"
-          />
+          
+          <!-- 알림 영역 -->
+          <v-menu
+            v-model="isNotificationOpen"
+            :close-on-content-click="false"
+            location="bottom end"
+            offset="10"
+          >
+            <template #activator="{ props }">
+              <Button
+                v-bind="props"
+                :variant="ButtonVariant.Secondary"
+                :size="CommonSize.Medium"
+                icon-only
+                icon="mdi-bell-outline"
+                class="notification-btn"
+              />
+            </template>
+
+            <v-card width="320" class="notification-dropdown">
+              <v-card-title class="d-flex justify-space-between align-center py-3 px-4">
+                <span class="text-subtitle-1 font-weight-bold">알림</span>
+                <v-btn variant="text" size="small" color="primary" @click="clearAllNotifications">전체 읽음</v-btn>
+              </v-card-title>
+              <v-divider />
+              <v-list class="pa-0" max-height="400">
+                <template v-if="notifications.length > 0">
+                  <v-list-item
+                    v-for="(n, i) in notifications"
+                    :key="i"
+                    :subtitle="n.time"
+                    class="py-3 border-b"
+                    @click="handleNotificationClick(n)"
+                  >
+                    <template #prepend>
+                      <v-avatar :color="n.color" size="32" class="mr-3">
+                        <v-icon color="white" size="18">{{ n.icon }}</v-icon>
+                      </v-avatar>
+                    </template>
+                    <v-list-item-title class="text-body-2 font-weight-medium text-wrap">
+                      {{ n.message }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </template>
+                <div v-else class="pa-8 text-center text-medium-emphasis">
+                  <v-icon size="48" class="mb-2 opacity-20">mdi-bell-off-outline</v-icon>
+                  <div class="text-body-2">새로운 알림이 없습니다.</div>
+                </div>
+              </v-list>
+              <v-divider />
+              <v-card-actions class="pa-2">
+                <v-btn block variant="text" size="small" @click="navigateTo(MENU_URLS.HOME)">모든 알림 보기</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+
           <slot name="header-controls" />
         </div>
       </div>
@@ -49,35 +117,30 @@
 
     <!-- 좌측 사이드바 -->
     <aside :class="['layout-sidebar', { 'layout-sidebar--collapsed': isSidebarCollapsed }]">
-      <!-- 토글 버튼 -->
-      <div class="layout-sidebar-header">
-        <Button
-          :variant="ButtonVariant.Secondary"
-          :size="CommonSize.Small"
-          icon-only
-          :icon="isSidebarCollapsed ? 'mdi-menu' : 'mdi-menu-open'"
-          class="layout-sidebar-toggle"
-          @click="toggleSidebar"
-        />
-      </div>
 
       <!-- 사용자 정보 -->
       <div
-        :class="['layout-sidebar-user', { 'layout-sidebar-user--collapsed': isSidebarCollapsed }]"
+        v-if="!isSidebarCollapsed"
+        class="layout-sidebar-user"
         @click="navigateTo(MENU_URLS.SETTING)"
       >
-        <div v-if="isSidebarCollapsed" class="layout-sidebar-user-icon-only">
-          <v-icon>mdi-account-circle</v-icon>
+        <div class="layout-sidebar-user-avatar">
+          <v-icon size="24">mdi-account-circle</v-icon>
         </div>
-        <template v-else>
-          <div class="layout-sidebar-user-avatar">
-            <v-icon>mdi-account-circle</v-icon>
-          </div>
-          <div class="layout-sidebar-user-info">
-            <div class="layout-sidebar-user-name">{{ authStore.userName || '사용자' }}</div>
-            <div class="layout-sidebar-user-email">{{ authStore.email || 'user@example.com' }}</div>
-          </div>
-        </template>
+        <div class="layout-sidebar-user-info">
+          <div class="layout-sidebar-user-name">{{ authStore.userName || '사용자' }}</div>
+          <div class="layout-sidebar-user-email">{{ authStore.email || 'user@example.com' }}</div>
+        </div>
+      </div>
+      <div 
+        v-else 
+        class="layout-sidebar-nav-item layout-sidebar-user--active-navy"
+        style="margin-bottom: 20px;"
+        @click="navigateTo(MENU_URLS.SETTING)"
+      >
+        <div class="layout-sidebar-nav-item-icon">
+          <v-icon size="20">mdi-account-circle</v-icon>
+        </div>
       </div>
 
       <!-- 메뉴 리스트 -->
@@ -93,11 +156,9 @@
           <div class="layout-sidebar-nav-item-icon">
             <v-icon>{{ item.icon }}</v-icon>
           </div>
-          <transition name="fade">
-            <span v-if="!isSidebarCollapsed" class="layout-sidebar-nav-item-label">
-              {{ item.label }}
-            </span>
-          </transition>
+          <span class="layout-sidebar-nav-item-label">
+            {{ item.label }}
+          </span>
         </NuxtLink>
       </nav>
 
@@ -110,11 +171,9 @@
           <div class="layout-sidebar-nav-item-icon">
             <v-icon size="20">mdi-help-circle-outline</v-icon>
           </div>
-          <transition name="fade">
-            <span v-if="!isSidebarCollapsed" class="layout-sidebar-nav-item-label">
-              서비스 도움말
-            </span>
-          </transition>
+          <span class="layout-sidebar-nav-item-label">
+            서비스 도움말
+          </span>
         </div>
         <div 
           class="layout-sidebar-nav-item" 
@@ -123,11 +182,9 @@
           <div class="layout-sidebar-nav-item-icon">
             <v-icon size="20">mdi-text-box-search-outline</v-icon>
           </div>
-          <transition name="fade">
-            <span v-if="!isSidebarCollapsed" class="layout-sidebar-nav-item-label">
-              AI 유의사항
-            </span>
-          </transition>
+          <span class="layout-sidebar-nav-item-label">
+            AI 유의사항
+          </span>
         </div>
       </div>
     </aside>
@@ -163,6 +220,28 @@ const colorMode = useColorMode();
 const isSidebarCollapsed = ref(false);
 const isAiHelpModalOpen = ref(false);
 const isServiceHelpModalOpen = ref(false);
+const isNotificationOpen = ref(false);
+
+const notifications = ref([
+  {
+    message: '새로운 분석 완료! 귀하의 경험이 성공적으로 분석되었습니다.',
+    time: '2분 전',
+    icon: 'mdi-auto-fix',
+    color: 'primary',
+  },
+  {
+    message: '회원가입을 환영합니다! CareerBuilder와 함께 성장해보세요.',
+    time: '1시간 전',
+    icon: 'mdi-party-popper',
+    color: 'success',
+  },
+  {
+    message: '구독 플랜이 곧 만료됩니다. 연장하여 혜택을 계속 누리세요.',
+    time: '24시간 전',
+    icon: 'mdi-alert-circle-outline',
+    color: 'warning',
+  },
+]);
 
 const isDark = computed(() => colorMode.value === 'dark');
 
@@ -206,6 +285,19 @@ const handleOpenServiceHelpDocs = () => {
 
 const handleOpenAiDocs = () => {
   isAiHelpModalOpen.value = true;
+};
+
+const handleOpenNotifications = () => {
+  isNotificationOpen.value = !isNotificationOpen.value;
+};
+
+const handleNotificationClick = (notification: any) => {
+  console.log('Notification clicked:', notification);
+  isNotificationOpen.value = false;
+};
+
+const clearAllNotifications = () => {
+  notifications.value = [];
 };
 
 const handleMockLogout = () => {
