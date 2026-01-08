@@ -16,7 +16,7 @@ class JwtTokenProvider(
         get() = jwtProperties.secret
 
     val validityInMilliseconds: Long
-        get() = jwtProperties.expiration
+        get() = jwtProperties.accessTokenExp
 
     fun createToken(userInfo: UserInfo): String {
         val claims: Claims = Jwts.claims().setSubject(userInfo.username)
