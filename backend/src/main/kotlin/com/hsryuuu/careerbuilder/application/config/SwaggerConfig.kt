@@ -15,14 +15,16 @@ import org.springframework.context.annotation.Configuration
 import java.util.*
 
 @Configuration
-class SwaggerConfig {
+class SwaggerConfig(
+    private val jwtTokenProvider: JwtTokenProvider
+) {
 
     init {
         SpringDocUtils.getConfig().addAnnotationsToIgnore(CurrentUserId::class.java)
     }
 
     @Bean
-    fun realtimeStockTrackerOpenApi(): OpenAPI {
+    fun careerBuilderOpenApi(): OpenAPI {
         val securitySchemeName = "bearerAuth"
 
         return OpenAPI()
@@ -59,6 +61,6 @@ class SwaggerConfig {
             email = "happyhsryu@gmail.com",
             role = UserRole.ROLE_USER
         )
-        return JwtTokenProvider().createToken(userInfo)
+        return jwtTokenProvider.createToken(userInfo)
     }
 }
