@@ -112,6 +112,7 @@ reports/
 
 **/secrets.*
 **/credentials.*
+/init/.env
 
 # =========================
 # 🗑️ Project-specific Exclusions
