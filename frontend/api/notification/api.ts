@@ -27,3 +27,13 @@ export const markNotificationAsRead = (id: string) => {
     method: HttpMethod.PUT,
   });
 };
+
+/**
+ * 알림 전체 읽음 처리
+ */
+export const markAllNotificationsAsRead = () => {
+  return useApi<null>({
+    url: '/api/notifications/read-all',
+    method: HttpMethod.PUT,
+  });
+};

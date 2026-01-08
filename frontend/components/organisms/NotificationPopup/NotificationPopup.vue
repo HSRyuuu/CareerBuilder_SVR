@@ -28,16 +28,14 @@
     <v-card width="380" class="notification-popup" elevation="4">
       <v-card-title class="d-flex justify-space-between align-center py-3 px-4">
         <span class="text-subtitle-1 font-weight-bold">알림</span>
-        <v-btn 
-          variant="text" 
-          size="small" 
-          color="primary"
-          class="text-none"
+        <Button 
+          :variant="ButtonVariant.Ghost" 
+          :size="CommonSize.Small"
           :disabled="!hasUnread"
           @click="handleMarkAllAsRead"
         >
           전체 읽음
-        </v-btn>
+        </Button>
       </v-card-title>
       <v-divider />
       
@@ -103,7 +101,14 @@
       </v-list>
       <v-divider />
       <v-card-actions class="pa-2">
-        <v-btn block variant="text" size="small" color="medium-emphasis" @click="handleViewAll">모든 알림 보기</v-btn>
+        <Button 
+          block 
+          :variant="ButtonVariant.Ghost" 
+          :size="CommonSize.Small" 
+          @click="handleViewAll"
+        >
+          모든 알림 보기
+        </Button>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -119,7 +124,7 @@ import { MENU_URLS } from '~/constants/menus';
 import { NotificationType } from '@/api/notification/types';
 
 // 3. API/Composables import
-import { fetchNotifications, markNotificationAsRead } from '@/api/notification/api';
+import { fetchNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '@/api/notification/api';
 import { useAuthStore } from '@/stores/auth';
 
 // 4. Type import
@@ -210,12 +215,17 @@ const handleNotificationClick = async (notification: TNotification) => {
 /**
  * 전체 읽음 처리
  */
-const handleMarkAllAsRead = () => {
-  notifications.value = notifications.value.map(n => ({
-    ...n,
-    isRead: true,
-    readAt: new Date().toISOString(),
-  }));
+const handleMarkAllAsRead = async () => {
+  try {
+    await markAllNotificationsAsRead();
+    notifications.value = notifications.value.map(n => ({
+      ...n,
+      isRead: true,
+      readAt: new Date().toISOString(),
+    }));
+  } catch (e) {
+    console.error('Failed to mark all notifications as read:', e);
+  }
 };
 
 /**
