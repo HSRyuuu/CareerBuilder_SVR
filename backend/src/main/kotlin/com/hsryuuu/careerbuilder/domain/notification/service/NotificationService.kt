@@ -43,4 +43,11 @@ class NotificationService(
         }
         notification.read()
     }
+
+    @Transactional
+    fun readAll(userId: UUID) {
+        val notifications = notificationRepository.findAllByUserIdAndIsRead(userId, false)
+        notifications.forEach { it.read() }
+        notificationRepository.saveAll(notifications)
+    }
 }

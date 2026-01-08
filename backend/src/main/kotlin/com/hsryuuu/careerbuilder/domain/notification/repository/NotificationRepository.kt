@@ -11,4 +11,5 @@ import java.util.*
 interface NotificationRepository : JpaRepository<Notification, UUID> {
     fun findAllByUserId(userId: UUID, pageable: Pageable): Page<Notification>
     fun findAllByUserIdAndIsRead(userId: UUID, isRead: Boolean, pageable: Pageable): Page<Notification>
+    fun findAllByUserIdAndIsRead(userId: UUID, isRead: Boolean): List<Notification>
 }

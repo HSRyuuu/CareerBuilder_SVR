@@ -37,4 +37,14 @@ class NotificationController(
     ) {
         notificationService.read(id, userId)
     }
+
+    @Operation(summary = "모든 알림 읽음 처리")
+    @PutMapping("/read-all")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun readAllNotification(
+        @CurrentUserId userId: UUID
+    ) {
+        notificationService.readAll(userId)
+    }
+
 }
