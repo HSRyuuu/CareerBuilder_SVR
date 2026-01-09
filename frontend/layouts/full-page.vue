@@ -9,14 +9,7 @@
         </div>
       </div>
       <div class="layout-header-right">
-        <Button
-          v-if="!authStore.isAuthenticated"
-          :variant="ButtonVariant.Primary"
-          :size="CommonSize.Medium"
-          @click="handleMockLogin"
-        >
-          임시 로그인
-        </Button>
+       
       </div>
     </header>
 
@@ -34,15 +27,6 @@ import { MENU_URLS } from '~/constants/menus';
 
 const authStore = useAuthStore();
 
-const handleMockLogin = () => {
-  authStore.setAccessToken('mock-token');
-  authStore.setUserInfo({
-    userId: 'admin',
-    userName: '임시유저',
-    email: 'admin@careerbuilder.com',
-  });
-  navigateTo(MENU_URLS.HOME);
-};
 </script>
 
 <style lang="scss" scoped>

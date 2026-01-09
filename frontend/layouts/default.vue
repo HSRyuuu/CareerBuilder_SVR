@@ -30,23 +30,7 @@
       </div>
       <div class="layout-header-right">
         <div class="header-actions">
-          <Button
-            v-if="!authStore.isAuthenticated"
-            :variant="ButtonVariant.Primary"
-            :size="CommonSize.Medium"
-            @click="handleMockLogin"
-          >
-            임시 로그인
-          </Button>
-          <Button
-            v-if="authStore.isAuthenticated"
-            :variant="ButtonVariant.Danger"
-            :size="CommonSize.Small"
-            @click="handleMockLogout"
-          >
-            임시 로그아웃
-          </Button>
-          
+
           <!-- AI 도움말 모달 -->
           <AiHelpDocumentModal v-model="isAiHelpModalOpen" />
           
@@ -196,16 +180,6 @@ const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
 };
 
-const handleMockLogin = () => {
-  authStore.setAccessToken('mock-token');
-  authStore.setUserInfo({
-    userId: 'test',
-    userName: '임시유저',
-    email: 'test@careerbuilder.com',
-  });
-  navigateTo(MENU_URLS.HOME);
-};
-
 const handleOpenServiceHelpDocs = () => {
   isServiceHelpModalOpen.value = true;
 };
@@ -214,12 +188,6 @@ const handleOpenAiDocs = () => {
   isAiHelpModalOpen.value = true;
 };
 
-
-const handleMockLogout = () => {
-  authStore.clearAuth();
-  clearUserInfo();
-  navigateTo(MENU_URLS.WELCOME);
-};
 </script>
 
 <style lang="scss" scoped>
