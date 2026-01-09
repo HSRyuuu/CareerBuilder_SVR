@@ -1,0 +1,38 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: optional:application-secret.yml
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cb}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:test}
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: false
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    root: info
+    "org.hibernate.SQL": off
+
+auth:
+  jwt:
+    secret: ${AUTH_JWT_SECRET}
+    access-token-exp: ${AUTH_JWT_ACCESS_TOKEN_EXP:600000}
+    refresh-token-exp: ${AUTH_JWT_REFRESH_TOKEN_EXP:2592000000}
