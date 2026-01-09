@@ -119,3 +119,8 @@ reports/
 # =========================
 
 /RealtimeStockTracker/
+
+# =========================
+# 🚀 Custom scripts
+# =========================
+backend/deploy.sh
