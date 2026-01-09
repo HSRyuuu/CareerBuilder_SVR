@@ -290,19 +290,28 @@ export const useApi = async <T, TBody = unknown>(
       isRefreshing = false;
       onRefreshFailed();
       handleLogout(authStore);
-      
+
+      if (showErrorToast) {
+        showError('로그인이 필요합니다.');
+      }
+
       return {
         data: null,
-        error: createProblemDetail(401, '인증이 만료되었습니다. 다시 로그인해주세요.'),
+        error: createProblemDetail(401, '로그인이 필요합니다.'),
       };
     }
 
     // 401인데 TOKEN_EXPIRED가 아닌 경우 (UNAUTHORIZED 등) - 로그인 페이지로 이동
     if (response.status === 401) {
       handleLogout(authStore);
+
+      if (showErrorToast) {
+        showError('로그인이 필요합니다.');
+      }
+
       return {
         data: null,
-        error: createProblemDetail(401, '인증이 만료되었습니다. 다시 로그인해주세요.'),
+        error: createProblemDetail(401, '로그인이 필요합니다.'),
       };
     }
 
