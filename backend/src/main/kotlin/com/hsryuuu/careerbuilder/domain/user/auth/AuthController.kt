@@ -7,6 +7,8 @@ import com.hsryuuu.careerbuilder.domain.user.appuser.service.AuthService
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LoginRequest
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LoginResponse
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LogoutResponse
+import com.hsryuuu.careerbuilder.domain.user.auth.model.RefreshRequest
+import com.hsryuuu.careerbuilder.domain.user.auth.model.RefreshResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
@@ -46,5 +48,10 @@ class AuthController(
     @GetMapping("/logout")
     fun logout(httpServletRequest: HttpServletRequest): LogoutResponse {
         return authService.logout(httpServletRequest)
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(@RequestBody request: RefreshRequest): RefreshResponse {
+        return authService.refresh(request.refreshToken)
     }
 }

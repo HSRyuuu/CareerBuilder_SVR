@@ -3,7 +3,7 @@
  *
  * 주요 기능:
  * - Authorization 헤더 자동 추가
- * - 401 에러 시 토큰 갱신 후 재시도
+ * - 401 TOKEN_EXPIRED 에러 시 토큰 갱신 후 재시도
  * - ProblemDetail 에러 파싱
  * - Toast 알림 (선택적)
  */
@@ -22,6 +22,8 @@ import { MENU_URLS } from '~/constants/menus';
 let isRefreshing = false;
 // 토큰 갱신 대기 중인 요청들
 let refreshSubscribers: ((token: string) => void)[] = [];
+// 토큰 갱신 실패 시 대기 요청들 reject
+let refreshRejectSubscribers: (() => void)[] = [];
 
 /**
  * 토큰 갱신 완료 후 대기 중인 요청들 실행
@@ -29,13 +31,27 @@ let refreshSubscribers: ((token: string) => void)[] = [];
 const onRefreshed = (token: string): void => {
   refreshSubscribers.forEach((callback) => callback(token));
   refreshSubscribers = [];
+  refreshRejectSubscribers = [];
+};
+
+/**
+ * 토큰 갱신 실패 시 대기 중인 요청들 reject
+ */
+const onRefreshFailed = (): void => {
+  refreshRejectSubscribers.forEach((callback) => callback());
+  refreshSubscribers = [];
+  refreshRejectSubscribers = [];
 };
 
 /**
  * 토큰 갱신 대기열에 추가
  */
-const addRefreshSubscriber = (callback: (token: string) => void): void => {
-  refreshSubscribers.push(callback);
+const addRefreshSubscriber = (
+  onSuccess: (token: string) => void,
+  onFail: () => void
+): void => {
+  refreshSubscribers.push(onSuccess);
+  refreshRejectSubscribers.push(onFail);
 };
 
 /**
@@ -67,31 +83,27 @@ const buildUrlWithParams = (
 };
 
 /**
- * ProblemDetail 응답인지 확인
+ * 토큰 만료 에러인지 확인 (title이 TOKEN_EXPIRED인 경우)
  */
-const isProblemDetail = (data: unknown): data is TProblemDetail => {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'type' in data &&
-    'title' in data &&
-    'status' in data &&
-    'detail' in data
-  );
+const isTokenExpiredError = (error: TProblemDetail): boolean => {
+  return error.status === 401 && error.title === 'TOKEN_EXPIRED';
 };
 
 /**
  * 토큰 갱신 요청
+ * @returns 새로운 토큰 쌍 또는 null (실패 시)
  */
-const refreshAccessToken = async (): Promise<string | null> => {
+const refreshTokens = async (
+  refreshToken: string
+): Promise<TRefreshTokenResponse | null> => {
   try {
     const baseUrl = getBaseUrl();
     const response = await fetch(`${baseUrl}/api/auth/refresh`, {
       method: 'POST',
-      credentials: 'include', // httpOnly Cookie 전송을 위해 필수
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ refreshToken }),
     });
 
     if (!response.ok) {
@@ -99,7 +111,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
     }
 
     const data = (await response.json()) as TRefreshTokenResponse;
-    return data.accessToken;
+    return data;
   } catch {
     return null;
   }
@@ -154,7 +166,7 @@ export const useApi = async <T, TBody = unknown>(
   const fetchOptions: RequestInit = {
     method,
     headers: requestHeaders,
-    credentials: 'include', // httpOnly Cookie 전송을 위해
+    credentials: 'include',
   };
 
   // Body 추가 (GET, DELETE가 아닌 경우)
@@ -176,47 +188,84 @@ export const useApi = async <T, TBody = unknown>(
       return { data, error: null };
     }
 
-    // 401 Unauthorized - 토큰 갱신 시도
-    if (response.status === 401) {
+    // 에러 응답 파싱 (백엔드는 항상 ProblemDetail 형식으로 반환)
+    const error = (await response.json()) as TProblemDetail;
+
+    // 401 TOKEN_EXPIRED - 토큰 갱신 시도
+    if (isTokenExpiredError(error)) {
+      const currentRefreshToken = authStore.getRefreshToken();
+
+      // RefreshToken이 없으면 로그아웃
+      if (!currentRefreshToken) {
+        handleLogout(authStore);
+        return {
+          data: null,
+          error: createProblemDetail(401, '인증이 만료되었습니다. 다시 로그인해주세요.'),
+        };
+      }
+
       // 이미 토큰 갱신 중이면 대기
       if (isRefreshing) {
         return new Promise((resolve) => {
-          addRefreshSubscriber(async (newToken: string) => {
-            requestHeaders['Authorization'] = `Bearer ${newToken}`;
-            fetchOptions.headers = requestHeaders;
+          addRefreshSubscriber(
+            // 성공 시
+            async (newToken: string) => {
+              requestHeaders['Authorization'] = `Bearer ${newToken}`;
+              fetchOptions.headers = requestHeaders;
 
-            const retryResponse = await fetch(fullUrl, fetchOptions);
-            if (retryResponse.ok) {
-              const data = (await retryResponse.json()) as T;
-              resolve({ data, error: null });
-            } else {
-              const errorData = await retryResponse.json();
+              try {
+                const retryResponse = await fetch(fullUrl, fetchOptions);
+                if (retryResponse.ok) {
+                  if (retryResponse.status === 204) {
+                    resolve({ data: null as T, error: null });
+                    return;
+                  }
+                  const data = (await retryResponse.json()) as T;
+                  resolve({ data, error: null });
+                } else {
+                  const retryError = (await retryResponse.json()) as TProblemDetail;
+                  if (showErrorToast) {
+                    showError(retryError.detail);
+                  }
+                  resolve({ data: null, error: retryError });
+                }
+              } catch {
+                const networkError = createProblemDetail(
+                  0,
+                  '서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.'
+                );
+                if (showErrorToast) {
+                  showError(networkError.detail);
+                }
+                resolve({ data: null, error: networkError });
+              }
+            },
+            // 실패 시
+            () => {
               resolve({
                 data: null,
-                error: isProblemDetail(errorData)
-                  ? errorData
-                  : createProblemDetail(retryResponse.status, '요청 처리 중 오류가 발생했습니다.'),
+                error: createProblemDetail(401, '인증이 만료되었습니다. 다시 로그인해주세요.'),
               });
             }
-          });
+          );
         });
       }
 
       // 토큰 갱신 시작
       isRefreshing = true;
 
-      const newToken = await refreshAccessToken();
+      const newTokens = await refreshTokens(currentRefreshToken);
 
-      if (newToken) {
+      if (newTokens) {
         // 새 토큰 저장
-        authStore.setAccessToken(newToken);
+        authStore.setTokens(newTokens.accessToken, newTokens.refreshToken);
         isRefreshing = false;
 
         // 대기 중인 요청들 실행
-        onRefreshed(newToken);
+        onRefreshed(newTokens.accessToken);
 
         // 원래 요청 재시도
-        requestHeaders['Authorization'] = `Bearer ${newToken}`;
+        requestHeaders['Authorization'] = `Bearer ${newTokens.accessToken}`;
         fetchOptions.headers = requestHeaders;
 
         const retryResponse = await fetch(fullUrl, fetchOptions);
@@ -229,26 +278,28 @@ export const useApi = async <T, TBody = unknown>(
         }
 
         // 재시도도 실패
-        const errorData = await retryResponse.json();
-        const error = isProblemDetail(errorData)
-          ? errorData
-          : createProblemDetail(retryResponse.status, '요청 처리 중 오류가 발생했습니다.');
-
+        const retryError = (await retryResponse.json()) as TProblemDetail;
         if (showErrorToast) {
-          showError(error.detail);
+          showError(retryError.detail);
         }
 
-        return { data: null, error };
+        return { data: null, error: retryError };
       }
 
       // 토큰 갱신 실패 - 로그아웃 처리
       isRefreshing = false;
-      authStore.clearAuth();
-      useUserInfo().clearUserInfo();
+      onRefreshFailed();
+      handleLogout(authStore);
+      
+      return {
+        data: null,
+        error: createProblemDetail(401, '인증이 만료되었습니다. 다시 로그인해주세요.'),
+      };
+    }
 
-      // 로그인 페이지로 이동
-      navigateTo(MENU_URLS.LOGIN);
-
+    // 401인데 TOKEN_EXPIRED가 아닌 경우 (UNAUTHORIZED 등) - 로그인 페이지로 이동
+    if (response.status === 401) {
+      handleLogout(authStore);
       return {
         data: null,
         error: createProblemDetail(401, '인증이 만료되었습니다. 다시 로그인해주세요.'),
@@ -256,11 +307,6 @@ export const useApi = async <T, TBody = unknown>(
     }
 
     // 기타 에러 응답
-    const errorData = await response.json();
-    const error = isProblemDetail(errorData)
-      ? errorData
-      : createProblemDetail(response.status, '요청 처리 중 오류가 발생했습니다.');
-
     if (showErrorToast) {
       showError(error.detail);
     }
@@ -282,7 +328,16 @@ export const useApi = async <T, TBody = unknown>(
 };
 
 /**
- * ProblemDetail 객체 생성 헬퍼
+ * 로그아웃 처리
+ */
+const handleLogout = (authStore: ReturnType<typeof useAuthStore>): void => {
+  authStore.clearAuth();
+  useUserInfo().clearUserInfo();
+  navigateTo(MENU_URLS.LOGIN);
+};
+
+/**
+ * ProblemDetail 객체 생성 헬퍼 (네트워크 에러 등 클라이언트 사이드 에러용)
  */
 const createProblemDetail = (status: number, detail: string): TProblemDetail => {
   return {

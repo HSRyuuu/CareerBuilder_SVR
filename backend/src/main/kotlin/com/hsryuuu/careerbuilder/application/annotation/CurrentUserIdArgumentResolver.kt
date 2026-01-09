@@ -1,5 +1,7 @@
 package com.hsryuuu.careerbuilder.application.annotation
 
+import com.hsryuuu.careerbuilder.application.exception.ErrorCode
+import com.hsryuuu.careerbuilder.application.exception.GlobalException
 import com.hsryuuu.careerbuilder.application.security.UserPrincipal
 import org.springframework.core.MethodParameter
 import org.springframework.security.core.context.SecurityContextHolder
@@ -25,7 +27,7 @@ class CurrentUserIdArgumentResolver : HandlerMethodArgumentResolver {
         val authentication = SecurityContextHolder.getContext().authentication
 
         if (authentication == null || !authentication.isAuthenticated || authentication.principal !is UserPrincipal) {
-            throw IllegalArgumentException("User not authenticated or invalid principal")
+            throw GlobalException(ErrorCode.UNAUTHORIZED)
         }
 
         val principal = authentication.principal as UserPrincipal

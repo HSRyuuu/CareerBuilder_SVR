@@ -25,6 +25,7 @@ export type TUserInfo = {
  */
 export type TLoginResponse = {
   accessToken: string;
+  refreshToken: string;
   userInfo: TUserInfo;
 };
 

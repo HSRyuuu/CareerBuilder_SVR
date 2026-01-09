@@ -10,6 +10,7 @@ export const useAuthStore = defineStore(
   () => {
     // ===== State =====
     const accessToken = ref<string | null>(null);
+    const refreshToken = ref<string | null>(null);
     const userId = ref<string | null>(null);
     const userName = ref<string | null>(null);
     const email = ref<string | null>(null);
@@ -34,6 +35,28 @@ export const useAuthStore = defineStore(
     };
 
     /**
+     * Refresh Token 조회
+     */
+    const getRefreshToken = (): string | null => {
+      return refreshToken.value;
+    };
+
+    /**
+     * Refresh Token 설정
+     */
+    const setRefreshToken = (token: string): void => {
+      refreshToken.value = token;
+    };
+
+    /**
+     * 토큰 설정 (Access + Refresh)
+     */
+    const setTokens = (access: string, refresh: string): void => {
+      accessToken.value = access;
+      refreshToken.value = refresh;
+    };
+
+    /**
      * 사용자 정보 설정
      */
     const setUserInfo = (info: { userId: string; userName: string; email: string }): void => {
@@ -47,6 +70,7 @@ export const useAuthStore = defineStore(
      */
     const clearAuth = (): void => {
       accessToken.value = null;
+      refreshToken.value = null;
       userId.value = null;
       userName.value = null;
       email.value = null;
@@ -55,6 +79,7 @@ export const useAuthStore = defineStore(
     return {
       // State
       accessToken,
+      refreshToken,
       userId,
       userName,
       email,
@@ -63,6 +88,9 @@ export const useAuthStore = defineStore(
       // Actions
       getAccessToken,
       setAccessToken,
+      getRefreshToken,
+      setRefreshToken,
+      setTokens,
       setUserInfo,
       clearAuth,
     };
@@ -72,7 +100,7 @@ export const useAuthStore = defineStore(
     persist: {
       key: 'auth',
       storage: piniaPluginPersistedstate.localStorage(),
-      pick: ['accessToken', 'userId', 'userName', 'email'],
+      pick: ['accessToken', 'refreshToken', 'userId', 'userName', 'email'],
     },
   }
 );

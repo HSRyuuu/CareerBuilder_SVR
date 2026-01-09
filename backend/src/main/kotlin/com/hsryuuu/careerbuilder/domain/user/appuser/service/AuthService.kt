@@ -17,6 +17,7 @@ import com.hsryuuu.careerbuilder.domain.user.appuser.repository.AppUserRepositor
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LoginRequest
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LoginResponse
 import com.hsryuuu.careerbuilder.domain.user.auth.model.LogoutResponse
+import com.hsryuuu.careerbuilder.domain.user.auth.model.RefreshResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
@@ -98,7 +99,9 @@ class AuthService(
             throw GlobalException(ErrorCode.INVALID_PASSWORD)
         }
         val userInfo = UserInfo.from(user)
-        return LoginResponse(jwtTokenProvider.createToken(userInfo), userInfo)
+        val accessToken = jwtTokenProvider.createToken(userInfo)
+        val refreshToken = jwtTokenProvider.createRefreshToken(userInfo.username)
+        return LoginResponse(accessToken, refreshToken, userInfo)
     }
 
     fun logout(httpServletRequest: HttpServletRequest): LogoutResponse {
@@ -121,5 +124,29 @@ class AuthService(
         return LogoutResponse(false)
     }
 
+    /**
+     * Refresh Token을 사용하여 새로운 Access Token과 Refresh Token 발급
+     */
+    @Transactional(readOnly = true)
+    fun refresh(refreshToken: String): RefreshResponse {
+        // Refresh Token 유효성 검증
+        if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
+            throw GlobalException(ErrorCode.UNAUTHORIZED)
+        }
+
+        // Refresh Token에서 username 추출
+        val username = jwtTokenProvider.getUsernameFromRefreshToken(refreshToken)
+
+        // 사용자 조회
+        val user = userRepository.findByUsername(username)
+            ?: throw GlobalException(ErrorCode.USER_NOT_FOUND)
+
+        // 새로운 토큰 발급
+        val userInfo = UserInfo.from(user)
+        val newAccessToken = jwtTokenProvider.createToken(userInfo)
+        val newRefreshToken = jwtTokenProvider.createRefreshToken(username)
+
+        return RefreshResponse(newAccessToken, newRefreshToken)
+    }
 
 }

@@ -13,6 +13,7 @@ enum class ErrorCode(
     FORBIDDEN(HttpStatus.FORBIDDEN, "리소스에 접근할 수 없습니다."),
     BAD_ENUM_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청값입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
     DUPLICATE_VALUE(HttpStatus.CONFLICT, "이미 존재하는 값이 있습니다."),
 
     // Auth

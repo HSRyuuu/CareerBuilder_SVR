@@ -1,15 +1,21 @@
 package com.hsryuuu.careerbuilder.application.security
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.hsryuuu.careerbuilder.application.exception.ErrorCode
+import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.http.MediaType
+import org.springframework.http.ProblemDetail
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import java.net.URI
 
 @Component
 class JwtAuthenticationFilter(
@@ -70,8 +76,13 @@ class JwtAuthenticationFilter(
                     SecurityContextHolder.getContext().authentication = authentication
                 }
             }
+        } catch (ex: ExpiredJwtException) {
+            // 토큰 만료 시 TOKEN_EXPIRED 에러 응답 반환
+            log.debug("토큰 만료: ${ex.message}")
+            sendTokenExpiredResponse(response, request.requestURI)
+            return
         } catch (ex: Exception) {
-            // 토큰 검증 실패 시 로깅 (실제 환경에서는 로그 레벨 조정 필요)
+            // 기타 토큰 검증 실패 시 로깅
             logger.error("인증 설정 중 오류 발생: ${ex.message}")
         }
 
@@ -88,5 +99,27 @@ class JwtAuthenticationFilter(
             log.error("JWTAuthenticationFilter Redis Error", ex)
             return false;
         }
+    }
+
+    /**
+     * 토큰 만료 시 RFC 7807 ProblemDetail 형식으로 응답
+     */
+    private fun sendTokenExpiredResponse(response: HttpServletResponse, requestUri: String) {
+        val errorCode = ErrorCode.TOKEN_EXPIRED
+        response.status = errorCode.status.value()
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.characterEncoding = "UTF-8"
+
+        val err = ProblemDetail.forStatusAndDetail(
+            errorCode.status,
+            errorCode.message
+        ).apply {
+            type = URI.create("https://careerbuilder.example.com/problems/validation-error")
+            title = errorCode.name
+            instance = URI.create(requestUri)
+        }
+        val problemDetailString = ObjectMapper().writeValueAsString(err)
+
+        response.writer.write(problemDetailString)
     }
 }

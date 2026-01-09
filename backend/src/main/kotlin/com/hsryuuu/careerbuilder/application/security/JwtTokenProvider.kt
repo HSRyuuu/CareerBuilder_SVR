@@ -18,6 +18,9 @@ class JwtTokenProvider(
     val validityInMilliseconds: Long
         get() = jwtProperties.accessTokenExp
 
+    val refreshTokenValidityInMilliseconds: Long
+        get() = jwtProperties.refreshTokenExp
+
     fun createToken(userInfo: UserInfo): String {
         val claims: Claims = Jwts.claims().setSubject(userInfo.username)
         val now = Date()
@@ -67,6 +70,55 @@ class JwtTokenProvider(
             .body
             .expiration
         return expiration.before(Date())
+    }
+
+    /**
+     * Refresh Token 생성
+     * Access Token과 달리 최소한의 정보(username)만 포함
+     */
+    fun createRefreshToken(username: String): String {
+        val claims: Claims = Jwts.claims().setSubject(username)
+        val now = Date()
+        val validity = Date(now.time + refreshTokenValidityInMilliseconds)
+
+        return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .claim("type", "refresh")
+            .signWith(Keys.hmacShaKeyFor(secretKey.toByteArray()), SignatureAlgorithm.HS256)
+            .compact()
+    }
+
+    /**
+     * Refresh Token에서 username 추출
+     */
+    fun getUsernameFromRefreshToken(token: String): String {
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(Keys.hmacShaKeyFor(secretKey.toByteArray()))
+            .build()
+            .parseClaimsJws(token)
+            .body
+
+        return claims.subject
+    }
+
+    /**
+     * Refresh Token 유효성 검증
+     */
+    fun validateRefreshToken(token: String): Boolean {
+        return try {
+            val claims = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.toByteArray()))
+                .build()
+                .parseClaimsJws(token)
+                .body
+
+            val tokenType = claims["type"] as? String
+            tokenType == "refresh" && !claims.expiration.before(Date())
+        } catch (e: Exception) {
+            false
+        }
     }
 
 }

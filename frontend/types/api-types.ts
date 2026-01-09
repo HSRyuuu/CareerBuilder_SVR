@@ -12,7 +12,10 @@ export type TProblemDetail = {
   status: number;
   detail: string;
   instance: string;
-  properties?: Record<string, unknown>;
+  // 선택적 확장 필드
+  code?: string;
+  errors?: Array<{ field: string; message: string }>;
+  data?: unknown;
 };
 
 /**
@@ -54,4 +57,5 @@ export type TApiRequestOptions<TBody = unknown> = {
  */
 export type TRefreshTokenResponse = {
   accessToken: string;
+  refreshToken: string;
 };

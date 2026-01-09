@@ -130,7 +130,7 @@ const handleLogin = async () => {
     }
     
     if (data) {
-      authStore.setAccessToken(data.accessToken);
+      authStore.setTokens(data.accessToken, data.refreshToken);
       authStore.setUserInfo({
         userId: data.userInfo.id,
         userName: data.userInfo.username,
