@@ -105,3 +105,24 @@ export const experienceColumns: TTableColumn<TExperience>[] = [
     valueFormatter: (value) => formatDateTime(value),
   },
 ];
+
+/**
+ * AI 경험 분석 페이지용 간소화된 컬럼 정의 (제목, 상태만)
+ * - 분석요청, 이동 버튼은 ExperienceTable props로 추가
+ */
+export const aiExperienceColumns: TTableColumn<TExperience>[] = [
+  {
+    field: 'title',
+    headerName: '제목',
+    flex: 3,
+    align: 'left',
+    cellClass: 'experience-list-table-title',
+    valueFormatter: (value) => truncateTitle(value || ''),
+  },
+  {
+    field: 'status',
+    headerName: '상태',
+    flex: 1,
+    align: 'center',
+  },
+];

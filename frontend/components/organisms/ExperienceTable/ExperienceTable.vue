@@ -77,6 +77,18 @@
           {{ selectButtonLabel }}
         </Button>
       </template>
+
+      <!-- 이동 버튼 셀 커스텀 렌더링 -->
+      <template #cell(navigate)="{ row }">
+        <Button
+          :variant="ButtonVariant.Outlined"
+          :size="CommonSize.Small"
+          @click.stop="handleNavigate(row)"
+        >
+          <v-icon size="small">mdi-arrow-right</v-icon>
+          {{ navigateButtonLabel }}
+        </Button>
+      </template>
     </Table>
   </div>
 </template>
@@ -92,6 +104,7 @@ import Button from '@/components/atoms/Button/Button.vue';
 import { ExperienceStatus, STATUS_INFO } from '@/types/experience-types';
 import type { ExperienceSortKey, SortDirection, TExperience } from '~/api/experience/types';
 import { ButtonVariant, CommonSize, FormSize, FormVariant } from '@/constants/enums/style-enum';
+import type { TTableColumn } from '@/components/organisms/Table/Table.vue';
 
 export type TExperienceTableFilters = {
   q: string;
@@ -102,21 +115,34 @@ export type TExperienceTableFilters = {
 
 interface Props {
   rows: TExperience[];
+  columns?: TTableColumn<TExperience>[];
   showSelectButton?: boolean;
   selectButtonLabel?: string;
+  showNavigateButton?: boolean;
+  navigateButtonLabel?: string;
 }
 
-const { rows, showSelectButton = false, selectButtonLabel = '선택' } = defineProps<Props>();
+const {
+  rows,
+  columns,
+  showSelectButton = false,
+  selectButtonLabel = '선택',
+  showNavigateButton = false,
+  navigateButtonLabel = '이동'
+} = defineProps<Props>();
 
 const emit = defineEmits<{
   'row-click': [TExperience];
   select: [TExperience];
+  navigate: [TExperience];
   'update:filters': [TExperienceTableFilters];
 }>();
 
-// 컬럼 정의 (선택 버튼 여부에 따라 동적 생성)
+// 컬럼 정의 (props로 전달된 컬럼이 있으면 사용, 없으면 기본 experienceColumns 사용)
 const computedColumns = computed(() => {
-  const cols = [...experienceColumns];
+  const baseColumns = columns ?? experienceColumns;
+  const cols = [...baseColumns];
+
   if (showSelectButton) {
     cols.push({
       field: 'select',
@@ -126,6 +152,17 @@ const computedColumns = computed(() => {
       align: 'center',
     });
   }
+
+  if (showNavigateButton) {
+    cols.push({
+      field: 'navigate',
+      headerName: navigateButtonLabel,
+      flex: 1,
+      width: '80px',
+      align: 'center',
+    });
+  }
+
   return cols;
 });
 
@@ -169,6 +206,10 @@ const handleRowClick = (row: TExperience) => {
 
 const handleSelect = (row: TExperience) => {
   emit('select', row);
+};
+
+const handleNavigate = (row: TExperience) => {
+  emit('navigate', row);
 };
 
 const getStatusDisplay = (status: any) => {

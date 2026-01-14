@@ -42,9 +42,13 @@
       <div class="table-section">
         <ExperienceTable
           :rows="experiences"
+          :columns="aiExperienceColumns"
           :show-select-button="true"
           select-button-label="분석 요청"
+          :show-navigate-button="true"
+          navigate-button-label="이동"
           @select="handleSelect"
+          @navigate="handleNavigate"
           @update:filters="handleFilterUpdate"
         />
 
@@ -71,6 +75,7 @@ import { fetchExperiences } from '~/api/experience/api';
 import { requestAiAnalysis } from '~/api/ai/api';
 import ExperienceTable from '@/components/organisms/ExperienceTable/ExperienceTable.vue';
 import ExperienceAnalysisModal from '@/components/organisms/ExperienceAnalysisModal/ExperienceAnalysisModal.vue';
+import { aiExperienceColumns } from '@/columns/experience';
 import PageHeader from '@/components/organisms/PageHeader/PageHeader.vue';
 import Select from '@/components/atoms/Select/Select.vue';
 import type { TSelectItem } from '@/components/atoms/Select/Select.vue';
@@ -142,6 +147,10 @@ const handleRowClick = (row: TExperience) => {
 const handleSelect = (row: TExperience) => {
   selectedExperience.value = row;
   showAnalysisModal.value = true;
+};
+
+const handleNavigate = (row: TExperience) => {
+  navigateTo(`${MENU_URLS.EXPERIENCE}/${row.id}`);
 };
 
 const handleAnalysisRequest = async (experience: TExperience, options: any) => {
