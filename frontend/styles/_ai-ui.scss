@@ -1,19 +1,14 @@
-// AI 관련 공통 UI 스타일
+// AI 관련 공통 UI 스타일 - Notion Style
 @use './variables' as *;
 
-// 1. AI 전용 그라디언트 정의 (기존보다 톤다운 및 명도 조정)
-$ai-gradient: linear-gradient(135deg, #6d28d9 0%, #1e40af 100%);
-$ai-gradient-reverse: linear-gradient(135deg, #1e40af 0%, #6d28d9 100%);
-$ai-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
-$ai-shadow-hover: 0 6px 18px rgba(30, 64, 175, 0.35);
+// 1. AI Holographic 그라디언트 정의 (Purple-Blue Shimmer)
+$ai-gradient: linear-gradient(135deg, var(--ai-gradient-start) 0%, var(--ai-gradient-mid) 50%, var(--ai-gradient-end) 100%);
+$ai-shadow: var(--shadow-ai);
 
 // 2. AI 텍스트 그라디언트
 .u-ai-text-gradient {
-  background: $ai-gradient;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 800;
+  @include ai-gradient-text;
+  font-weight: var(--font-bold);
 }
 
 // 3. AI 버튼 스타일 (Filled)
@@ -21,89 +16,81 @@ $ai-shadow-hover: 0 6px 18px rgba(30, 64, 175, 0.35);
   background: $ai-gradient !important;
   color: white !important;
   border: none !important;
-  font-weight: 700 !important;
+  font-weight: var(--font-bold) !important;
   box-shadow: $ai-shadow !important;
   transition: all 0.3s ease !important;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: $ai-shadow-hover !important;
+    box-shadow: 0 0 32px rgba(139, 92, 246, 0.35), 0 0 64px rgba(59, 130, 246, 0.25) !important;
     opacity: 0.95;
   }
 
   .v-icon {
     color: white !important;
-    margin-right: 4px !important;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+    margin-right: var(--space-xs) !important;
   }
 }
 
-// 4. AI 버튼 스타일 (Outline / Gradient Border)
+// 4. AI 버튼 스타일 (Outline / Holographic Border)
 .u-ai-btn-outline {
-  border: 1.5px solid transparent !important;
-  background-image: linear-gradient(var(--bg-primary), var(--bg-primary)), $ai-gradient !important;
-  background-origin: border-box !important;
-  background-clip: padding-box, border-box !important;
-  color: #1e40af !important;
-  font-weight: 700 !important;
+  @include ai-hologram-border;
+  color: var(--accent-primary) !important;
+  font-weight: var(--font-bold) !important;
   transition: all 0.3s ease !important;
 
   &:hover {
     transform: translateY(-1px);
-    background-image: linear-gradient(rgba(30, 64, 175, 0.08), rgba(30, 64, 175, 0.08)), 
-                      linear-gradient(var(--bg-primary), var(--bg-primary)), 
-                      $ai-gradient !important;
-    background-clip: padding-box, padding-box, border-box !important;
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15) !important;
+    box-shadow: var(--shadow-ai) !important;
   }
 
   .v-icon {
-    color: #1e40af !important;
-    margin-right: 4px !important;
+    color: var(--accent-primary) !important;
+    margin-right: var(--space-xs) !important;
   }
 }
 
-// 다크모드 대응
+// 다크모드 대응 (AI 그라디언트는 동일하게 유지)
 .dark-mode {
   .u-ai-text-gradient {
-    background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    // 동일한 그라디언트 사용 (자동으로 glow 강도만 조정됨)
+    @include ai-gradient-text;
   }
 
   .u-ai-btn-outline {
-    color: #60a5fa !important;
+    color: var(--accent-primary) !important;
     .v-icon {
-      color: #60a5fa !important;
+      color: var(--accent-primary) !important;
     }
   }
 }
 
 // 5. AI 특수 카드/배너용 배경
 .u-ai-bg-soft {
-  background: linear-gradient(135deg, rgba(30, 64, 175, 0.05) 0%, rgba(30, 58, 138, 0.05) 100%);
-  border: 1px solid rgba(30, 64, 175, 0.2);
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent-primary);
+  opacity: 0.8;
 }
-// 6. Plan Chips (Common Styles)
+
+// 6. Plan Chips (Notion-Inspired)
 .u-plan-chip {
-  padding: 4px 12px;
+  padding: var(--space-xs) var(--space-md);
   border-radius: 100px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 800;
+  gap: var(--space-xs);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.3s ease;
   user-select: none;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   background: var(--bg-tertiary);
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
   }
 
   &.basic {
@@ -112,24 +99,24 @@ $ai-shadow-hover: 0 6px 18px rgba(30, 64, 175, 0.35);
   }
 
   &.lite {
-    color: #d97706;
-    background: rgba(217, 119, 6, 0.1);
-    border-color: rgba(217, 119, 6, 0.2);
+    color: var(--warning-color);
+    background: rgba(203, 145, 47, 0.1);
+    border-color: var(--warning-color);
   }
 
   &.pro {
-    background: rgba(139, 92, 246, 0.1);
-    border-color: rgba(139, 92, 246, 0.2);
-    
+    @include ai-hologram-border;
+    animation: ai-shimmer 6s ease infinite;
+
     .chip-text {
       @extend .u-ai-text-gradient;
       -webkit-text-fill-color: transparent;
     }
-    
+
     .v-icon {
       @extend .u-ai-text-gradient;
-      -webkit-text-fill-color: initial; 
-      color: #8b5cf6; // Fallback
+      -webkit-text-fill-color: initial;
+      color: var(--ai-gradient-start); // Fallback
     }
   }
 
@@ -137,20 +124,20 @@ $ai-shadow-hover: 0 6px 18px rgba(30, 64, 175, 0.35);
     color: white;
     background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
     border-color: #4338ca;
-    box-shadow: 0 4px 12px rgba(49, 46, 129, 0.3);
+    box-shadow: var(--shadow-md);
 
     .chip-text {
       color: white;
     }
 
     &:hover {
-      box-shadow: 0 6px 18px rgba(49, 46, 129, 0.4);
+      box-shadow: var(--shadow-lg);
     }
   }
 
   .chip-text {
-    font-size: 11px;
-    font-weight: 800;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
     line-height: 1;
   }
 }

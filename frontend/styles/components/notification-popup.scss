@@ -1,5 +1,7 @@
+@use '../variables' as *;
+
 .notification-popup {
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
 }
 
@@ -9,8 +11,8 @@
     width: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(var(--v-border-color), 0.2);
-    border-radius: 3px;
+    background: var(--border-default);
+    border-radius: var(--radius-sm);
   }
 }
 
@@ -20,21 +22,21 @@
   align-items: flex-start;
 
   &:hover {
-    background-color: rgba(var(--v-theme-primary), 0.04);
+    background-color: var(--accent-subtle);
   }
 
   &--unread {
-    background-color: rgba(var(--v-theme-primary), 0.02);
+    background-color: var(--accent-subtle);
     position: relative;
-    
+
     &::after {
       content: '';
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: var(--space-lg);
+      right: var(--space-lg);
       width: 6px;
       height: 6px;
-      background-color: rgb(var(--v-theme-primary));
+      background-color: var(--accent-primary);
       border-radius: 50%;
     }
   }
@@ -61,9 +63,9 @@
 }
 
 .border-b {
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-bottom: 1px solid var(--border-default);
 }
 
 .gap-1 {
-  gap: 4px;
+  gap: var(--space-xs);
 }

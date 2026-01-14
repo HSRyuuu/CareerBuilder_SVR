@@ -1,21 +1,21 @@
 @use './variables' as *;
 
-// Vue Toastification Premium Customization
+// Vue Toastification Premium Customization - Notion Style
 .Vue-Toastification__container {
-  padding: 24px;
+  padding: var(--space-xl);
   z-index: 10000;
 }
 
 .Vue-Toastification__toast {
-  padding: 16px 20px;
-  border-radius: 16px; // More rounded for modern look
-  font-family: 'Inter', 'Outfit', -apple-system, sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  padding: var(--space-lg) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border-default);
   min-height: 60px;
   display: flex;
   align-items: center;
@@ -41,41 +41,41 @@
 
   // Success Toast
   &.Vue-Toastification__toast--success {
-    background: rgba(16, 185, 129, 0.1) !important;
+    background: rgba(15, 123, 108, 0.1) !important;
     color: #065f46 !important;
-    border: 1px solid rgba(16, 185, 129, 0.2) !important;
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12) !important;
+    border: 1px solid var(--success-color) !important;
+    box-shadow: var(--shadow-md) !important;
 
     &::after {
-      background: linear-gradient(to bottom, #10b981, #059669);
+      background: var(--success-color);
     }
 
     .Vue-Toastification__icon {
-      color: #10b981 !important;
+      color: var(--success-color) !important;
     }
 
     .Vue-Toastification__close-button {
-      color: #10b981 !important;
+      color: var(--success-color) !important;
     }
   }
 
   // Error Toast
   &.Vue-Toastification__toast--error {
-    background: rgba(239, 68, 68, 0.1) !important;
+    background: rgba(224, 62, 62, 0.1) !important;
     color: #991b1b !important;
-    border: 1px solid rgba(239, 68, 68, 0.2) !important;
-    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.12) !important;
+    border: 1px solid var(--error-color) !important;
+    box-shadow: var(--shadow-md) !important;
 
     &::after {
-      background: linear-gradient(to bottom, #ef4444, #dc2626);
+      background: var(--error-color);
     }
 
     .Vue-Toastification__icon {
-      color: #ef4444 !important;
+      color: var(--error-color) !important;
     }
 
     .Vue-Toastification__close-button {
-      color: #ef4444 !important;
+      color: var(--error-color) !important;
     }
   }
 
@@ -84,14 +84,14 @@
   &.Vue-Toastification__toast--info {
     background: var(--bg-glass) !important;
     color: var(--text-primary) !important;
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-default) !important;
 
     &::after {
-      background: linear-gradient(to bottom, #3b82f6, #2563eb);
+      background: var(--accent-primary);
     }
 
     .Vue-Toastification__icon {
-      color: var(--primary-color) !important;
+      color: var(--accent-primary) !important;
     }
   }
 }
@@ -99,34 +99,34 @@
 // Dark Mode Adjustments
 .dark-mode {
   .Vue-Toastification__toast {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-default);
 
     &.Vue-Toastification__toast--success {
-      background: rgba(6, 78, 59, 0.2) !important;
-      color: #34d399 !important;
-      border-color: rgba(52, 211, 153, 0.2) !important;
+      background: rgba(15, 159, 136, 0.2) !important;
+      color: var(--success-color) !important;
+      border-color: var(--success-color) !important;
     }
 
     &.Vue-Toastification__toast--error {
-      background: rgba(127, 29, 29, 0.2) !important;
-      color: #f87171 !important;
-      border-color: rgba(248, 113, 113, 0.2) !important;
+      background: rgba(235, 87, 87, 0.2) !important;
+      color: var(--error-color) !important;
+      border-color: var(--error-color) !important;
     }
 
     &.Vue-Toastification__toast--default,
     &.Vue-Toastification__toast--info {
-      background: rgba(15, 23, 42, 0.6) !important;
-      color: #f1f5f9 !important;
+      background: var(--bg-glass) !important;
+      color: var(--text-primary) !important;
     }
   }
 }
 
-// Close Button Hide default color
+// Close Button
 .Vue-Toastification__close-button {
-  font-size: 18px;
+  font-size: var(--text-lg);
   line-height: 1;
-  padding: 0 0 0 10px;
+  padding: 0 0 0 var(--space-sm);
   opacity: 0.5;
   transition: opacity 0.2s ease;
 
@@ -136,5 +136,5 @@
 }
 
 .Vue-Toastification__icon {
-  margin-right: 14px;
+  margin-right: var(--space-md);
 }

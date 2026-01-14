@@ -47,12 +47,6 @@
         </div>
         <div class="hero-visual">
           <div class="visual-container">
-            <!-- 연결 선 (Network Lines) -->
-            <svg class="visual-connectors" viewBox="0 0 500 400">
-              <line class="line dash" x1="120" y1="80" x2="380" y2="320" />
-              <line class="line dash" x1="380" y1="80" x2="120" y2="320" />
-            </svg>
-
             <div class="visual-grid">
               <div class="floating-card card-1">
                 <v-icon color="#22d3ee" size="small">mdi-robot</v-icon>
