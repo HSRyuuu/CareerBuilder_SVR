@@ -28,6 +28,7 @@ Desktop.ini
 .idea/
 out/
 .vscode/
+.sisyphus/
 
 # =========================
 # 🐘 Backend (Java/Kotlin + Spring Boot + Gradle)

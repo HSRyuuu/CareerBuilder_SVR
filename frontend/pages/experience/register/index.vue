@@ -109,17 +109,22 @@ const handleSave = async () => {
   };
 
   // API 호출
-  const { error } = await createExperience(requestBody);
+  const { data, error } = await createExperience(requestBody);
 
   if (error) {
     console.error('API 에러:', error);
     return;
   }
 
-  toast.success('저장되었습니다!');
+  toast.success('경험이 등록되었습니다');
 
-  // 목록 페이지로 이동
-  await navigateTo(MENU_URLS.EXPERIENCE);
+  // 상세 페이지로 이동
+  if (data?.id) {
+    await navigateTo(`/experience/${data.id}`);
+  } else {
+    // Fallback: ID가 없으면 목록으로
+    await navigateTo(MENU_URLS.EXPERIENCE);
+  }
 };
 
 const handleCancel = () => {

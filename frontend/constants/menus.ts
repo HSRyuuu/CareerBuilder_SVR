@@ -39,7 +39,7 @@ export type TMenuItem = {
 // 메뉴 목록
 export const MENU_ITEMS: TMenuItem[] = [
   { key: Menu.Home, path: MENU_URLS.HOME, label: '홈', icon: 'mdi-home' },
-    { key: Menu.AI, path: MENU_URLS.AI, label: 'AI 코칭', icon: 'mdi-brain' },
+    { key: Menu.AI, path: MENU_URLS.AI, label: 'AI hub', icon: 'mdi-brain' },
   { key: Menu.Career, path: MENU_URLS.EXPERIENCE, label: '경험', icon: 'mdi-text-box-multiple' },
   { key: Menu.Resume, path: MENU_URLS.RESUME, label: '이력서', icon: 'mdi-account-details' },
 ];

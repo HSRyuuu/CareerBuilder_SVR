@@ -130,7 +130,7 @@ const headerSubtitle = computed(() => {
 });
 
 const formMode = computed(() => {
-  return currentStep.value === 3 ? ExperienceFormMode.EDIT_WITH_AI : ExperienceFormMode.VIEW;
+  return currentStep.value === 3 ? ExperienceFormMode.VIEW : ExperienceFormMode.VIEW;
 });
 
 const formData = ref<TExperienceFormData>(JSON.parse(JSON.stringify(INITIAL_DUMMY_DATA)));

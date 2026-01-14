@@ -1047,6 +1047,12 @@
   border-radius: 6px;
   width: fit-content;
   letter-spacing: 0.05em;
+  
+  // Fix: global.scss의 .ai-badge 스타일(background-clip: text)이 상속되어 글자가 안 보이는 문제 해결
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+  text-transform: none;
 }
 
 .ai-recommendation-row {
@@ -1192,6 +1198,7 @@
   .ai-badge {
     background: rgba(16, 185, 129, 0.2);
     color: #34d399;
+    -webkit-text-fill-color: #34d399;
   }
 
   .ai-feedback-box {
