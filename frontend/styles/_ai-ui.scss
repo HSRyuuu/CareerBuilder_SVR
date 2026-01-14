@@ -32,7 +32,28 @@ $ai-shadow: var(--shadow-ai);
   }
 }
 
-// 4. AI 버튼 스타일 (Outline / Holographic Border)
+// 4. AI 버튼 스타일 (Gradient - Primary 버튼에 AI 느낌 추가)
+.u-ai-btn-gradient {
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%) !important;
+  color: white !important;
+  border: none !important;
+  font-weight: var(--font-bold) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25), 0 0 20px rgba(59, 130, 246, 0.15) !important;
+  transition: all 0.3s ease !important;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35), 0 0 32px rgba(59, 130, 246, 0.25) !important;
+    opacity: 0.95;
+  }
+
+  .v-icon {
+    color: white !important;
+    margin-right: var(--space-xs) !important;
+  }
+}
+
+// 5. AI 버튼 스타일 (Outline / Holographic Border)
 .u-ai-btn-outline {
   @include ai-hologram-border;
   color: var(--accent-primary) !important;
@@ -65,14 +86,14 @@ $ai-shadow: var(--shadow-ai);
   }
 }
 
-// 5. AI 특수 카드/배너용 배경
+// 6. AI 특수 카드/배너용 배경
 .u-ai-bg-soft {
   background: var(--accent-subtle);
   border: 1px solid var(--accent-primary);
   opacity: 0.8;
 }
 
-// 6. Plan Chips (Notion-Inspired)
+// 7. Plan Chips (Notion-Inspired)
 .u-plan-chip {
   padding: var(--space-xs) var(--space-md);
   border-radius: 100px;
