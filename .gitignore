@@ -29,6 +29,8 @@ Desktop.ini
 out/
 .vscode/
 .sisyphus/
+.claude-workflow/
+.claude/
 
 # =========================
 # 🐘 Backend (Java/Kotlin + Spring Boot + Gradle)
