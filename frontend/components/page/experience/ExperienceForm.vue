@@ -617,7 +617,7 @@ const emit = defineEmits<{
 
 const toast = useToast();
 const localIsEditMode = computed(() => [ExperienceFormMode.REGISTER, ExperienceFormMode.EDIT, ExperienceFormMode.EDIT_WITH_AI].includes(mode as ExperienceFormMode));
-const hasAiAnalysis = computed(() => !!aiAnalysis && mode === ExperienceFormMode.EDIT_WITH_AI);
+const hasAiAnalysis = computed(() => !!aiAnalysis);
 
 // 목표/핵심 성과 Help 토글 상태
 const showGoalHelp = ref(false);
